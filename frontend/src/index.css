@@ -1,0 +1,212 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Industrial dark theme — Gagan Engineering Works */
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+html { scroll-behavior: smooth; }
+
+body {
+    margin: 0;
+    font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background: #050505;
+    color: #F9FAFB;
+}
+
+code, .mono {
+    font-family: 'IBM Plex Mono', monospace;
+}
+
+.font-display {
+    font-family: 'Bebas Neue', 'IBM Plex Sans', sans-serif;
+    letter-spacing: 0.02em;
+}
+
+@layer base {
+    :root {
+        --background: 0 0% 2%;
+        --foreground: 210 20% 98%;
+        --card: 0 0% 7%;
+        --card-foreground: 210 20% 98%;
+        --popover: 0 0% 7%;
+        --popover-foreground: 210 20% 98%;
+        --primary: 14 100% 57%;
+        --primary-foreground: 0 0% 100%;
+        --secondary: 0 0% 10%;
+        --secondary-foreground: 210 20% 98%;
+        --muted: 0 0% 10%;
+        --muted-foreground: 220 9% 65%;
+        --accent: 14 100% 57%;
+        --accent-foreground: 0 0% 100%;
+        --destructive: 0 84% 60%;
+        --destructive-foreground: 0 0% 98%;
+        --border: 0 0% 15%;
+        --input: 0 0% 12%;
+        --ring: 14 100% 57%;
+        --radius: 0.125rem;
+    }
+}
+
+@layer base {
+    * { @apply border-border; }
+    body { @apply bg-background text-foreground; }
+}
+
+/* Industrial selection */
+::selection { background: #FF5722; color: #fff; }
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: #050505; }
+::-webkit-scrollbar-thumb { background: #27272A; border: 2px solid #050505; }
+::-webkit-scrollbar-thumb:hover { background: #FF5722; }
+
+/* Animated grid background */
+.grid-bg {
+    background-image:
+        linear-gradient(rgba(255,87,34,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,87,34,0.04) 1px, transparent 1px);
+    background-size: 80px 80px;
+}
+
+.grain-overlay::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.4;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.3'/%3E%3C/svg%3E");
+}
+
+/* Reusable utilities */
+.tech-label {
+    font-family: 'IBM Plex Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    font-size: 0.7rem;
+    color: #FF5722;
+}
+
+.btn-primary {
+    background: #FF5722;
+    color: #fff;
+    padding: 0.875rem 1.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    border: 1px solid #FF5722;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.btn-primary:hover { background: #F4511E; transform: translateY(-2px); }
+
+.btn-ghost {
+    background: transparent;
+    color: #F9FAFB;
+    padding: 0.875rem 1.75rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    border: 1px solid #4B5563;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.btn-ghost:hover { border-color: #FF5722; color: #FF5722; }
+
+/* Card industrial border */
+.industrial-card {
+    background: #0a0a0a;
+    border: 1px solid #1f1f1f;
+    transition: all 0.4s ease;
+    position: relative;
+}
+.industrial-card::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; bottom: -1px;
+    height: 2px;
+    background: #FF5722;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+}
+.industrial-card:hover { border-color: #2a2a2a; transform: translateY(-4px); }
+.industrial-card:hover::after { transform: scaleX(1); }
+
+.industrial-card img { transition: transform 0.6s ease; }
+.industrial-card:hover img { transform: scale(1.05); }
+
+/* Form inputs */
+.industrial-input {
+    width: 100%;
+    background: #0a0a0a;
+    border: 1px solid #1f1f1f;
+    border-bottom: 2px solid #27272A;
+    color: #F9FAFB;
+    padding: 0.875rem 1rem;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    border-radius: 2px;
+    outline: none;
+}
+.industrial-input::placeholder { color: #6b7280; }
+.industrial-input:focus {
+    border-color: #1f1f1f;
+    border-bottom-color: #FF5722;
+    background: #0c0c0c;
+}
+select.industrial-input { appearance: none; background-image: linear-gradient(45deg, transparent 50%, #FF5722 50%), linear-gradient(135deg, #FF5722 50%, transparent 50%); background-position: calc(100% - 18px) 50%, calc(100% - 12px) 50%; background-size: 6px 6px, 6px 6px; background-repeat: no-repeat; padding-right: 2.5rem; }
+
+/* Floating CTA pulse */
+@keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(37,211,102,0.5); }
+    50% { box-shadow: 0 0 0 14px rgba(37,211,102,0); }
+}
+.pulse-whatsapp { animation: pulse-glow 2.4s infinite; }
+
+/* Marquee */
+@keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+.marquee-track { animation: marquee 40s linear infinite; }
+
+/* Reveal */
+.reveal-up {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: revealUp 0.8s ease-out forwards;
+}
+@keyframes revealUp { to { opacity: 1; transform: translateY(0); } }
+
+/* Scrollbar hide utility (for horizontal scroll filter pills) */
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+
+/* xs breakpoint helpers (400px) — used with xs: prefix in Tailwind */
+@media (min-width: 400px) {
+    .xs\:flex-row { flex-direction: row; }
+    .xs\:w-auto { width: auto; }
+    .xs\:block { display: block; }
+    .xs\:text-xl { font-size: 1.25rem; line-height: 1.75rem; }
+    .xs\:text-5xl { font-size: 3rem; line-height: 1; }
+    .xs\:flex-col { flex-direction: column; }
+    .xs\:flex-1 { flex: 1 1 0%; }
+    .xs\:items-center { align-items: center; }
+    .xs\:justify-center { justify-content: center; }
+    .xs\:text-center { text-align: center; }
+}
+
+/* Misc utilities */
+.hover\:bg-white\/3:hover { background-color: rgba(255,255,255,0.03); }

@@ -1,0 +1,11 @@
+{
+  "name": "gagan-engineering-website-root",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "npm start --prefix frontend",
+    "dev": "npm start --prefix frontend",
+    "build": "npm run build --prefix frontend",
+    "backend": "python -m uvicorn server:app --app-dir backend --host 127.0.0.1 --port 8000 --reload"
+  }
+}

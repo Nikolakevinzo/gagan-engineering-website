@@ -1,0 +1,144 @@
+{
+  "project_name": "Gagan Engineering Works Website",
+  "app_type": "marketing_site",
+  "domain": "Heavy Industrial Machinery & Manufacturing",
+  "theme": "dark",
+  "archetype": "Archetype 4 (Swiss & High-Contrast - Industrial Variant)",
+  "vibe": "Trustworthy, heavy-duty, precision-engineered, solid, authoritative",
+  "design_principles": [
+    "Fusion over Imitation: Combine high-end premium automotive/aerospace web design cues with heavy machinery presentation.",
+    "Emotion First: The design must feel 'heavy' and 'precise'. Use dark, stark contrast to evoke the durability of steel and the heat of manufacturing.",
+    "Contrast: Use Deep Obsidian base against blinding Industrial Orange and bright steel white for sharp, blueprint-like clarity.",
+    "Structural Grids: Emphasize 'The Technical Look' with exposed grid borders to reflect engineering structure.",
+    "Data-Driven Storytelling: Highlight 14+ years of experience and machinery specs clearly, treating numbers as art."
+  ],
+  "colors": {
+    "background": {
+      "default": "#050505",
+      "surface": "#121212",
+      "surface_elevated": "#1A1A1A"
+    },
+    "primary": {
+      "default": "#FF5722",
+      "hover": "#F4511E",
+      "active": "#E64A19",
+      "foreground": "#FFFFFF"
+    },
+    "accent": {
+      "metallic": "#9CA3AF",
+      "steel": "#4B5563",
+      "danger": "#EF4444"
+    },
+    "text": {
+      "primary": "#F9FAFB",
+      "secondary": "#D1D5DB",
+      "muted": "#9CA3AF",
+      "inverse": "#050505"
+    },
+    "border": {
+      "default": "#27272A",
+      "focus": "#FF5722"
+    }
+  },
+  "typography": {
+    "fonts": {
+      "headings": "Clash Display, sans-serif",
+      "body": "IBM Plex Sans, sans-serif",
+      "monospace": "IBM Plex Mono, monospace"
+    },
+    "scales": {
+      "h1": "text-5xl sm:text-6xl font-semibold tracking-tighter uppercase",
+      "h2": "text-3xl sm:text-4xl font-semibold tracking-tight uppercase",
+      "h3": "text-2xl sm:text-3xl font-medium tracking-tight",
+      "h4": "text-xl font-medium",
+      "body_lg": "text-lg leading-relaxed",
+      "body": "text-base leading-relaxed",
+      "small": "text-sm tracking-wide uppercase text-muted"
+    },
+    "guidelines": [
+      "Headings should use Clash Display with tight tracking to simulate heavy, solid block text.",
+      "Overlines and labels must be uppercase, monospace (IBM Plex Mono), and widely tracked (tracking-[0.2em]) for a blueprint/spec-sheet feel.",
+      "Body text should remain readable and crisp in IBM Plex Sans."
+    ]
+  },
+  "layout": {
+    "spacing_system": "Generous spacing philosophy. Use p-8, p-12, p-16 for section breathing room.",
+    "grid_strategy": "The 'Control Room' Grid & Technical Borders: Expose the skeleton using border-collapse styles. Use strict bento boxes for the product catalog with 1px border-border borders.",
+    "surface_treatment": [
+      "Containers: Flat backgrounds, 1px sharp border (border-border), zero shadow.",
+      "Hover states: Sharp -translate-y-1 lift with industrial orange bottom-border accent.",
+      "Navigation: Crystal Glassmorphism over the dark background (bg-black/60 backdrop-blur-xl border-b border-white/10)."
+    ]
+  },
+  "components": {
+    "buttons": {
+      "primary": "Square or very slightly rounded (rounded-sm). Solid Industrial Orange (#FF5722) background, white text. No gradients. Hover state slightly brightens.",
+      "secondary": "Transparent background, 1px solid steel border (#4B5563), white text. Hover state fills with surface elevated color.",
+      "floating_cta": "Fixed bottom-right corner. High-contrast icon buttons (WhatsApp, Phone) with drop-shadow and quick-pulse animation."
+    },
+    "cards": {
+      "product": "Bento style. Image taking up 60% of card height, dark overlay gradient at bottom. Spec sheet snippet visible. Hover zooms image slightly inside container.",
+      "testimonial": "Technical layout. Quote in monospace or italic serif, rating in bright orange stars, reviewer details structured like a data table."
+    },
+    "forms": {
+      "inputs": "Flat dark inputs (bg-surface_elevated), square corners (rounded-none or rounded-sm), border-b-2 only (border-border), focus state changes border-b to primary orange."
+    }
+  },
+  "motion": {
+    "strategy": "Heavy and deliberate. Things should feel like they carry physical weight. Fast snappy transitions are banned.",
+    "transitions": "transition-all duration-300 ease-out",
+    "framer_motion": {
+      "hero_reveal": "Slow vertical slide up with opacity fade in (duration: 0.8s, ease: custom cubic-bezier).",
+      "scroll_parallax": "Subtle parallax on heavy machinery background images using React Spring or Framer Motion."
+    }
+  },
+  "media": {
+    "images": [
+      {
+        "category": "hero_background",
+        "url": "https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA3MDB8MHwxfHNlYXJjaHwyfHx3ZWxkaW5nJTIwd29ya2VyJTIwbWFudWZhY3R1cmluZ3xlbnwwfHx8fDE3ODIyNzk0Mzh8MA&ixlib=rb-4.1.0&q=85",
+        "description": "Welding worker in dark environment with bright sparks. Perfect for hero section overlay."
+      },
+      {
+        "category": "factory_interior",
+        "url": "https://images.unsplash.com/photo-1496247749665-49cf5b1022e9?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1MTN8MHwxfHNlYXJjaHwyfHxtZXRhbCUyMHN0ZWVsJTIwbWFudWZhY3R1cmluZyUyMG1hY2hpbmVyeXxlbnwwfHx8fDE3ODIyNzk0Mzh8MA&ixlib=rb-4.1.0&q=85",
+        "description": "Wide shot of a massive industrial factory floor. Good for About Us section."
+      },
+      {
+        "category": "machinery_detail",
+        "url": "https://images.pexels.com/photos/12951623/pexels-photo-12951623.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "description": "Close up of heavy, greasy machinery showing industrial steel texture."
+      },
+      {
+        "category": "glowing_metal",
+        "url": "https://images.unsplash.com/photo-1598302936625-6075fbd98dd7?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA3MDB8MHwxfHNlYXJjaHwxfHx3ZWxkaW5nJTIwd29ya2VyJTIwbWFudWZhY3R1cmluZ3xlbnwwfHx8fDE3ODIyNzk0Mzh8MA&ixlib=rb-4.1.0&q=85",
+        "description": "Worker with glowing metal/sparks, representing heat and manufacturing."
+      },
+      {
+        "category": "steel_structure",
+        "url": "https://images.unsplash.com/photo-1613970351372-9804e380bd09?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1MTN8MHwxfHNlYXJjaHwzfHxtZXRhbCUyMHN0ZWVsJTIwbWFudWZhY3R1cmluZyUyMG1hY2hpbmVyeXxlbnwwfHx8fDE3ODIyNzk0Mzh8MA&ixlib=rb-4.1.0&q=85",
+        "description": "Abstract shot of heavy steel piping, excellent for background textures or footer."
+      }
+    ],
+    "icons": {
+      "library": "@phosphor-icons/react",
+      "style": "Duotone or Regular weight. Must look technical and crisp."
+    }
+  },
+  "accessibility": {
+    "contrast": "Ensure white text on #050505 passes APCA standards. All orange buttons must have white text.",
+    "testing_attributes": "CRITICAL: All interactive elements (buttons, inputs, links, forms) MUST include a data-testid attribute formatted as kebab-case and role-based (e.g., data-testid='hero-cta-button', data-testid='contact-form-submit')."
+  },
+  "instructions_to_main_agent": [
+    "Set up React with TailwindCSS.",
+    "Install and configure dependencies: framer-motion, @phosphor-icons/react, lucide-react, react-hook-form, zod.",
+    "For the UI, avoid generic Shadcn card defaults. Strip out border-radius to 0 or 2px max. Implement the 'Technical Grid Border' style for the product catalogue.",
+    "Ensure the hero image uses a max overlay opacity of bg-black/50, or a gradient overlay for text readability.",
+    "Build a Bento-style product grid for the 8 machines listed in the requirements. Use placeholder product images or abstract machinery details from the media section if specific product photos aren't available, but DO NOT use placeholder text services.",
+    "Create a dedicated About Us section highlighting 14+ years experience, Khopoli location, and proprietorship.",
+    "Implement a contact form tailored for lead gen (Name, Phone, Email, Product Interest dropdown, Message).",
+    "Include floating CTAs for WhatsApp and Phone for instant B2B contact.",
+    "Apply `data-testid` to all functional components.",
+    "Ensure mobile responsiveness is flawless, as B2B buyers in India will predominantly use mobile."
+  ]
+}
