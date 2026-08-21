@@ -4,4 +4,4 @@ Disallow: /admin
 Disallow: /admin/
 Disallow: /api/admin/
 
-Sitemap: https://gagan-engineering-website.vercel.app/sitemap.xml
+Sitemap: https://www.gaganengineerings.in/sitemap.xml

@@ -27,7 +27,7 @@ export const BUSINESS = {
   annualTurnover: "₹40 Lakh – ₹1.5 Crore",
   teamSize: "11–25 Skilled Engineers & Fabricators",
   indiamartUrl: "https://www.indiamart.com/gaganengineeringworks/",
-  websiteUrl: "https://gagan-engineering-website.vercel.app",
+  websiteUrl: process.env.REACT_APP_WEBSITE_URL || "https://www.gaganengineerings.in",
   workingHours: "Monday – Saturday: 9:00 AM – 7:30 PM IST (Sunday Closed)",
   serviceAreas: ["Pan-India", "Maharashtra", "Gujarat", "Delhi NCR", "Tamil Nadu", "Karnataka", "Punjab", "International Exports"],
   coreStrengths: [

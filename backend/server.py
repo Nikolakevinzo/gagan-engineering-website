@@ -827,7 +827,8 @@ async def admin_stats(username: str = Depends(verify_admin)):
 
 
 # ----------------- SEO Endpoints -----------------
-WEBSITE_URL = "https://gagan-engineering-website.vercel.app"
+_raw_site_url = os.environ.get("WEBSITE_URL") or os.environ.get("VERCEL_PROJECT_PRODUCTION_URL") or "https://www.gaganengineerings.in"
+WEBSITE_URL = _raw_site_url if _raw_site_url.startswith("http") else f"https://{_raw_site_url}"
 
 @app.get("/sitemap.xml", response_class=Response)
 async def sitemap():
