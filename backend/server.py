@@ -360,8 +360,12 @@ class AIQuestionRequest(BaseModel):
 
 # ----------------- Admin Auth -----------------
 def verify_admin(credentials: HTTPBasicCredentials = Depends(security)):
-    correct_username = secrets.compare_digest(credentials.username, ADMIN_USERNAME)
-    correct_password = secrets.compare_digest(credentials.password, ADMIN_PASSWORD)
+    # Dynamically fetch current credentials from Environment Variables (set in Vercel or .env)
+    expected_user = os.environ.get('ADMIN_USERNAME', 'admin')
+    expected_pass = os.environ.get('ADMIN_PASSWORD', 'gaganworks2006')
+
+    correct_username = secrets.compare_digest(credentials.username.strip(), expected_user.strip())
+    correct_password = secrets.compare_digest(credentials.password.strip(), expected_pass.strip())
     if not (correct_username and correct_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
