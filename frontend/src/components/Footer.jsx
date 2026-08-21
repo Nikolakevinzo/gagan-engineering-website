@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Phone, Mail, MapPin, MessageCircle, ExternalLink, ShieldCheck, Award } from "lucide-react";
+import { Phone, Mail, MapPin, MessageCircle, ExternalLink, ShieldCheck, Award, Lock } from "lucide-react";
 import { BUSINESS } from "@/lib/business";
 import { CATALOGUE_PRODUCTS } from "@/lib/catalogueData";
 
@@ -32,11 +32,15 @@ export default function Footer() {
               Established in 2006 in Khopoli, Maharashtra, Gagan Engineering Works is a leading manufacturer of high-performance Bra Cup Moulding Presses, Hydraulic Decoilers, C/Z Purlin Roll Formers, and Cut-To-Length Lines.
             </p>
 
-            <div className="pt-2 flex flex-wrap items-center gap-3">
+            {/* Badges */}
+            <div className="flex flex-wrap items-center gap-2 pt-2">
+              <span className="inline-flex items-center gap-1.5 bg-[#121c16] border border-[#1b3d2b] text-emerald-400 text-xs px-3 py-1.5 rounded-sm">
+                <ShieldCheck className="w-3.5 h-3.5" /> ISO 9001:2015 Certified
+              </span>
               <a
                 href={BUSINESS.indiamartUrl}
                 target="_blank"
-                rel="noopener noreferrer"
+                rel="noreferrer"
                 className="inline-flex items-center gap-1.5 bg-[#0e1e24] border border-[#1b3d4a] text-sky-400 text-xs px-3 py-1.5 rounded-sm hover:border-sky-400 transition-colors"
               >
                 <Award className="w-3.5 h-3.5" /> IndiaMART TrustSEAL Verified (4.0★)
@@ -106,6 +110,14 @@ export default function Footer() {
                 <a href="/llms.txt" target="_blank" className="hover:text-[#FF5722] transition-colors mono">
                   LLM / AI Search Manifest (llms.txt)
                 </a>
+              </li>
+              <li className="pt-2">
+                <Link
+                  to="/admin"
+                  className="inline-flex items-center gap-1.5 text-zinc-300 hover:text-[#FF5722] bg-white/5 hover:bg-white/10 border border-white/10 px-2.5 py-1.5 rounded-xs transition-colors font-mono text-[11px]"
+                >
+                  <Lock className="w-3.5 h-3.5 text-[#FF5722]" /> Admin Panel
+                </Link>
               </li>
             </ul>
           </div>
