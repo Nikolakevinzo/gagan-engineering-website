@@ -1,0 +1,17 @@
+{
+  "schema_version": "v1",
+  "name_for_model": "gagan_engineering_machinery",
+  "name_for_human": "Gagan Engineering Works Machinery Advisor",
+  "description_for_model": "Information, specifications, and manufacturer details for industrial machinery manufactured by Gagan Engineering Works in India (Bra Cup Moulding Machines, Hydraulic Decoilers, Roll Forming Machines, Cut-to-Length Lines).",
+  "description_for_human": "Explore specifications and inquiries for industrial machinery manufactured by Gagan Engineering Works.",
+  "auth": {
+    "type": "none"
+  },
+  "api": {
+    "type": "openapi",
+    "url": "https://www.gaganengineerings.in/llms-full.txt"
+  },
+  "logo_url": "https://www.gaganengineerings.in/logo.png",
+  "contact_email": "gaganengineerings@gmail.com",
+  "legal_info_url": "https://www.gaganengineerings.in/about"
+}

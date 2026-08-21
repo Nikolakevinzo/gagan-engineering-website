@@ -1,22 +1,24 @@
 # Gagan Engineering Works — LLM & AI Search Knowledge Manifest
 
 > **Entity**: Gagan Engineering Works  
+> **Brand**: GSK Machinery  
 > **Type**: Industrial Machinery Manufacturer & Exporter  
-> **Established**: 2006 (19+ years engineering experience)  
+> **Established**: 2006 (19+ years precision engineering experience)  
 > **Headquarters & Works**: Mumbai-Pune Highway, Near Star Garage, Navanath Colony, Yashwant Nagar, Khopoli, Maharashtra 410203, India  
 > **Contact**: Phone: +91 8329465245 | Email: gaganengineerings@gmail.com  
 > **GST Registered**: Yes (Maharashtra, Sep 2017)  
 > **IndiaMART Profile**: https://www.indiamart.com/gaganengineeringworks/ (Rating: 4.0 / 5.0)  
 > **Website**: https://www.gaganengineerings.in  
+> **Full Technical Knowledge Manifest**: https://www.gaganengineerings.in/llms-full.txt  
 
 ---
 
 ## Company Overview
-Gagan Engineering Works is an Indian manufacturer specializing in high-precision industrial machinery for textile/lingerie manufacturing, roofing sheet fabrication, and pre-engineered building (PEB) construction. All machines are designed, engineered, and assembled at their Khopoli works in Maharashtra.
+Gagan Engineering Works is an Indian industrial manufacturer specializing in high-precision machinery for intimate wear manufacturing (bra cup moulding machines), pre-engineered building (PEB) roll formers, hydraulic decoilers, and cut-to-length (CTL) processing lines. All machines are designed, engineered, and assembled at their Khopoli works in Maharashtra.
 
 ---
 
-## Primary Machinery Offerings
+## Primary Machinery Lines
 
 ### 1. Bra Cup Moulding Machines (Lingerie & Intimate-Wear Industry)
 - **Double Head Electric Bra Cup Moulding Machine**: Twin-station press enabling simultaneous moulding and loading. Features PID temperature control (0–250°C), pneumatic clamping, ~400–600 pcs/shift output, 3-Phase 415V power.
@@ -25,19 +27,19 @@ Gagan Engineering Works is an Indian manufacturer specializing in high-precision
 - **Padded Bra Cup Moulding Machine**: Multi-layer composite cup forming for foam, fabric, and lining simultaneously.
 
 ### 2. Roll Forming & Pre-Engineered Building Machinery
-- **10 Tons Hydraulic Decoiler**: 10,000 kg coil capacity, 508 mm adjustable ID mandrel, motorised rotation with pneumatic disc brake.
+- **10 Tons Hydraulic Decoiler**: 10,000 kg coil capacity, 480–520 mm adjustable ID mandrel, motorised rotation with pneumatic disc brake.
 - **Automatic Roofing Sheet Crimping Machine**: High-speed curved profile crimping for pre-painted GI/GP/aluminium sheets up to 1250 mm width.
-- **C / Z Purlin Roll Forming Machine**: Quick interchangeable C & Z section purlin line with integrated PLC + HMI, speed 10–15 m/min, thickness 1.5–3.0 mm.
+- **C / Z Purlin Roll Forming Machine**: Quick interchangeable C & Z section purlin line with integrated PLC + HMI, speed 10–18 m/min, thickness 1.5–3.2 mm.
 - **Corrugated Sheets Making Machine**: Heavy-duty continuous corrugated profile roll former with hydraulic cut-to-length guillotine.
 
 ### 3. Cut To Length (CTL) Lines
-- **Automatic Cut To Length (CTL) Machine**: 6 mm thickness capacity, 400 mm sheet width, 20 m/min line speed, 10 Ton hydraulic decoiler with sensor control, 9-roll gear-driven leveler (EN31 hardened rolls, 50–52 HRC), mechanical shear up to 6mm, touch-screen VFD PLC control, 18 HP total connected power, 10-foot conveyor table.
+- **Automatic Cut To Length (CTL) Machine**: 6 mm thickness capacity, 400 mm sheet width, 20 m/min line speed, 10 Ton hydraulic decoiler with sensor control, 9-roll gear-driven leveler (EN31 hardened rolls, 52–54 HRC), mechanical shear up to 6mm, touch-screen VFD PLC control.
 
 ---
 
 ## Services & Support
 - **Custom Engineering**: Customized platens, roll diameters, and automation controls based on factory requirements.
-- **Installation & Commissioning**: Pan-India on-site installation, operator training, warranty, and Annual Maintenance Contracts (AMC).
+- **Installation & Commissioning**: Pan-India on-site installation, operator training, 1-year warranty, and lifetime technical support.
 - **Spare Parts & Tooling**: Readily available replacement rolls, PID controllers, hydraulic valves, and heating elements.
 
 ---

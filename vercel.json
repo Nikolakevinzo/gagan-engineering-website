@@ -18,11 +18,18 @@
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "api/index.py"
+      "dest": "api/index.py",
+      "headers": {
+        "X-Robots-Tag": "noindex"
+      }
     },
     {
       "src": "/sitemap.xml",
-      "dest": "api/index.py"
+      "dest": "api/index.py",
+      "headers": {
+        "Content-Type": "application/xml; charset=utf-8",
+        "Cache-Control": "public, max-age=3600, s-maxage=86400"
+      }
     },
     {
       "handle": "filesystem"

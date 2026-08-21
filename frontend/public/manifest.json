@@ -1,0 +1,21 @@
+{
+  "short_name": "Gagan Engg",
+  "name": "Gagan Engineering Works — Industrial Machinery Manufacturer",
+  "description": "Premier manufacturer of Bra Cup Moulding Machines, Hydraulic Decoilers, Roll Forming Machines & Industrial Machinery from Khopoli, Maharashtra.",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#050505",
+  "background_color": "#050505",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en-IN",
+  "categories": ["business", "industrial", "manufacturing"]
+}

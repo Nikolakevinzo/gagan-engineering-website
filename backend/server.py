@@ -866,19 +866,32 @@ async def sitemap():
         product_date = now
         if isinstance(p.get("updatedAt"), datetime):
             product_date = p["updatedAt"].strftime("%Y-%m-%d")
+        
+        img_tag = ""
+        if p.get("image"):
+            img_url = p["image"]
+            p_name = p.get("name", "").replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+            img_tag = f"""
+    <image:image>
+      <image:loc>{img_url}</image:loc>
+      <image:title>{p_name}</image:title>
+      <image:caption>{p_name} manufactured by Gagan Engineering Works Khopoli</image:caption>
+    </image:image>"""
+
         urls.append(f"""  <url>
     <loc>{WEBSITE_URL}/products/{p['id']}</loc>
     <lastmod>{product_date}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>{img_tag}
   </url>""")
 
     xml = f"""<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 {chr(10).join(urls)}
 </urlset>"""
 
-    return Response(content=xml, media_type="application/xml")
+    return Response(content=xml, media_type="application/xml", headers={"Cache-Control": "public, max-age=3600"})
 
 @app.get("/robots.txt", response_class=PlainTextResponse)
 async def robots_txt():

@@ -14,7 +14,8 @@ export default function SEO({
   ogType = "website",
   productData = null,
   faqData = null,
-  breadcrumbs = null
+  breadcrumbs = null,
+  itemList = null
 }) {
   const siteTitle = title
     ? `${title} | Gagan Engineering Works`
@@ -83,7 +84,7 @@ export default function SEO({
     // Base Organization & LocalBusiness Schema
     schemas.push({
       "@context": "https://schema.org",
-      "@type": "LocalBusiness",
+      "@type": ["Organization", "LocalBusiness"],
       "@id": `${BUSINESS.websiteUrl}/#organization`,
       "name": BUSINESS.name,
       "legalName": BUSINESS.legalName,
@@ -143,20 +144,18 @@ export default function SEO({
           "@type": "Offer",
           "url": currentUrl,
           "priceCurrency": "INR",
-          "price": "Contact for Best Price",
-          "priceValidUntil": "2027-12-31",
+          "price": "0",
+          "priceSpecification": {
+            "@type": "UnitPriceSpecification",
+            "priceCurrency": "INR",
+            "priceType": "https://schema.org/InvoicePrice"
+          },
           "availability": "https://schema.org/InStock",
           "itemCondition": "https://schema.org/NewCondition",
           "seller": {
             "@type": "Organization",
             "name": BUSINESS.name
           }
-        },
-        "aggregateRating": {
-          "@type": "AggregateRating",
-          "ratingValue": "4.8",
-          "reviewCount": "24",
-          "bestRating": "5"
         }
       });
     }
@@ -191,6 +190,20 @@ export default function SEO({
       });
     }
 
+    // ItemList Schema (for catalogue page)
+    if (itemList && itemList.length > 0) {
+      schemas.push({
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        "itemListElement": itemList.map((item, index) => ({
+          "@type": "ListItem",
+          "position": index + 1,
+          "url": `${BUSINESS.websiteUrl}/products/${item.id}`,
+          "name": item.name
+        }))
+      });
+    }
+
     // Inject JSON-LD Script tag
     let schemaScript = document.getElementById("jsonld-seo-schema");
     if (!schemaScript) {
@@ -200,7 +213,7 @@ export default function SEO({
       document.head.appendChild(schemaScript);
     }
     schemaScript.text = JSON.stringify(schemas.length === 1 ? schemas[0] : schemas);
-  }, [siteTitle, siteDescription, siteKeywords, currentUrl, metaImage, ogType, productData, faqData, breadcrumbs]);
+  }, [siteTitle, siteDescription, siteKeywords, currentUrl, metaImage, ogType, productData, faqData, breadcrumbs, itemList]);
 
   return null;
 }

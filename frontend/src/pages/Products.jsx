@@ -75,6 +75,7 @@ export default function Products() {
           { name: "Home", url: BUSINESS.websiteUrl },
           { name: "Machinery Catalogue", url: `${BUSINESS.websiteUrl}/products` }
         ]}
+        itemList={filteredProducts}
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
