@@ -73,6 +73,7 @@ function App() {
               <Products />
             </PublicLayout>
           } />
+          <Route path="/product" element={<Navigate to="/products" replace />} />
           <Route path="/products/:id" element={
             <PublicLayout>
               <ProductDetail />
