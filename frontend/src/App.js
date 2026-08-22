@@ -1,5 +1,5 @@
-import "@/App.css";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { useEffect } from "react";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { Toaster } from "sonner";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -19,6 +19,21 @@ import AdminDashboard from "@/pages/Admin/Dashboard";
 import AdminProductList from "@/pages/Admin/ProductList";
 import AdminProductForm from "@/pages/Admin/ProductForm";
 import AdminLeadsList from "@/pages/Admin/LeadsList";
+
+// Automatically scrolls to top of page on any route / page change
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: "instant"
+    });
+  }, [pathname]);
+
+  return null;
+}
 
 // Public site layout wrapper
 function PublicLayout({ children }) {
@@ -51,6 +66,7 @@ function App() {
   return (
     <AdminAuthProvider>
       <BrowserRouter>
+        <ScrollToTop />
         <Routes>
           {/* Admin Login (standalone, no sidebar) */}
           <Route path="/admin/login" element={<AdminLogin />} />
