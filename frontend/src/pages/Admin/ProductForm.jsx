@@ -305,34 +305,40 @@ function ImageUploader({ image, onChange, getAuthHeader }) {
     setError("");
     setUploading(true);
 
-    // 1. Try uploading to backend /api/admin/upload-image
-    try {
-      const formData = new FormData();
-      formData.append("file", file);
-
-      const res = await fetch(`${BACKEND_URL}/api/admin/upload-image`, {
-        method: "POST",
-        headers: getAuthHeader(),
-        body: formData,
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        if (data.url) {
-          onChange(data.url);
-          setUploading(false);
-          return;
-        }
-      }
-    } catch {
-      // Backend upload failed or offline — gracefully fallback to client Base64 data URL
-    }
-
-    // 2. Fallback: Base64 data URL (works 100% offline & on Vercel without storage setup)
     const reader = new FileReader();
     reader.onload = (e) => {
-      onChange(e.target.result);
-      setUploading(false);
+      const img = new Image();
+      img.onload = () => {
+        // High quality client-side canvas compression (max 1200px)
+        const maxDim = 1200;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxDim || height > maxDim) {
+          if (width > height) {
+            height = Math.round((height * maxDim) / width);
+            width = maxDim;
+          } else {
+            width = Math.round((width * maxDim) / height);
+            height = maxDim;
+          }
+        }
+
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, width, height);
+
+        const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.88);
+        onChange(compressedDataUrl);
+        setUploading(false);
+      };
+      img.onerror = () => {
+        onChange(e.target.result);
+        setUploading(false);
+      };
+      img.src = e.target.result;
     };
     reader.onerror = () => {
       setError("Failed to read image file.");

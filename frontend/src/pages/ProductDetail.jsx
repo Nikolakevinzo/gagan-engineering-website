@@ -4,7 +4,7 @@ import { ArrowLeft, ArrowRight, Phone, MessageCircle, ShieldCheck, Printer, File
 import SEO from "@/components/SEO";
 import ProductCard from "@/components/ProductCard";
 import SectionHeader from "@/components/SectionHeader";
-import { CATALOGUE_PRODUCTS } from "@/lib/catalogueData";
+import { CATALOGUE_PRODUCTS, getLiveCatalogueProducts } from "@/lib/catalogueData";
 import { BUSINESS } from "@/lib/business";
 import { api } from "@/lib/api";
 
@@ -19,18 +19,20 @@ export default function ProductDetail() {
 
   useEffect(() => {
     setLoading(true);
-    const localProd = CATALOGUE_PRODUCTS.find((p) => p.id === id);
+    const liveList = getLiveCatalogueProducts();
+    const localProd = liveList.find((p) => p.id === id);
 
     api
       .get(`/products/${id}`)
       .then((r) => {
         if (r.data && r.data.product) {
-          setProduct(r.data.product);
+          // Merge with live custom updates if available
+          setProduct(localProd ? { ...r.data.product, ...localProd } : r.data.product);
           setRelated(r.data.related || []);
         } else if (localProd) {
           setProduct(localProd);
           setRelated(
-            CATALOGUE_PRODUCTS.filter((p) => p.categorySlug === localProd.categorySlug && p.id !== localProd.id).slice(0, 3)
+            liveList.filter((p) => p.categorySlug === localProd.categorySlug && p.id !== localProd.id).slice(0, 3)
           );
         }
         setLoading(false);
@@ -40,7 +42,7 @@ export default function ProductDetail() {
         if (localProd) {
           setProduct(localProd);
           setRelated(
-            CATALOGUE_PRODUCTS.filter((p) => p.categorySlug === localProd.categorySlug && p.id !== localProd.id).slice(0, 3)
+            liveList.filter((p) => p.categorySlug === localProd.categorySlug && p.id !== localProd.id).slice(0, 3)
           );
         }
         setLoading(false);
@@ -58,11 +60,13 @@ export default function ProductDetail() {
 
   if (!product) {
     return (
-      <div className="bg-[#050505] min-h-screen pt-32 px-4 text-center text-white flex flex-col items-center justify-center gap-4">
-        <h2 className="text-2xl font-bold">Product Not Found</h2>
-        <p className="text-white/60">The machine specification you are looking for is unavailable.</p>
-        <Link to="/products" className="btn-primary inline-flex">
-          Back to Catalogue
+      <div className="bg-[#050505] min-h-screen pt-32 flex flex-col items-center justify-center text-center px-4">
+        <h1 className="font-display text-4xl text-white uppercase mb-4">Machine Not Found</h1>
+        <p className="text-white/60 mb-8 max-w-md">
+          The requested machinery specification may have been moved or updated in our workshop catalogue.
+        </p>
+        <Link to="/products" className="btn-primary">
+          Browse All Machinery
         </Link>
       </div>
     );
@@ -92,7 +96,7 @@ export default function ProductDetail() {
         <div className="flex items-center gap-1.5 sm:gap-2 mono text-[10px] sm:text-[11px] text-white/50 mb-6 sm:mb-8 uppercase tracking-wider overflow-x-auto whitespace-nowrap pb-1">
           <Link to="/" className="hover:text-white transition-colors shrink-0">Home</Link>
           <span className="shrink-0">/</span>
-          <Link to="/products" className="hover:text-white transition-colors shrink-0">Machinery</Link>
+          <Link to="/products" className="hover:text-white transition-colors shrink-0">Catalogue</Link>
           <span className="shrink-0">/</span>
           <span className="text-[#FF5722] truncate">{product.name}</span>
         </div>
@@ -103,9 +107,12 @@ export default function ProductDetail() {
           <div className="space-y-3 sm:space-y-4">
             <div className="relative border border-white/10 bg-[#0c0c0e] aspect-[4/3] sm:aspect-[16/11] rounded-xs overflow-hidden shadow-2xl p-4 sm:p-6 flex items-center justify-center">
               <img
-                src={product.image}
+                src={product.image || "https://5.imimg.com/data5/SELLER/Default/2026/3/591026243/LM/XU/AK/4175789/corrugated-sheets-making-machine-500x500.jpeg"}
                 alt={`${product.name} - Gagan Engineering Works Khopoli`}
                 className="w-full h-full object-contain"
+                onError={(e) => {
+                  e.currentTarget.src = "https://5.imimg.com/data5/SELLER/Default/2026/3/591026243/LM/XU/AK/4175789/corrugated-sheets-making-machine-500x500.jpeg";
+                }}
                 data-testid="product-image"
               />
               <div className="absolute top-3 left-3 bg-black/85 backdrop-blur-md px-2.5 sm:px-3 py-1 sm:py-1.5 mono text-[9px] sm:text-[10px] tracking-[0.15em] sm:tracking-[0.2em] uppercase text-[#FF5722] border border-[#FF5722]/40 rounded-xs">
