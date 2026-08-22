@@ -83,6 +83,7 @@ export default function ProductDetail() {
         productData={product}
         faqData={product.faqs}
         breadcrumbs={breadcrumbs}
+        canonicalUrl={`${BUSINESS.websiteUrl}/products/${product.id}`}
         ogImage={product.image}
       />
 
