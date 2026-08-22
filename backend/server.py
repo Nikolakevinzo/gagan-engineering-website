@@ -456,21 +456,26 @@ def build_lead_email_html(lead: ContactLead) -> str:
     """
 
 async def send_lead_email(lead: ContactLead) -> Optional[str]:
-    if not resend.api_key:
-        logger.warning("Resend API key not configured — skipping email send.")
+    api_key = os.environ.get('RESEND_API_KEY') or resend.api_key
+    if not api_key:
+        logger.warning("Resend API key not configured (RESEND_API_KEY missing) — skipping email send.")
         return None
+    resend.api_key = api_key
+    sender = os.environ.get('SENDER_EMAIL', SENDER_EMAIL or 'onboarding@resend.dev')
+    recipient = os.environ.get('BUSINESS_EMAIL', BUSINESS_EMAIL or 'gaganengineerings@gmail.com')
     params = {
-        "from": f"Gagan Engineering Leads <{SENDER_EMAIL}>",
-        "to": [BUSINESS_EMAIL],
+        "from": f"Gagan Engineering Leads <{sender}>",
+        "to": [recipient],
         "subject": f"Machinery Inquiry from {lead.name} — {lead.product_interest or 'General'}",
         "html": build_lead_email_html(lead),
-        "reply_to": lead.email,
+        "reply_to": lead.email if lead.email else recipient,
     }
     try:
         result = await asyncio.to_thread(resend.Emails.send, params)
-        return result.get("id") if isinstance(result, dict) else None
+        logger.info(f"Lead email successfully sent via Resend for {lead.name}: {result}")
+        return result.get("id") if isinstance(result, dict) else str(result)
     except Exception as e:
-        logger.error(f"Failed to send lead email: {e}")
+        logger.error(f"Failed to send lead email via Resend: {e}")
         return None
 
 
@@ -817,12 +822,19 @@ async def admin_stats(username: str = Depends(verify_admin)):
 
     categories = set(p.get("categorySlug", "") for p in products)
 
+    resend_ready = bool(os.environ.get('RESEND_API_KEY') or resend.api_key)
+    sender_mail = os.environ.get('SENDER_EMAIL', SENDER_EMAIL or 'onboarding@resend.dev')
+    biz_mail = os.environ.get('BUSINESS_EMAIL', BUSINESS_EMAIL or 'gaganengineerings@gmail.com')
+
     return {
         "total_products": len(products),
         "featured_products": featured_count,
         "total_leads": leads_count,
         "categories_count": len(categories),
         "categories": list(categories),
+        "resend_configured": resend_ready,
+        "sender_email": sender_mail,
+        "business_email": biz_mail,
     }
 
 
