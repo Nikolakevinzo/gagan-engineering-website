@@ -302,6 +302,39 @@ SEED_PRODUCTS = [
         "faqs": [],
         "createdAt": datetime.now(timezone.utc),
         "updatedAt": datetime.now(timezone.utc),
+    },
+    {
+        "id": "semi-automatic-pipe-counter-boring-and-facing-machine",
+        "name": "Semi-Automatic Pipe Counter Boring and Facing Machine",
+        "category": "Roll Forming & Sheet Metal",
+        "categorySlug": "roll-forming-sheet-metal",
+        "image": "https://5.imimg.com/data5/SELLER/Default/2026/3/591026243/LM/XU/AK/4175789/corrugated-sheets-making-machine-500x500.jpeg",
+        "tagline": "Precision pipe end facing & counter boring up to 60 mm OD with hydraulic clamping and VFD speed control",
+        "shortDesc": "Heavy-duty semi-automatic pipe counter boring and facing machine for accurate tube end preparation and beveling up to 60 mm OD.",
+        "description": "The Semi-Automatic Pipe Counter Boring and Facing Machine manufactured by Gagan Engineering Works in Khopoli is designed for high-precision end facing, chamfering, and internal counter boring of round pipes and industrial tubes up to 60 mm outer diameter. Powered by a 5 HP main drive with variable frequency control (100–1450 RPM) and a dedicated 1 HP hydraulic power pack (60-litre capacity), the machine delivers rigid hydraulic clamping, smooth automated feed stroke, and accurate length repeat cycles for continuous manufacturing operations.",
+        "specs": {
+            "Machine Type": "Semi-Automatic Pipe Counter Boring and Facing Machine",
+            "Maximum Pipe Size": "60 mm OD",
+            "Main Motor": "5 HP (1450 RPM)",
+            "Speed Control": "100–1450 RPM, VFD Control",
+            "Drive Type": "Heavy-Duty Belt Drive",
+            "Hydraulic Motor": "1 HP",
+            "Clamping": "Rigid Hydraulic Clamping",
+            "Feed": "Hydraulic Automated Feed",
+            "Length Control": "Auto Control",
+            "Power Pack Capacity": "60 Litres",
+            "Machine Dimensions": "1.0 m × 1.5 m × 1200 mm Height",
+            "Make / Origin": "Gagan Engineering Works (Khopoli, MH)",
+            "Rate / Price": "₹3,40,000/- per machine"
+        },
+        "featured": True,
+        "faqs": [
+            {"q": "What is the maximum pipe diameter handled by this machine?", "a": "This semi-automatic machine handles pipes and tubes up to 60 mm Outside Diameter (OD) with rigid hydraulic clamping."},
+            {"q": "Does this machine offer variable speed control?", "a": "Yes, it is equipped with a Variable Frequency Drive (VFD) offering smooth spindle speed adjustment between 100 and 1450 RPM."},
+            {"q": "What warranty and service support are provided?", "a": "Gagan Engineering Works provides a 1-year comprehensive manufacturer warranty and on-site commissioning across India."}
+        ],
+        "createdAt": datetime.now(timezone.utc),
+        "updatedAt": datetime.now(timezone.utc),
     }
 ]
 

@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 
 import { getBackendUrl } from "@/lib/adminConfig";
+import { CATALOGUE_PRODUCTS } from "@/lib/catalogueData";
 
 const BACKEND_URL = getBackendUrl();
 
@@ -597,19 +598,32 @@ export default function AdminProductForm() {
 
     const fetchProduct = async () => {
       try {
-        const res = await fetch(`${BACKEND_URL}/api/admin/products/${id}`, {
-          headers: getAuthHeader(),
-        });
-        if (!res.ok) throw new Error("Not found");
-        const data = await res.json();
-        const p = data.product;
+        let p = null;
+        try {
+          const res = await fetch(`${BACKEND_URL}/api/admin/products/${id}`, {
+            headers: getAuthHeader(),
+          });
+          if (res.ok) {
+            const data = await res.json();
+            p = data.product;
+          }
+        } catch (e) {
+          // Fall through to catalogue lookup
+        }
+
+        if (!p) {
+          p = CATALOGUE_PRODUCTS.find((item) => item.id === id);
+        }
+
+        if (!p) throw new Error("Not found");
+
         setForm({
           name: p.name || "",
-          category: p.category || "Bra Cup Moulding Machine",
-          categorySlug: p.categorySlug || "bra-cup-moulding-machine",
+          category: p.category || "Roll Forming & Sheet Metal",
+          categorySlug: p.categorySlug || "roll-forming-sheet-metal",
           image: p.image || "",
           tagline: p.tagline || "",
-          shortDesc: p.shortDesc || "",
+          shortDesc: p.shortDesc || p.short_description || "",
           description: p.description || "",
           featured: p.featured || false,
         });

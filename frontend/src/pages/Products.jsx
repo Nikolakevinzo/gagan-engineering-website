@@ -22,7 +22,17 @@ export default function Products() {
       .get("/products")
       .then((r) => {
         if (r.data && r.data.products && r.data.products.length > 0) {
-          setProducts(r.data.products);
+          const dbProducts = r.data.products;
+          const merged = [...CATALOGUE_PRODUCTS];
+          dbProducts.forEach((dbItem) => {
+            const idx = merged.findIndex((m) => m.id === dbItem.id);
+            if (idx >= 0) {
+              merged[idx] = { ...merged[idx], ...dbItem };
+            } else {
+              merged.push(dbItem);
+            }
+          });
+          setProducts(merged);
         }
       })
       .catch(() => {});
