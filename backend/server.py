@@ -52,7 +52,6 @@ logger = logging.getLogger(__name__)
 
 app = FastAPI(title="Gagan Engineering Works API", version="3.0.0")
 api_router = APIRouter(prefix="/api")
-security = HTTPBasic(auto_error=False)
 
 # Ensure images directories exist and are mounted safely
 try:
