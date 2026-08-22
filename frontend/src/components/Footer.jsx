@@ -102,6 +102,21 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
+                <Link to="/return-policy" className="hover:text-[#FF5722] transition-colors">
+                  Warranty & Return Policy
+                </Link>
+              </li>
+              <li>
+                <Link to="/privacy-policy" className="hover:text-[#FF5722] transition-colors">
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link to="/terms" className="hover:text-[#FF5722] transition-colors">
+                  Terms & Conditions
+                </Link>
+              </li>
+              <li>
                 <a href="/sitemap.xml" target="_blank" className="hover:text-[#FF5722] transition-colors mono">
                   XML Sitemap
                 </a>

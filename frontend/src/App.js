@@ -11,6 +11,9 @@ import Products from "@/pages/Products";
 import ProductDetail from "@/pages/ProductDetail";
 import About from "@/pages/About";
 import Contact from "@/pages/Contact";
+import ReturnPolicy from "@/pages/ReturnPolicy";
+import PrivacyPolicy from "@/pages/PrivacyPolicy";
+import Terms from "@/pages/Terms";
 import AdminLogin from "@/pages/Admin/Login";
 import AdminDashboard from "@/pages/Admin/Dashboard";
 import AdminProductList from "@/pages/Admin/ProductList";
@@ -87,6 +90,22 @@ function App() {
           <Route path="/contact" element={
             <PublicLayout>
               <Contact />
+            </PublicLayout>
+          } />
+          <Route path="/return-policy" element={
+            <PublicLayout>
+              <ReturnPolicy />
+            </PublicLayout>
+          } />
+          <Route path="/returns" element={<Navigate to="/return-policy" replace />} />
+          <Route path="/privacy-policy" element={
+            <PublicLayout>
+              <PrivacyPolicy />
+            </PublicLayout>
+          } />
+          <Route path="/terms" element={
+            <PublicLayout>
+              <Terms />
             </PublicLayout>
           } />
           {/* Catch-all */}

@@ -1034,6 +1034,55 @@ async def sitemap():
 
     return Response(content=xml, media_type="application/xml", headers={"Cache-Control": "public, max-age=3600"})
 
+@app.get("/google-merchant-feed.xml", response_class=Response)
+@app.get("/google-shopping-feed.xml", response_class=Response)
+async def google_merchant_feed():
+    products = await get_products_from_db()
+    items = []
+
+    for p in products:
+        p_id = p.get("id", "")
+        p_name = p.get("name", "").replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+        p_desc = (p.get("description") or p.get("tagline") or p_name).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+        p_img = p.get("image") or f"{WEBSITE_URL}/logo.png"
+        p_link = f"{WEBSITE_URL}/products/{p_id}"
+        category = p.get("category", "Industrial Machinery")
+        
+        # Industrial category mapping
+        google_cat = "Business &amp; Industrial &gt; Manufacturing &gt; Manufacturing Machinery"
+        
+        items.append(f"""    <item>
+      <g:id>{p_id}</g:id>
+      <g:title>{p_name}</g:title>
+      <g:description>{p_desc}</g:description>
+      <g:link>{p_link}</g:link>
+      <g:image_link>{p_img}</g:image_link>
+      <g:brand>Gagan Engineering Works</g:brand>
+      <g:condition>new</g:condition>
+      <g:availability>in_stock</g:availability>
+      <g:price>150000.00 INR</g:price>
+      <g:google_product_category>{google_cat}</g:google_product_category>
+      <g:product_type>{category}</g:product_type>
+      <g:identifier_exists>no</g:identifier_exists>
+      <g:shipping>
+        <g:country>IN</g:country>
+        <g:service>Freight Delivery (Pan-India)</g:service>
+        <g:price>0.00 INR</g:price>
+      </g:shipping>
+    </item>""")
+
+    rss = f"""<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">
+  <channel>
+    <title>Gagan Engineering Works - Machinery Catalogue Feed</title>
+    <link>{WEBSITE_URL}</link>
+    <description>Industrial Machinery &amp; Equipment Manufacturer in Khopoli, Maharashtra, India</description>
+{chr(10).join(items)}
+  </channel>
+</rss>"""
+
+    return Response(content=rss, media_type="application/xml", headers={"Cache-Control": "public, max-age=3600"})
+
 @app.get("/robots.txt", response_class=PlainTextResponse)
 async def robots_txt():
     return f"""User-agent: *
