@@ -1085,6 +1085,7 @@ async def google_merchant_feed():
 
 @admin_router.post("/submit-indexnow")
 @app.post("/api/admin/submit-indexnow")
+@app.post("/admin/submit-indexnow")
 async def submit_indexnow(username: str = Depends(verify_admin)):
     """Submits all site URLs to Microsoft Bing and IndexNow for instant search indexing."""
     import requests
