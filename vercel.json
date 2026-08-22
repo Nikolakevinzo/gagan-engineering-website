@@ -61,6 +61,14 @@
       "handle": "filesystem"
     },
     {
+      "src": "/static/(.*)",
+      "dest": "frontend/static/$1"
+    },
+    {
+      "src": "/(.*\\.(?:png|jpg|jpeg|svg|ico|json|txt|xml|woff|woff2|ttf|eot))",
+      "dest": "frontend/$1"
+    },
+    {
       "src": "/(.*)",
       "dest": "frontend/index.html"
     }
