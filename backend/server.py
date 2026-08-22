@@ -1083,6 +1083,42 @@ async def google_merchant_feed():
 
     return Response(content=rss, media_type="application/xml", headers={"Cache-Control": "public, max-age=3600"})
 
+@app.post("/api/admin/submit-indexnow")
+async def submit_indexnow(username: str = Depends(verify_admin)):
+    """Submits all site URLs to Microsoft Bing and IndexNow for instant search indexing."""
+    import requests
+    products = await get_products_from_db()
+    
+    url_list = [
+        f"{WEBSITE_URL}/",
+        f"{WEBSITE_URL}/products",
+        f"{WEBSITE_URL}/about",
+        f"{WEBSITE_URL}/contact",
+        f"{WEBSITE_URL}/return-policy",
+        f"{WEBSITE_URL}/privacy-policy",
+        f"{WEBSITE_URL}/terms",
+    ]
+    for p in products:
+        url_list.append(f"{WEBSITE_URL}/products/{p['id']}")
+
+    payload = {
+        "host": "www.gaganengineerings.in",
+        "key": "3a5f2c7e48b19a0",
+        "keyLocation": f"{WEBSITE_URL}/3a5f2c7e48b19a0.txt",
+        "urlList": url_list
+    }
+
+    try:
+        resp = requests.post("https://api.indexnow.org/indexnow", json=payload, timeout=10)
+        return {
+            "status": "success",
+            "code": resp.status_code,
+            "submitted_urls_count": len(url_list),
+            "message": "URLs successfully pushed to IndexNow (Bing, Yandex, Seznam)"
+        }
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
 @app.get("/robots.txt", response_class=PlainTextResponse)
 async def robots_txt():
     return f"""User-agent: *

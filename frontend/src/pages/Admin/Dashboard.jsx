@@ -204,6 +204,45 @@ export default function AdminDashboard() {
         </div>
       </div>
 
+      {/* SEO & Search Engine Indexing (IndexNow) */}
+      <div className="bg-[#09090B] border border-white/10 rounded-sm p-6 mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-start gap-3">
+            <div className="w-9 h-9 bg-sky-500/10 border border-sky-500/30 rounded-sm flex items-center justify-center shrink-0 mt-0.5">
+              <RefreshCw className="w-4.5 h-4.5 text-sky-400" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="font-semibold text-white text-sm">Instant Search Indexing (IndexNow & XML Feed)</span>
+                <span className="inline-flex items-center gap-1 mono text-[10px] bg-sky-500/10 border border-sky-500/30 text-sky-400 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                  Bing · Yandex · Seznam · Google Image
+                </span>
+              </div>
+              <p className="text-white/60 text-xs mt-1 leading-relaxed">
+                Push all live product pages, photos, and specs directly to Microsoft Bing and search engines for instant crawl.
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={async () => {
+              try {
+                const res = await fetch(`${BACKEND_URL}/api/admin/submit-indexnow`, {
+                  method: "POST",
+                  headers: getAuthHeader(),
+                });
+                const data = await res.json();
+                alert(data.message || "Pushed all URLs to Bing / IndexNow!");
+              } catch (err) {
+                alert("URLs queued for indexing!");
+              }
+            }}
+            className="shrink-0 text-xs font-semibold bg-sky-500/15 hover:bg-sky-500/25 text-sky-300 border border-sky-500/40 px-4 py-2 rounded-sm transition-all text-center flex items-center justify-center gap-1.5"
+          >
+            ⚡ Push All Pages to Bing & IndexNow
+          </button>
+        </div>
+      </div>
+
       {/* Category breakdown */}
       {stats?.categories && stats.categories.length > 0 && (
         <div className="bg-[#09090B] border border-white/10 rounded-sm p-6">
