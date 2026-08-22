@@ -52,7 +52,7 @@ logger = logging.getLogger(__name__)
 
 app = FastAPI(title="Gagan Engineering Works API", version="3.0.0")
 api_router = APIRouter(prefix="/api")
-security = HTTPBasic()
+security = HTTPBasic(auto_error=False)
 
 # Ensure images directories exist and are mounted safely
 try:
@@ -405,7 +405,13 @@ class AIQuestionRequest(BaseModel):
 
 
 # ----------------- Admin Auth -----------------
-def verify_admin(credentials: HTTPBasicCredentials = Depends(security)):
+def verify_admin(credentials: Optional[HTTPBasicCredentials] = Depends(security)):
+    if not credentials:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Admin authentication required. Please log in.",
+        )
+
     # Dynamically fetch current credentials from Environment Variables (set in Vercel or .env)
     expected_user = os.environ.get('ADMIN_USERNAME', 'admin')
     expected_pass = os.environ.get('ADMIN_PASSWORD', 'gaganworks2006')
@@ -416,7 +422,6 @@ def verify_admin(credentials: HTTPBasicCredentials = Depends(security)):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid admin credentials",
-            headers={"WWW-Authenticate": "Basic"},
         )
     return credentials.username
 
