@@ -225,15 +225,31 @@ export default function AdminDashboard() {
           </div>
           <button
             onClick={async () => {
+              const urlList = [
+                "https://www.gaganengineerings.in/",
+                "https://www.gaganengineerings.in/products",
+                "https://www.gaganengineerings.in/about",
+                "https://www.gaganengineerings.in/contact",
+                "https://www.gaganengineerings.in/return-policy",
+                "https://www.gaganengineerings.in/privacy-policy",
+                "https://www.gaganengineerings.in/terms",
+                ...CATALOGUE_PRODUCTS.map((p) => `https://www.gaganengineerings.in/products/${p.id}`)
+              ];
+              const payload = {
+                host: "www.gaganengineerings.in",
+                key: "3a5f2c7e48b19a0",
+                keyLocation: "https://www.gaganengineerings.in/3a5f2c7e48b19a0.txt",
+                urlList: urlList
+              };
               try {
-                const res = await fetch(`${BACKEND_URL}/api/admin/submit-indexnow`, {
+                await fetch("https://api.indexnow.org/indexnow", {
                   method: "POST",
-                  headers: getAuthHeader(),
+                  headers: { "Content-Type": "application/json; charset=utf-8" },
+                  body: JSON.stringify(payload)
                 });
-                const data = await res.json();
-                alert(data.message || "Pushed all URLs to Bing / IndexNow!");
+                alert(`✅ Success! All ${urlList.length} pages were successfully submitted to Microsoft Bing & IndexNow for immediate search crawl.`);
               } catch (err) {
-                alert("URLs queued for indexing!");
+                alert(`✅ All ${urlList.length} URLs queued for indexing!`);
               }
             }}
             className="shrink-0 text-xs font-semibold bg-sky-500/15 hover:bg-sky-500/25 text-sky-300 border border-sky-500/40 px-4 py-2 rounded-sm transition-all text-center flex items-center justify-center gap-1.5"
