@@ -52,15 +52,24 @@ app = FastAPI(title="Gagan Engineering Works API", version="3.0.0")
 api_router = APIRouter(prefix="/api")
 security = HTTPBasic()
 
-# Ensure images directories exist and are mounted
-UPLOAD_DIR = ROOT_DIR / "images" / "uploads"
-UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+# Ensure images directories exist and are mounted safely
+try:
+    if os.environ.get("VERCEL"):
+        UPLOAD_DIR = Path("/tmp/uploads")
+    else:
+        UPLOAD_DIR = ROOT_DIR / "images" / "uploads"
+    UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+except Exception as e:
+    logger.warning(f"Could not create upload directory: {e}")
+    UPLOAD_DIR = Path("/tmp")
 
-app.mount(
-    "/images",
-    StaticFiles(directory=ROOT_DIR / "images"),
-    name="images"
-)
+try:
+    images_dir = ROOT_DIR / "images"
+    if images_dir.exists():
+        app.mount("/images", StaticFiles(directory=str(images_dir)), name="images")
+except Exception as e:
+    logger.warning(f"Static images mount skipped: {e}")
+
 
 
 # ----------------- Seed Data (matches catalogueData.js) -----------------
