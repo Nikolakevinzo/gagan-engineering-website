@@ -29,8 +29,9 @@ export default function SEO({
     keywords ||
     "Bra Cup Moulding Machine, Roll Forming Machine, 10 Ton Hydraulic Decoiler, Automatic Cut To Length Machine, C Z Purlin Machine, Roofing Sheet Crimping Machine, Industrial Machinery Manufacturer Khopoli Maharashtra India";
 
+  const pathname = typeof window !== "undefined" ? window.location.pathname : "";
   const currentUrl =
-    canonicalUrl || (typeof window !== "undefined" ? window.location.href : BUSINESS.websiteUrl);
+    canonicalUrl || (pathname && pathname !== "/" ? `${BUSINESS.websiteUrl}${pathname}` : BUSINESS.websiteUrl);
 
   const metaImage = ogImage || `${BUSINESS.websiteUrl}/logo.png`;
 
