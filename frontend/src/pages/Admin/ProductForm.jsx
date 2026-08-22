@@ -468,38 +468,43 @@ function ImageUploader({ image, onChange, getAuthHeader }) {
 
       {/* Image Preview & Remove Controls */}
       {image && (
-        <div className="bg-black/40 border border-white/10 rounded-sm p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4">
-          <div className="relative w-28 h-24 sm:w-36 sm:h-28 bg-zinc-950 border border-white/15 rounded-xs overflow-hidden shrink-0">
+        <div className="bg-black/60 border border-white/15 rounded-sm p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+          <div className="relative w-32 h-28 sm:w-40 sm:h-32 bg-[#0c0c0e] border border-white/20 rounded-xs overflow-hidden shrink-0 flex items-center justify-center p-1">
             <img
               src={image}
               alt="Machine Preview"
-              className="w-full h-full object-cover"
-              onError={(e) => { e.target.style.display = "none"; }}
+              className="w-full h-full object-contain"
+              onError={(e) => {
+                e.currentTarget.src = "https://5.imimg.com/data5/SELLER/Default/2026/3/591026243/LM/XU/AK/4175789/corrugated-sheets-making-machine-500x500.jpeg";
+              }}
             />
           </div>
-          <div className="flex-1 min-w-0 space-y-1">
+          <div className="flex-1 min-w-0 space-y-2">
             <div className="flex items-center gap-2">
-              <span className="mono text-[11px] text-green-400 font-semibold flex items-center gap-1">
-                <Check className="w-3.5 h-3.5" /> Image Attached
+              <span className="mono text-xs text-green-400 font-semibold flex items-center gap-1.5 bg-green-500/10 border border-green-500/30 px-2.5 py-0.5 rounded-xs">
+                <Check className="w-3.5 h-3.5" /> Image Attached & Active
               </span>
             </div>
-            <p className="mono text-[11px] text-white/40 truncate max-w-md">
-              {image.startsWith("data:") ? "Local File (Base64 Encoded)" : image}
+            <p className="mono text-[11px] text-white/50 truncate max-w-md">
+              {image.startsWith("data:")
+                ? `Embedded High-Res Photo (${Math.round(image.length / 1024)} KB)`
+                : image}
             </p>
-            <div className="pt-2 flex items-center gap-2">
+            <div className="pt-1 flex items-center gap-2.5">
               <button
                 type="button"
                 onClick={() => {
-                  if (activeTab === "upload") fileInputRef.current?.click();
+                  setActiveTab("upload");
+                  setTimeout(() => fileInputRef.current?.click(), 50);
                 }}
-                className="text-xs text-white/70 hover:text-white border border-white/15 hover:border-white/30 px-3 py-1 rounded-xs transition-colors"
+                className="text-xs text-white bg-white/10 hover:bg-white/20 border border-white/20 px-3 py-1.5 rounded-xs transition-colors flex items-center gap-1.5"
               >
-                Change Image
+                <Upload className="w-3 h-3" /> Change File
               </button>
               <button
                 type="button"
                 onClick={() => onChange("")}
-                className="text-xs text-red-400 hover:text-red-300 px-3 py-1 rounded-xs hover:bg-red-400/10 transition-colors"
+                className="text-xs text-red-400 hover:text-red-300 px-3 py-1.5 rounded-xs hover:bg-red-400/10 border border-red-500/30 transition-colors"
               >
                 Remove
               </button>

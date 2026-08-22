@@ -14,9 +14,12 @@ export default function ProductCard({ product, index = 0 }) {
       <div>
         <div className="relative aspect-[16/10] bg-[#0c0c0e] flex items-center justify-center p-3 sm:p-4 overflow-hidden border-b border-white/10">
           <img
-            src={product.image}
+            src={product.image || "https://5.imimg.com/data5/SELLER/Default/2026/3/591026243/LM/XU/AK/4175789/corrugated-sheets-making-machine-500x500.jpeg"}
             alt={`${product.name} - Gagan Engineering Works`}
             loading="lazy"
+            onError={(e) => {
+              e.currentTarget.src = "https://5.imimg.com/data5/SELLER/Default/2026/3/591026243/LM/XU/AK/4175789/corrugated-sheets-making-machine-500x500.jpeg";
+            }}
             className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
           />
           <div className="absolute top-2.5 left-2.5 bg-black/85 backdrop-blur-md px-2 py-0.5 text-[9px] sm:text-[10px] mono tracking-wider text-[#FF5722] border border-[#FF5722]/30 uppercase rounded-xs">
