@@ -610,7 +610,7 @@ async def submit_contact(payload: ContactLeadCreate):
         except Exception as e:
             logger.warning(f"Failed to save lead to MongoDB: {e}")
 
-    email_id = await send_lead_email(lead)
+    email_id, err_detail = await send_lead_email_with_diagnostics(lead)
 
     return {
         "status": "success",
@@ -618,6 +618,7 @@ async def submit_contact(payload: ContactLeadCreate):
         "lead_id": lead.id,
         "email_sent": bool(email_id),
         "email_id": email_id,
+        "email_error": err_detail if not email_id else None,
     }
 
 @api_router.post("/ai/ask")
