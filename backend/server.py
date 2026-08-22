@@ -1135,6 +1135,21 @@ Sitemap: {WEBSITE_URL}/sitemap.xml
 
 
 # ----------------- App Setup -----------------
+@app.middleware("http")
+async def normalize_api_path(request, call_next):
+    """Ensures Vercel serverless rewrites resolve correctly whether /api is stripped or preserved."""
+    path = request.scope.get("path", "")
+    if not path.startswith("/api") and (
+        path.startswith("/admin")
+        or path.startswith("/products")
+        or path.startswith("/contact")
+        or path.startswith("/quotes")
+        or path.startswith("/health")
+    ):
+        request.scope["path"] = f"/api{path}"
+    response = await call_next(request)
+    return response
+
 app.include_router(api_router)
 app.include_router(admin_router)
 
