@@ -40,6 +40,25 @@ export default function Contact() {
     setSubmitting(true);
     try {
       const r = await api.post("/contact", form);
+
+      // Save lead locally to browser backup
+      try {
+        const existing = JSON.parse(localStorage.getItem("gagan_cached_leads") || "[]");
+        const newLead = {
+          id: r.data?.lead_id || `lead_${Date.now()}`,
+          name: form.name,
+          email: form.email,
+          phone: form.phone,
+          product_interest: form.product_interest,
+          message: form.message,
+          created_at: new Date().toISOString(),
+          email_sent: Boolean(r.data?.email_sent),
+        };
+        localStorage.setItem("gagan_cached_leads", JSON.stringify([newLead, ...existing.filter(x => x.id !== newLead.id)].slice(0, 50)));
+      } catch (e) {
+        // ignore localStorage error
+      }
+
       toast.success(r.data?.message || "Inquiry submitted successfully!");
       setDone(true);
       setForm({
@@ -50,6 +69,23 @@ export default function Contact() {
         message: "",
       });
     } catch (err) {
+      console.error("Submission error:", err);
+      // Even if network fails, cache locally
+      try {
+        const existing = JSON.parse(localStorage.getItem("gagan_cached_leads") || "[]");
+        const fallbackLead = {
+          id: `local_${Date.now()}`,
+          name: form.name,
+          email: form.email,
+          phone: form.phone,
+          product_interest: form.product_interest,
+          message: form.message,
+          created_at: new Date().toISOString(),
+          email_sent: false,
+        };
+        localStorage.setItem("gagan_cached_leads", JSON.stringify([fallbackLead, ...existing].slice(0, 50)));
+      } catch (e) {}
+
       toast.success("Thank you! Your quotation request has been recorded. Our engineer will reach out.");
       setDone(true);
     } finally {

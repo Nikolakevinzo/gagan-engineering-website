@@ -302,6 +302,7 @@ SEED_CATEGORIES = [
 
 # In-memory fallback when MongoDB is unavailable
 _mem_products = list(SEED_PRODUCTS)
+_mem_leads: List[Dict] = []
 
 
 # ----------------- Models -----------------
@@ -456,26 +457,61 @@ def build_lead_email_html(lead: ContactLead) -> str:
     """
 
 async def send_lead_email(lead: ContactLead) -> Optional[str]:
-    api_key = os.environ.get('RESEND_API_KEY') or resend.api_key
+    api_key = os.environ.get('RESEND_API_KEY') or getattr(resend, 'api_key', None)
     if not api_key:
         logger.warning("Resend API key not configured (RESEND_API_KEY missing) — skipping email send.")
         return None
+
+    api_key = str(api_key).strip().strip('"').strip("'")
     resend.api_key = api_key
-    sender = os.environ.get('SENDER_EMAIL', SENDER_EMAIL or 'onboarding@resend.dev')
-    recipient = os.environ.get('BUSINESS_EMAIL', BUSINESS_EMAIL or 'gaganengineerings@gmail.com')
-    params = {
+
+    sender = os.environ.get('SENDER_EMAIL', SENDER_EMAIL or 'onboarding@resend.dev').strip()
+    recipient = os.environ.get('BUSINESS_EMAIL', BUSINESS_EMAIL or 'gaganengineerings@gmail.com').strip()
+
+    subject = f"Machinery Inquiry from {lead.name} — {lead.product_interest or 'General'}"
+    html_content = build_lead_email_html(lead)
+
+    payload = {
         "from": f"Gagan Engineering Leads <{sender}>",
         "to": [recipient],
-        "subject": f"Machinery Inquiry from {lead.name} — {lead.product_interest or 'General'}",
-        "html": build_lead_email_html(lead),
-        "reply_to": lead.email if lead.email else recipient,
+        "subject": subject,
+        "html": html_content,
     }
+    if lead.email and "@" in lead.email:
+        payload["reply_to"] = lead.email.strip()
+
+    # Method 1: Try Resend SDK
     try:
-        result = await asyncio.to_thread(resend.Emails.send, params)
-        logger.info(f"Lead email successfully sent via Resend for {lead.name}: {result}")
-        return result.get("id") if isinstance(result, dict) else str(result)
+        result = await asyncio.to_thread(resend.Emails.send, payload)
+        email_id = result.get("id") if isinstance(result, dict) else str(result)
+        logger.info(f"Lead email successfully sent via Resend SDK for {lead.name}: {email_id}")
+        return email_id
     except Exception as e:
-        logger.error(f"Failed to send lead email via Resend: {e}")
+        logger.warning(f"Resend SDK attempt note: {e}. Executing direct REST API fallback...")
+
+    # Method 2: Foolproof Direct REST API fallback via requests
+    try:
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json"
+        }
+        res = await asyncio.to_thread(
+            requests.post,
+            "https://api.resend.com/emails",
+            headers=headers,
+            json=payload,
+            timeout=10
+        )
+        if res.status_code in (200, 201):
+            data = res.json()
+            email_id = data.get("id", "sent")
+            logger.info(f"Lead email successfully sent via Resend REST API for {lead.name}: {email_id}")
+            return email_id
+        else:
+            logger.error(f"Resend REST API returned HTTP {res.status_code}: {res.text}")
+            return None
+    except Exception as e:
+        logger.error(f"Failed to send lead email via Resend REST API: {e}")
         return None
 
 
@@ -529,6 +565,11 @@ async def list_categories():
 @api_router.post("/contact")
 async def submit_contact(payload: ContactLeadCreate):
     lead = ContactLead(**payload.model_dump())
+    lead_dict = lead.model_dump()
+    lead_dict["created_at"] = lead.created_at.isoformat()
+
+    # Always keep in memory so leads section works even without MongoDB
+    _mem_leads.insert(0, lead_dict)
 
     if db is not None:
         try:
@@ -543,6 +584,7 @@ async def submit_contact(payload: ContactLeadCreate):
         "message": "Thank you! Your quotation request has been received. Our chief engineer will contact you within 24 hours.",
         "lead_id": lead.id,
         "email_sent": bool(email_id),
+        "email_id": email_id,
     }
 
 @api_router.post("/ai/ask")
@@ -793,7 +835,15 @@ async def admin_list_leads(
     username: str = Depends(verify_admin)
 ):
     if db is None:
-        return {"leads": [], "total": 0, "message": "MongoDB not connected"}
+        skip = (page - 1) * limit
+        paginated = _mem_leads[skip:skip + limit]
+        return {
+            "leads": paginated,
+            "total": len(_mem_leads),
+            "page": page,
+            "limit": limit,
+            "message": "In-memory leads (MongoDB not connected)"
+        }
     try:
         total = await db["contact_leads"].count_documents({})
         skip = (page - 1) * limit
@@ -803,26 +853,69 @@ async def admin_list_leads(
         for lead in leads:
             if isinstance(lead.get("created_at"), datetime):
                 lead["created_at"] = lead["created_at"].isoformat()
-        return {"leads": leads, "total": total, "page": page, "limit": limit}
+        
+        # Merge in-memory leads if any aren't in DB yet
+        db_ids = {l.get("id") for l in leads if l.get("id")}
+        for mem_l in _mem_leads:
+            if mem_l.get("id") not in db_ids:
+                leads.insert(0, mem_l)
+
+        return {"leads": leads, "total": max(total, len(_mem_leads)), "page": page, "limit": limit}
     except Exception as e:
-        logger.error(f"Failed to fetch leads: {e}")
-        raise HTTPException(status_code=500, detail="Failed to fetch leads")
+        logger.error(f"Failed to fetch leads from MongoDB: {e}")
+        skip = (page - 1) * limit
+        paginated = _mem_leads[skip:skip + limit]
+        return {"leads": paginated, "total": len(_mem_leads), "page": page, "limit": limit, "message": f"Fallback: {str(e)}"}
+
+@admin_router.post("/test-email")
+async def admin_test_email(username: str = Depends(verify_admin)):
+    """Diagnostic endpoint to test Resend API key and email delivery."""
+    api_key = os.environ.get('RESEND_API_KEY') or getattr(resend, 'api_key', None)
+    if not api_key:
+        raise HTTPException(status_code=400, detail="RESEND_API_KEY environment variable is missing on Vercel.")
+
+    api_key = str(api_key).strip().strip('"').strip("'")
+    sender = os.environ.get('SENDER_EMAIL', SENDER_EMAIL or 'onboarding@resend.dev').strip()
+    recipient = os.environ.get('BUSINESS_EMAIL', BUSINESS_EMAIL or 'gaganengineerings@gmail.com').strip()
+
+    test_lead = ContactLead(
+        name="[TEST] Chief Engineer Verification",
+        email="test@gaganengineerings.in",
+        phone="+91 8329465245",
+        product_interest="Double Head Electric Bra Cup Moulding Machine",
+        message="This is an automated diagnostic test from Gagan Engineering Works Admin Panel to verify Resend API integration."
+    )
+
+    email_id = await send_lead_email(test_lead)
+    if not email_id:
+        raise HTTPException(
+            status_code=500,
+            detail="Resend rejected the email or encountered an error. Check if SENDER_EMAIL is onboarding@resend.dev (or verified domain), and recipient is verified in Resend."
+        )
+
+    return {
+        "status": "success",
+        "message": f"Test email dispatched successfully to {recipient}!",
+        "email_id": email_id,
+        "sender": sender,
+        "recipient": recipient,
+    }
 
 @admin_router.get("/stats")
 async def admin_stats(username: str = Depends(verify_admin)):
     products = await get_products_from_db()
     featured_count = sum(1 for p in products if p.get("featured"))
 
-    leads_count = 0
+    leads_count = len(_mem_leads)
     if db is not None:
         try:
-            leads_count = await db["contact_leads"].count_documents({})
+            leads_count = max(await db["contact_leads"].count_documents({}), len(_mem_leads))
         except Exception:
             pass
 
     categories = set(p.get("categorySlug", "") for p in products)
 
-    resend_ready = bool(os.environ.get('RESEND_API_KEY') or resend.api_key)
+    resend_ready = bool(os.environ.get('RESEND_API_KEY') or getattr(resend, 'api_key', None))
     sender_mail = os.environ.get('SENDER_EMAIL', SENDER_EMAIL or 'onboarding@resend.dev')
     biz_mail = os.environ.get('BUSINESS_EMAIL', BUSINESS_EMAIL or 'gaganengineerings@gmail.com')
 

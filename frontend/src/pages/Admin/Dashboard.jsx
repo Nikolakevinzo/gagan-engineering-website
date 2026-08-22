@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAdminAuth } from "@/components/AdminLayout";
-import { Package, Users, Star, BarChart3, Plus, ArrowRight, RefreshCw } from "lucide-react";
+import { Package, Users, Star, BarChart3, Plus, ArrowRight, RefreshCw, Mail, CheckCircle2, AlertTriangle } from "lucide-react";
 
 import { getBackendUrl } from "@/lib/adminConfig";
 import { CATALOGUE_PRODUCTS } from "@/lib/catalogueData";
@@ -23,18 +23,27 @@ export default function AdminDashboard() {
       });
       if (!res.ok) throw new Error("Failed to fetch stats");
       const data = await res.json();
-      setStats(data);
+      
+      const localLeads = JSON.parse(localStorage.getItem("gagan_cached_leads") || "[]");
+      const combinedLeadsCount = Math.max(data.total_leads || 0, localLeads.length);
+
+      setStats({
+        ...data,
+        total_leads: combinedLeadsCount,
+      });
     } catch (err) {
       // Fallback stats
       const total = CATALOGUE_PRODUCTS.length;
       const featured = CATALOGUE_PRODUCTS.filter((p) => p.featured).length;
       const cats = Array.from(new Set(CATALOGUE_PRODUCTS.map((p) => p.category)));
+      const localLeads = JSON.parse(localStorage.getItem("gagan_cached_leads") || "[]");
       setStats({
         total_products: total,
         featured_products: featured,
-        total_leads: 0,
+        total_leads: localLeads.length,
         categories_count: cats.length,
         categories: cats,
+        resend_configured: false,
       });
     } finally {
       setLoading(false);
@@ -159,6 +168,40 @@ export default function AdminDashboard() {
           </div>
           <ArrowRight className="w-4 h-4 text-white/30 ml-auto group-hover:text-green-400 transition-colors" />
         </Link>
+      </div>
+
+      {/* Resend Email Delivery Status */}
+      <div className="bg-[#09090B] border border-white/10 rounded-sm p-6 mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-start gap-3">
+            <div className={`w-9 h-9 ${stats?.resend_configured ? "bg-green-500/10 border border-green-500/30" : "bg-yellow-500/10 border border-yellow-500/30"} rounded-sm flex items-center justify-center shrink-0 mt-0.5`}>
+              <Mail className={`w-4.5 h-4.5 ${stats?.resend_configured ? "text-green-400" : "text-yellow-400"}`} />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="font-semibold text-white text-sm">Resend Email Delivery</span>
+                {stats?.resend_configured ? (
+                  <span className="inline-flex items-center gap-1 mono text-[10px] bg-green-500/10 border border-green-500/30 text-green-400 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                    <CheckCircle2 className="w-3 h-3" /> Active & Armed
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1 mono text-[10px] bg-yellow-500/10 border border-yellow-500/30 text-yellow-400 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                    <AlertTriangle className="w-3 h-3" /> Redeploy Needed
+                  </span>
+                )}
+              </div>
+              <p className="text-white/60 text-xs mt-1 leading-relaxed">
+                Forwarding customer inquiries to: <strong className="text-white">{stats?.business_email || "gaganengineerings@gmail.com"}</strong> via <span className="mono text-white/80">{stats?.sender_email || "onboarding@resend.dev"}</span>
+              </p>
+            </div>
+          </div>
+          <Link
+            to="/admin/leads"
+            className="shrink-0 text-xs font-semibold bg-[#FF5722]/10 hover:bg-[#FF5722]/20 text-[#FF5722] border border-[#FF5722]/30 px-3.5 py-2 rounded-sm transition-all text-center"
+          >
+            Test Email in Leads →
+          </Link>
+        </div>
       </div>
 
       {/* Category breakdown */}

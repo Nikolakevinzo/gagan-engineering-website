@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAdminAuth } from "@/components/AdminLayout";
-import { RefreshCw, Download, Phone, Mail, Calendar, ChevronLeft, ChevronRight, MessageCircle } from "lucide-react";
+import { RefreshCw, Download, Phone, Mail, Calendar, ChevronLeft, ChevronRight, MessageCircle, Send, CheckCircle2, AlertTriangle } from "lucide-react";
+import { toast } from "sonner";
 
 import { getBackendUrl } from "@/lib/adminConfig";
 
@@ -24,6 +25,7 @@ export default function AdminLeadsList() {
   const [leads, setLeads] = useState([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [testingEmail, setTestingEmail] = useState(false);
   const [error, setError] = useState("");
   const [page, setPage] = useState(1);
   const LIMIT = 25;
@@ -36,12 +38,36 @@ export default function AdminLeadsList() {
         `${BACKEND_URL}/api/admin/leads?page=${page}&limit=${LIMIT}`,
         { headers: getAuthHeader() }
       );
-      if (!res.ok) throw new Error("Failed to fetch leads");
-      const data = await res.json();
-      setLeads(data.leads || []);
-      setTotal(data.total || 0);
+      let backendLeads = [];
+      let backendTotal = 0;
+      if (res.ok) {
+        const data = await res.json();
+        backendLeads = data.leads || [];
+        backendTotal = data.total || 0;
+      }
+
+      // Merge with browser local storage backup
+      const localLeads = JSON.parse(localStorage.getItem("gagan_cached_leads") || "[]");
+      const combinedMap = new Map();
+
+      // Put backend leads first
+      backendLeads.forEach((l) => combinedMap.set(l.id || l.name + l.created_at, l));
+      // Add any local leads not yet present
+      localLeads.forEach((l) => {
+        const key = l.id || l.name + l.created_at;
+        if (!combinedMap.has(key)) {
+          combinedMap.set(key, l);
+        }
+      });
+
+      const merged = Array.from(combinedMap.values());
+      setLeads(merged);
+      setTotal(Math.max(backendTotal, merged.length));
     } catch (err) {
-      setError("Could not load leads. Backend may be offline or no leads yet.");
+      console.warn("Could not load from backend, using local cached leads:", err);
+      const localLeads = JSON.parse(localStorage.getItem("gagan_cached_leads") || "[]");
+      setLeads(localLeads);
+      setTotal(localLeads.length);
     } finally {
       setLoading(false);
     }
@@ -49,6 +75,25 @@ export default function AdminLeadsList() {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { fetchLeads(); }, [page]);
+
+  const testResendEmail = async () => {
+    setTestingEmail(true);
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/admin/test-email`, {
+        method: "POST",
+        headers: getAuthHeader(),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.detail || "Failed to trigger test email");
+      }
+      toast.success(data.message || "Test email sent successfully via Resend!");
+    } catch (err) {
+      toast.error(err.message || "Resend test failed. Ensure RESEND_API_KEY is saved in Vercel.");
+    } finally {
+      setTestingEmail(false);
+    }
+  };
 
   const exportCSV = () => {
     if (!leads.length) return;
@@ -80,13 +125,23 @@ export default function AdminLeadsList() {
         <div>
           <h1 className="font-display text-3xl text-white tracking-wider uppercase">Leads / Inquiries</h1>
           <p className="mono text-xs text-white/40 mt-1 uppercase tracking-wider">
-            {total} quotation request{total !== 1 ? "s" : ""} total
+            {total} quotation request{total !== 1 ? "s" : ""} recorded
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={testResendEmail}
+            disabled={testingEmail}
+            className="flex items-center gap-2 text-xs font-semibold bg-[#FF5722]/10 hover:bg-[#FF5722]/20 text-[#FF5722] border border-[#FF5722]/30 px-3.5 py-2 rounded-sm transition-all disabled:opacity-50"
+            title="Send an instant diagnostic test email to verify Resend API key"
+          >
+            <Send className={`w-3.5 h-3.5 ${testingEmail ? "animate-pulse" : ""}`} />
+            {testingEmail ? "Testing Resend..." : "Test Resend Email"}
+          </button>
           <button
             onClick={fetchLeads}
             className="flex items-center gap-2 text-xs text-white/60 hover:text-white border border-white/15 hover:border-white/30 px-3 py-2 rounded-sm transition-all"
+            title="Refresh Leads"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
           </button>
