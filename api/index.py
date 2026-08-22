@@ -21,16 +21,18 @@ from fastapi.staticfiles import StaticFiles
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
-# MongoDB connection with safe fallback
-mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
+# MongoDB connection with safe fallback (only connects if MONGO_URL is configured)
+mongo_url = os.environ.get('MONGO_URL')
 db_name = os.environ.get('DB_NAME', 'gagan_engineering')
 client = None
 db = None
-try:
-    client = AsyncIOMotorClient(mongo_url, serverSelectionTimeoutMS=2000)
-    db = client[db_name]
-except Exception as e:
-    logging.warning(f"MongoDB connection deferred or offline: {e}")
+if mongo_url:
+    try:
+        client = AsyncIOMotorClient(mongo_url, serverSelectionTimeoutMS=2000)
+        db = client[db_name]
+    except Exception as e:
+        logger.warning(f"MongoDB connection deferred or offline: {e}")
+
 
 # Resend configuration
 resend.api_key = os.environ.get('RESEND_API_KEY')
