@@ -70,8 +70,8 @@ export default function Home() {
   return (
     <div className="bg-[#050505] text-white min-h-screen">
       <SEO
-        title="Industrial Machinery Manufacturer in India"
-        description="Gagan Engineering Works manufactures Bra Cup Moulding Machines, 10-Ton Hydraulic Decoilers, Roll Forming Machines, Cut-To-Length Lines, and Roofing Machinery in Khopoli, Maharashtra."
+        title="Machinery Manufacturer"
+        description="Manufacturer of Bra Cup Moulding Machines, Hydraulic Decoilers, Roll Forming Lines & Industrial Machinery in Khopoli, Maharashtra."
         keywords="Bra Cup Moulding Machine Manufacturer, Roll Forming Machine India, 10 Ton Hydraulic Decoiler, Automatic Cut To Length Machine, C Z Purlin Machine, Roofing Sheet Crimping Machine Khopoli"
         faqData={GLOBAL_FAQS}
         breadcrumbs={[{ name: "Home", url: BUSINESS.websiteUrl }]}

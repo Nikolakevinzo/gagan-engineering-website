@@ -19,11 +19,11 @@ export default function SEO({
 }) {
   const siteTitle = title
     ? `${title} | Gagan Engineering Works`
-    : "Gagan Engineering Works | Industrial Machinery Manufacturer in India";
+    : "Gagan Engineering Works | Machinery Manufacturer";
 
   const siteDescription =
     description ||
-    "Premier manufacturer of Bra Cup Moulding Machines, 10 Ton Hydraulic Decoilers, Roll Forming Machines, Cut To Length (CTL) Lines, and Roofing Machinery from Khopoli, Maharashtra.";
+    "Manufacturer of Bra Cup Moulding Machines, Hydraulic Decoilers, Roll Forming Lines & Industrial Machinery in Khopoli, Maharashtra.";
 
   const siteKeywords =
     keywords ||
