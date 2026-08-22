@@ -101,9 +101,10 @@ export default function Contact() {
   return (
     <div className="bg-[#050505] min-h-screen pt-24 sm:pt-28 pb-16 sm:pb-24 text-white">
       <SEO
-        title="Contact & Request Machinery Quotation | Gagan Engineering Works Khopoli"
-        description="Request a price quotation for Bra Cup Moulding Machines, Hydraulic Decoilers, and Roll Formers from Gagan Engineering Works in Khopoli, Maharashtra. Direct phone and WhatsApp inquiries welcome."
+        title="Contact & Machinery Quotation"
+        description="Request a price quotation for Bra Cup Moulding Machines, Hydraulic Decoilers & Roll Formers from Gagan Engineering Works in Khopoli, Maharashtra."
         keywords="Contact Gagan Engineering Works, Machinery Price Quotation, Bra Cup Machine RFQ, Khopoli Factory Phone Number, Gagan Engineering Contact"
+        canonicalUrl={`${BUSINESS.websiteUrl}/contact`}
         breadcrumbs={breadcrumbs}
       />
 
@@ -117,6 +118,7 @@ export default function Contact() {
 
         {/* Section Header */}
         <SectionHeader
+          as="h1"
           overline="// Connect With Our Works"
           title="Request a Machine Quotation (RFQ)"
           description="Tell us your factory's production target, sheet thickness, or cup size requirements. We will prepare an engineering proposal and commercial quotation within 24 hours."

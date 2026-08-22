@@ -11,6 +11,7 @@ export default function Terms() {
         title="Terms & Conditions"
         description="Terms and conditions for machinery inquiries, quotation validity, manufacturing lead times, and commercial supply by Gagan Engineering Works."
         keywords="Terms and Conditions, Machinery Supply Terms, Gagan Engineering Works Khopoli"
+        canonicalUrl={`${BUSINESS.websiteUrl}/terms`}
         breadcrumbs={[
           { name: "Home", url: BUSINESS.websiteUrl },
           { name: "Terms & Conditions", url: `${BUSINESS.websiteUrl}/terms` }
@@ -25,6 +26,7 @@ export default function Terms() {
         </div>
 
         <SectionHeader
+          as="h1"
           overline="// Commercial Terms"
           title="Terms & Conditions of Machinery Supply"
           description="Last updated: August 2026. These commercial terms govern machinery orders, quotations, manufacturing lead times, and warranties provided by Gagan Engineering Works."

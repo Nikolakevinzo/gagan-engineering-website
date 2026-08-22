@@ -73,9 +73,10 @@ export default function About() {
   return (
     <div className="bg-[#050505] min-h-screen pt-24 sm:pt-28 pb-16 sm:pb-24 text-white">
       <SEO
-        title="About Gagan Engineering Works | 19+ Years Industrial Machinery Manufacturer Khopoli"
-        description="Learn about Gagan Engineering Works, established in 2006 in Khopoli, Maharashtra. Manufacturer of Bra Cup Moulding Machines, Roll Formers, and Decoilers with 19+ years experience."
+        title="About Our Works"
+        description="Learn about Gagan Engineering Works, established in 2006 in Khopoli, Maharashtra. Manufacturer of Bra Cup Moulding Machines, Roll Formers & Decoilers."
         keywords="About Gagan Engineering Works, Industrial Machinery Khopoli, Machinery Manufacturer Maharashtra, Bra Cup Machine Factory, Gagan Engineering Estd 2006"
+        canonicalUrl={`${BUSINESS.websiteUrl}/about`}
         breadcrumbs={breadcrumbs}
       />
 

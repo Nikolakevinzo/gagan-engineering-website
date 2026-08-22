@@ -68,9 +68,10 @@ export default function Products() {
   return (
     <div className="bg-[#050505] text-white min-h-screen pt-24 sm:pt-28 pb-16 sm:pb-24">
       <SEO
-        title="Industrial Machinery Catalogue | Bra Cup Moulding, Decoilers & Roll Formers"
-        description="Explore Gagan Engineering Works' complete catalogue of 8+ industrial machines: Bra Cup Moulding Machines, 10-Ton Hydraulic Decoilers, C/Z Purlin Roll Formers, and Cut-To-Length Lines."
+        title="Industrial Machinery Catalogue"
+        description="Catalogue of Bra Cup Moulding Machines, 10-Ton Hydraulic Decoilers, Roll Formers & Cut-To-Length Lines from Khopoli, Maharashtra."
         keywords="Bra Cup Moulding Machine, Hydraulic Decoiler, C Z Purlin Machine, Automatic CTL Line, Roofing Crimping Machine Catalogue, Gagan Engineering Khopoli"
+        canonicalUrl={`${BUSINESS.websiteUrl}/products`}
         breadcrumbs={[
           { name: "Home", url: BUSINESS.websiteUrl },
           { name: "Machinery Catalogue", url: `${BUSINESS.websiteUrl}/products` }
@@ -81,6 +82,7 @@ export default function Products() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
         {/* Header */}
         <SectionHeader
+          as="h1"
           overline="// Industrial Machinery Catalogue"
           title="Engineered for Continuous Shift Operations"
           description="Browse our range of heavy-duty bra cup moulding presses, coil handling decoilers, cut-to-length lines, and roll forming machinery manufactured at our Khopoli workshop."

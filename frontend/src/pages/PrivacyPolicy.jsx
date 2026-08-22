@@ -11,6 +11,7 @@ export default function PrivacyPolicy() {
         title="Privacy Policy"
         description="Privacy Policy for Gagan Engineering Works. Learn how we handle and protect customer inquiries, communications, and quotation details."
         keywords="Privacy Policy, Gagan Engineering Works Privacy, Data Protection Khopoli"
+        canonicalUrl={`${BUSINESS.websiteUrl}/privacy-policy`}
         breadcrumbs={[
           { name: "Home", url: BUSINESS.websiteUrl },
           { name: "Privacy Policy", url: `${BUSINESS.websiteUrl}/privacy-policy` }
@@ -25,6 +26,7 @@ export default function PrivacyPolicy() {
         </div>
 
         <SectionHeader
+          as="h1"
           overline="// Privacy & Data Protection"
           title="Privacy Policy"
           description="Last updated: August 2026. Gagan Engineering Works is committed to protecting your business contact information and privacy."

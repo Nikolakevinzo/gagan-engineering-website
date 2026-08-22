@@ -8,9 +8,10 @@ export default function ReturnPolicy() {
   return (
     <div className="bg-[#050505] text-white min-h-screen pt-24 sm:pt-28 pb-16 sm:pb-24">
       <SEO
-        title="Warranty, Returns & Cancellation Policy"
+        title="Warranty & Return Policy"
         description="Official Warranty, Return and Cancellation Policy for industrial machinery manufactured by Gagan Engineering Works, Khopoli, Maharashtra."
         keywords="Return Policy, Warranty Terms, Gagan Engineering Works Refund Policy, Machinery Warranty Khopoli"
+        canonicalUrl={`${BUSINESS.websiteUrl}/return-policy`}
         breadcrumbs={[
           { name: "Home", url: BUSINESS.websiteUrl },
           { name: "Return & Warranty Policy", url: `${BUSINESS.websiteUrl}/return-policy` }
@@ -26,6 +27,7 @@ export default function ReturnPolicy() {
         </div>
 
         <SectionHeader
+          as="h1"
           overline="// Official Policy"
           title="Return, Replacement & Warranty Policy"
           description="Last updated: August 2026. This policy applies to all industrial machinery and equipment manufactured and supplied by Gagan Engineering Works."
