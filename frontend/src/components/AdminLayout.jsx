@@ -37,7 +37,12 @@ export function AdminAuthProvider({ children }) {
   const getAuthHeader = () => {
     if (!credentials) return {};
     const encoded = btoa(`${credentials.username}:${credentials.password}`);
-    return { Authorization: `Basic ${encoded}` };
+    return {
+      "Authorization": `Bearer ${encoded}`,
+      "X-Admin-Auth": encoded,
+      "X-Admin-User": credentials.username,
+      "X-Admin-Pass": credentials.password
+    };
   };
 
   return (
