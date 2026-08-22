@@ -456,23 +456,32 @@ def build_lead_email_html(lead: ContactLead) -> str:
     </table>
     """
 
-async def send_lead_email(lead: ContactLead) -> Optional[str]:
+async def send_lead_email_with_diagnostics(lead: ContactLead) -> Tuple[Optional[str], Optional[str]]:
     api_key = os.environ.get('RESEND_API_KEY') or getattr(resend, 'api_key', None)
     if not api_key:
-        logger.warning("Resend API key not configured (RESEND_API_KEY missing) — skipping email send.")
-        return None
+        msg = "RESEND_API_KEY environment variable is not configured."
+        logger.warning(msg)
+        return None, msg
 
     api_key = str(api_key).strip().strip('"').strip("'")
     resend.api_key = api_key
 
-    sender = os.environ.get('SENDER_EMAIL', SENDER_EMAIL or 'onboarding@resend.dev').strip()
+    raw_sender = os.environ.get('SENDER_EMAIL', SENDER_EMAIL or 'onboarding@resend.dev').strip()
     recipient = os.environ.get('BUSINESS_EMAIL', BUSINESS_EMAIL or 'gaganengineerings@gmail.com').strip()
+
+    # Format from address properly
+    if "<" in raw_sender and ">" in raw_sender:
+        from_email = raw_sender
+    elif raw_sender == "onboarding@resend.dev":
+        from_email = "Gagan Engineering Leads <onboarding@resend.dev>"
+    else:
+        from_email = f"Gagan Engineering Leads <{raw_sender}>"
 
     subject = f"Machinery Inquiry from {lead.name} — {lead.product_interest or 'General'}"
     html_content = build_lead_email_html(lead)
 
     payload = {
-        "from": f"Gagan Engineering Leads <{sender}>",
+        "from": from_email,
         "to": [recipient],
         "subject": subject,
         "html": html_content,
@@ -480,14 +489,18 @@ async def send_lead_email(lead: ContactLead) -> Optional[str]:
     if lead.email and "@" in lead.email:
         payload["reply_to"] = lead.email.strip()
 
+    errors = []
+
     # Method 1: Try Resend SDK
     try:
         result = await asyncio.to_thread(resend.Emails.send, payload)
         email_id = result.get("id") if isinstance(result, dict) else str(result)
         logger.info(f"Lead email successfully sent via Resend SDK for {lead.name}: {email_id}")
-        return email_id
+        return email_id, None
     except Exception as e:
-        logger.warning(f"Resend SDK attempt note: {e}. Executing direct REST API fallback...")
+        sdk_err = str(e)
+        errors.append(f"SDK: {sdk_err}")
+        logger.warning(f"Resend SDK attempt note: {sdk_err}. Trying direct REST API fallback...")
 
     # Method 2: Foolproof Direct REST API fallback via requests
     try:
@@ -506,13 +519,21 @@ async def send_lead_email(lead: ContactLead) -> Optional[str]:
             data = res.json()
             email_id = data.get("id", "sent")
             logger.info(f"Lead email successfully sent via Resend REST API for {lead.name}: {email_id}")
-            return email_id
+            return email_id, None
         else:
-            logger.error(f"Resend REST API returned HTTP {res.status_code}: {res.text}")
-            return None
+            rest_err = f"HTTP {res.status_code}: {res.text}"
+            errors.append(f"REST: {rest_err}")
+            logger.error(f"Resend REST API error: {rest_err}")
+            return None, rest_err
     except Exception as e:
-        logger.error(f"Failed to send lead email via Resend REST API: {e}")
-        return None
+        rest_err = str(e)
+        errors.append(f"REST Exception: {rest_err}")
+        logger.error(f"Failed to send lead email via direct Resend REST API: {rest_err}")
+        return None, "; ".join(errors)
+
+async def send_lead_email(lead: ContactLead) -> Optional[str]:
+    email_id, _ = await send_lead_email_with_diagnostics(lead)
+    return email_id
 
 
 # ----------------- Public Routes -----------------
@@ -872,11 +893,13 @@ async def admin_test_email(username: str = Depends(verify_admin)):
     """Diagnostic endpoint to test Resend API key and email delivery."""
     api_key = os.environ.get('RESEND_API_KEY') or getattr(resend, 'api_key', None)
     if not api_key:
-        raise HTTPException(status_code=400, detail="RESEND_API_KEY environment variable is missing on Vercel.")
+        raise HTTPException(
+            status_code=400,
+            detail="RESEND_API_KEY environment variable is not configured in Vercel settings."
+        )
 
-    api_key = str(api_key).strip().strip('"').strip("'")
-    sender = os.environ.get('SENDER_EMAIL', SENDER_EMAIL or 'onboarding@resend.dev').strip()
     recipient = os.environ.get('BUSINESS_EMAIL', BUSINESS_EMAIL or 'gaganengineerings@gmail.com').strip()
+    sender = os.environ.get('SENDER_EMAIL', SENDER_EMAIL or 'onboarding@resend.dev').strip()
 
     test_lead = ContactLead(
         name="[TEST] Chief Engineer Verification",
@@ -886,16 +909,16 @@ async def admin_test_email(username: str = Depends(verify_admin)):
         message="This is an automated diagnostic test from Gagan Engineering Works Admin Panel to verify Resend API integration."
     )
 
-    email_id = await send_lead_email(test_lead)
+    email_id, err_detail = await send_lead_email_with_diagnostics(test_lead)
     if not email_id:
         raise HTTPException(
-            status_code=500,
-            detail="Resend rejected the email or encountered an error. Check if SENDER_EMAIL is onboarding@resend.dev (or verified domain), and recipient is verified in Resend."
+            status_code=400,
+            detail=f"Resend rejected email dispatch: {err_detail or 'Unknown error'}"
         )
 
     return {
         "status": "success",
-        "message": f"Test email dispatched successfully to {recipient}!",
+        "message": f"Test email dispatched successfully to {recipient} (ID: {email_id})!",
         "email_id": email_id,
         "sender": sender,
         "recipient": recipient,
