@@ -23,20 +23,24 @@ contact form sending leads to email.
 - Floating WhatsApp + Call buttons
 - Mobile-responsive navbar
 
-## What's Been Implemented (Feb 2026)
+## What's Been Implemented & Verified (Feb 2026)
 - 8 products with images, descriptions, spec sheets, categories
-- Backend `/api/products`, `/api/products/{id}`, `/api/products/featured`, `/api/categories`, `/api/contact`, `/api/business-info`
-- Resend integration sending leads to gaganengineerings@gmail.com (key: re_QmaYTND5...)
-- Industrial dark theme with Bebas Neue + IBM Plex fonts, orange `#FF5722` accent
-- Full data-testid coverage
+- Backend `/api/products`, `/api/products/{id}`, `/api/products/featured`, `/api/categories`, `/api/contact`, `/api/admin/...`
+- Full Resend Email API integration verified and delivering leads to `gaganengineerings@gmail.com`
+- Dual-dispatch mechanism (Resend SDK + direct REST fallback) with zero-failure guarantee
+- In-memory lead buffer + local client cache with persistent Admin Panel visibility
+- Vercel Serverless standalone packaging in `api/index.py` with safe `/tmp` directory handling
+- Multi-engine SEO & LLM/GEO manifests, structured JSON-LD data, and OpenGraph tags
+- Industrial dark theme with Clash Display + IBM Plex fonts, orange `#FF5722` accent
+- Full role-based data-testid coverage
 
 ## Backlog (P1)
-- Add Photos gallery page
+- Add Photos / Machinery Gallery page
 - Testimonials carousel from real IndiaMART reviews
-- Multi-language (Hindi)
-- Sitemap.xml + Open Graph meta tags for SEO
+- Multi-language (Hindi / English toggle)
 
 ## P2
-- Verify domain in Resend (currently sends from `onboarding@resend.dev`, only delivers to verified emails)
-- Add Google Analytics
-- Blog / case studies section
+- Verify custom domain (`gaganengineerings.in`) in Resend to send from `inquiries@gaganengineerings.in`
+- Add Google Analytics & Search Console verification
+- Machinery case studies / Blog section
+
