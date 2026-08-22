@@ -30,7 +30,12 @@ export default function AdminLogin() {
     try {
       const encoded = btoa(`${username}:${password}`);
       const res = await fetch(`${BACKEND_URL}/api/admin/auth/check`, {
-        headers: { Authorization: `Basic ${encoded}` },
+        headers: {
+          "Authorization": `Bearer ${encoded}`,
+          "X-Admin-Auth": encoded,
+          "X-Admin-User": username,
+          "X-Admin-Pass": password,
+        },
       });
 
       if (res.ok) {
