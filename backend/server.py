@@ -1083,6 +1083,7 @@ async def google_merchant_feed():
 
     return Response(content=rss, media_type="application/xml", headers={"Cache-Control": "public, max-age=3600"})
 
+@admin_router.post("/submit-indexnow")
 @app.post("/api/admin/submit-indexnow")
 async def submit_indexnow(username: str = Depends(verify_admin)):
     """Submits all site URLs to Microsoft Bing and IndexNow for instant search indexing."""
@@ -1114,7 +1115,7 @@ async def submit_indexnow(username: str = Depends(verify_admin)):
             "status": "success",
             "code": resp.status_code,
             "submitted_urls_count": len(url_list),
-            "message": "URLs successfully pushed to IndexNow (Bing, Yandex, Seznam)"
+            "message": f"Successfully pushed {len(url_list)} URLs to Microsoft Bing / IndexNow!"
         }
     except Exception as e:
         return {"status": "error", "message": str(e)}
