@@ -310,7 +310,8 @@ function ImageUploader({ image, onChange, getAuthHeader }) {
       const img = new Image();
       img.onload = () => {
         // High quality client-side canvas compression (max 1200px)
-        const maxDim = 1200;
+        // Max 800px to keep base64 well under Vercel 4.5MB body limit
+        const maxDim = 800;
         let width = img.width;
         let height = img.height;
 
@@ -330,7 +331,8 @@ function ImageUploader({ image, onChange, getAuthHeader }) {
         const ctx = canvas.getContext("2d");
         ctx.drawImage(img, 0, 0, width, height);
 
-        const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.88);
+        // 0.75 quality keeps image < 80KB as base64 — safe for Vercel payload limits
+        const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.75);
         onChange(compressedDataUrl);
         setUploading(false);
       };
@@ -622,8 +624,17 @@ export default function AdminProductForm() {
           // Fall through to catalogue lookup
         }
 
+        // Fallback 1: check static catalogue
         if (!p) {
           p = CATALOGUE_PRODUCTS.find((item) => item.id === id);
+        }
+
+        // Fallback 2: check localStorage admin cache
+        if (!p) {
+          try {
+            const localProducts = JSON.parse(localStorage.getItem("gagan_custom_products") || "[]");
+            p = localProducts.find((item) => item.id === id);
+          } catch (e) {}
         }
 
         if (!p) throw new Error("Not found");
@@ -641,7 +652,7 @@ export default function AdminProductForm() {
         setSpecs(p.specs || {});
         setFaqs(p.faqs || []);
       } catch (err) {
-        setError("Could not load product for editing.");
+        setError("Could not load product for editing. Please check your connection and try again.");
       } finally {
         setFetching(false);
       }
@@ -687,39 +698,52 @@ export default function AdminProductForm() {
 
       const data = await res.json().catch(() => ({}));
 
-      // Always persist to local cache so updates are instantly reflected
-      try {
-        const stored = JSON.parse(localStorage.getItem("gagan_custom_products") || "[]");
-        const prodId = isEdit ? id : (data?.product?.id || form.name.toLowerCase().replace(/[^a-z0-9]+/g, "-"));
-        const updatedItem = { ...payload, id: prodId };
-        const filtered = stored.filter((item) => item.id !== prodId);
-        localStorage.setItem("gagan_custom_products", JSON.stringify([...filtered, updatedItem]));
-      } catch (e) {}
+      if (res.ok) {
+        // ✅ Server confirmed the save — also update local cache for instant UI feedback
+        try {
+          const stored = JSON.parse(localStorage.getItem("gagan_custom_products") || "[]");
+          const prodId = isEdit ? id : (data?.product?.id || form.name.toLowerCase().replace(/[^a-z0-9]+/g, "-"));
+          const savedProduct = data?.product ? { ...data.product } : { ...payload, id: prodId };
+          const filtered = stored.filter((item) => item.id !== savedProduct.id);
+          localStorage.setItem("gagan_custom_products", JSON.stringify([...filtered, savedProduct]));
+        } catch (e) {}
 
-      if (!res.ok && res.status !== 200 && res.status !== 201) {
-        // If backend failed but we saved locally, inform the user
-        setSuccess(isEdit ? "Product updated successfully (saved to local cache)!" : "Product created successfully!");
+        setSuccess(isEdit ? "✅ Product updated successfully! Changes are live." : "✅ Product created successfully!");
+        if (!isEdit) {
+          setTimeout(() => navigate("/admin/products"), 1500);
+        }
+      } else if (res.status === 401) {
+        setError("Authentication failed. Please log out and log in again.");
       } else {
-        setSuccess(isEdit ? "Product updated successfully!" : "Product created successfully!");
-      }
-
-      if (!isEdit) {
-        setTimeout(() => navigate("/admin/products"), 1500);
+        // API failed — save locally as fallback
+        try {
+          const stored = JSON.parse(localStorage.getItem("gagan_custom_products") || "[]");
+          const prodId = isEdit ? id : form.name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+          const updatedItem = { ...payload, id: prodId };
+          const filtered = stored.filter((item) => item.id !== prodId);
+          localStorage.setItem("gagan_custom_products", JSON.stringify([...filtered, updatedItem]));
+          setSuccess(`⚠️ ${isEdit ? "Updated" : "Created"} (saved to local cache — server error: ${data?.detail || res.status}).`);
+          if (!isEdit) {
+            setTimeout(() => navigate("/admin/products"), 2000);
+          }
+        } catch (e) {
+          setError(`Server error (${res.status}): ${data?.detail || "Could not save product."}`);
+        }
       }
     } catch (err) {
-      // Offline / fallback save
+      // Network offline — fallback save to localStorage
       try {
         const stored = JSON.parse(localStorage.getItem("gagan_custom_products") || "[]");
         const prodId = isEdit ? id : form.name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
         const updatedItem = { ...payload, id: prodId };
         const filtered = stored.filter((item) => item.id !== prodId);
         localStorage.setItem("gagan_custom_products", JSON.stringify([...filtered, updatedItem]));
-        setSuccess(isEdit ? "Product updated successfully (saved locally)!" : "Product created successfully!");
+        setSuccess(`⚠️ ${isEdit ? "Updated" : "Created"} locally (offline mode — will sync when reconnected).`);
         if (!isEdit) {
-          setTimeout(() => navigate("/admin/products"), 1500);
+          setTimeout(() => navigate("/admin/products"), 2000);
         }
       } catch (e) {
-        setError(`Could not ${isEdit ? "update" : "create"} product.`);
+        setError(`Network error: ${err.message || "Could not save product."}`);
       }
     } finally {
       setLoading(false);

@@ -37,6 +37,27 @@ export default function AdminProductList() {
   const fetchProducts = async () => {
     setLoading(true);
     setError("");
+
+    // Helper: merge arrays (later wins by id)
+    const mergeProducts = (base, overrides) => {
+      const merged = [...base];
+      overrides.forEach((item) => {
+        const idx = merged.findIndex((m) => m.id === item.id);
+        if (idx >= 0) {
+          merged[idx] = { ...merged[idx], ...item };
+        } else {
+          merged.push(item);
+        }
+      });
+      return merged;
+    };
+
+    // Load localStorage admin updates
+    let localProducts = [];
+    try {
+      localProducts = JSON.parse(localStorage.getItem("gagan_custom_products") || "[]");
+    } catch (e) {}
+
     try {
       const params = new URLSearchParams({ page, limit: LIMIT });
       if (search) params.set("search", search);
@@ -47,18 +68,28 @@ export default function AdminProductList() {
       });
       if (!res.ok) throw new Error("Failed to fetch products from backend");
       const data = await res.json();
-      if (data.products && data.products.length > 0) {
-        setProducts(data.products);
-        setTotal(data.total || data.products.length);
-      } else {
-        // Fallback to catalogue if empty
-        setProducts(CATALOGUE_PRODUCTS);
-        setTotal(CATALOGUE_PRODUCTS.length);
+
+      let base = data.products && data.products.length > 0 ? data.products : CATALOGUE_PRODUCTS;
+      // Merge localStorage on top of API results (local always wins for instant feedback)
+      if (localProducts.length > 0) {
+        base = mergeProducts(base, localProducts);
       }
+
+      // Apply filters client-side
+      let filtered = base;
+      if (category !== "all") {
+        filtered = filtered.filter((p) => p.categorySlug === category || p.category?.toLowerCase().includes(category));
+      }
+      if (search) {
+        filtered = filtered.filter((p) => p.name.toLowerCase().includes(search.toLowerCase()));
+      }
+
+      setProducts(filtered);
+      setTotal(filtered.length);
     } catch (err) {
-      // Gracefully show catalogue products so admin is never blocked
+      // Gracefully show catalogue + localStorage products so admin is never blocked
       console.warn("Backend products fetch failed, using fallback catalogue:", err);
-      let filtered = CATALOGUE_PRODUCTS;
+      let filtered = mergeProducts(CATALOGUE_PRODUCTS, localProducts);
       if (category !== "all") {
         filtered = filtered.filter((p) => p.categorySlug === category);
       }

@@ -19,26 +19,44 @@ export default function ProductDetail() {
 
   useEffect(() => {
     setLoading(true);
-    const liveList = getLiveCatalogueProducts();
-    const localProd = liveList.find((p) => p.id === id);
 
     api
       .get(`/products/${id}`)
       .then((r) => {
         if (r.data && r.data.product) {
-          // Merge with live custom updates if available
-          setProduct(localProd ? { ...r.data.product, ...localProd } : r.data.product);
+          // DB is the authoritative source — use it directly
+          // Check if localStorage has a *newer* image update (base64 starts with data:)
+          try {
+            const localProducts = JSON.parse(localStorage.getItem("gagan_custom_products") || "[]");
+            const localProd = localProducts.find((p) => p.id === id);
+            if (localProd && localProd.image && localProd.image.startsWith("data:")) {
+              // Local has a base64 upload that may not be in DB yet
+              setProduct({ ...r.data.product, image: localProd.image });
+            } else {
+              setProduct(r.data.product);
+            }
+          } catch (e) {
+            setProduct(r.data.product);
+          }
           setRelated(r.data.related || []);
-        } else if (localProd) {
-          setProduct(localProd);
-          setRelated(
-            liveList.filter((p) => p.categorySlug === localProd.categorySlug && p.id !== localProd.id).slice(0, 3)
-          );
+        } else {
+          // DB doesn't have it — fall back to live catalogue (includes localStorage)
+          const liveList = getLiveCatalogueProducts();
+          const localProd = liveList.find((p) => p.id === id);
+          if (localProd) {
+            setProduct(localProd);
+            setRelated(
+              liveList.filter((p) => p.categorySlug === localProd.categorySlug && p.id !== localProd.id).slice(0, 3)
+            );
+          }
         }
         setLoading(false);
         window.scrollTo(0, 0);
       })
       .catch(() => {
+        // API offline — use live catalogue with localStorage
+        const liveList = getLiveCatalogueProducts();
+        const localProd = liveList.find((p) => p.id === id);
         if (localProd) {
           setProduct(localProd);
           setRelated(

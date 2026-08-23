@@ -18,24 +18,48 @@ export default function Products() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    // Helper: merge array of products with overrides (later wins)
+    const mergeProducts = (base, overrides) => {
+      const merged = [...base];
+      overrides.forEach((item) => {
+        const idx = merged.findIndex((m) => m.id === item.id);
+        if (idx >= 0) {
+          merged[idx] = { ...merged[idx], ...item };
+        } else {
+          merged.push(item);
+        }
+      });
+      return merged;
+    };
+
     api
       .get("/products")
       .then((r) => {
+        let combined = [...CATALOGUE_PRODUCTS];
+        // 1. Merge DB products (DB wins over catalogue)
         if (r.data && r.data.products && r.data.products.length > 0) {
-          const dbProducts = r.data.products;
-          const merged = [...CATALOGUE_PRODUCTS];
-          dbProducts.forEach((dbItem) => {
-            const idx = merged.findIndex((m) => m.id === dbItem.id);
-            if (idx >= 0) {
-              merged[idx] = { ...merged[idx], ...dbItem };
-            } else {
-              merged.push(dbItem);
-            }
-          });
-          setProducts(merged);
+          combined = mergeProducts(combined, r.data.products);
         }
+        // 2. Merge localStorage admin edits (local wins over DB for instant updates)
+        try {
+          const localProducts = JSON.parse(localStorage.getItem("gagan_custom_products") || "[]");
+          if (localProducts.length > 0) {
+            combined = mergeProducts(combined, localProducts);
+          }
+        } catch (e) {}
+        setProducts(combined);
       })
-      .catch(() => {});
+      .catch(() => {
+        // API offline: use catalogue + localStorage fallback
+        let combined = [...CATALOGUE_PRODUCTS];
+        try {
+          const localProducts = JSON.parse(localStorage.getItem("gagan_custom_products") || "[]");
+          if (localProducts.length > 0) {
+            combined = mergeProducts(combined, localProducts);
+          }
+        } catch (e) {}
+        setProducts(combined);
+      });
   }, []);
 
   useEffect(() => {
