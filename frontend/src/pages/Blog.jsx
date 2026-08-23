@@ -39,13 +39,13 @@ export default function Blog() {
   return (
     <div className="bg-[#050505] min-h-screen pt-24 sm:pt-28 pb-16 sm:pb-24 text-white">
       <SEO
-        title="Engineering Knowledge Hub & Technical Guides"
+        title="Engineering Blog & Machinery Buying Guides"
         description="In-depth technical guides on Bra Cup Moulding Machines, Automatic Cut To Length Lines, C/Z Purlin Roll Formers, and industrial machinery export guidelines from Gagan Engineering Works."
         keywords="Industrial Machinery Blog, Bra Cup Moulding Machine Guide, Automatic CTL Line Guide, Roll Forming Machine Specs, Machinery Export from India"
         canonicalUrl={`${BUSINESS.websiteUrl}/blog`}
         breadcrumbs={[
           { name: "Home", url: BUSINESS.websiteUrl },
-          { name: "Engineering Knowledge Hub", url: `${BUSINESS.websiteUrl}/blog` }
+          { name: "Blog", url: `${BUSINESS.websiteUrl}/blog` }
         ]}
       />
 
@@ -54,16 +54,17 @@ export default function Blog() {
         <div className="flex items-center gap-1.5 sm:gap-2 mono text-[10px] sm:text-[11px] text-white/50 mb-6 sm:mb-8 uppercase tracking-wider">
           <Link to="/" className="hover:text-white transition-colors">Home</Link>
           <span>/</span>
-          <span className="text-[#FF5722]">Engineering Knowledge Hub</span>
+          <span className="text-[#FF5722]">Blog & Technical Guides</span>
         </div>
 
         {/* Section Header */}
         <SectionHeader
           as="h1"
-          overline="// Technical Knowledge Base"
-          title="Machinery Engineering & Buying Guides"
+          overline="// Technical Blog & Papers"
+          title="Engineering & Machinery Buying Guides"
           description="In-depth technical papers, equipment comparison matrices, working principles, and export guidelines authored by our chief machinery engineers."
         />
+
 
         {/* Search & Category Filter Bar */}
         <div className="mt-8 sm:mt-12 bg-[#0A0A0C] border border-white/10 p-4 sm:p-5 rounded-xs space-y-4 shadow-xl">
@@ -134,6 +135,9 @@ export default function Blog() {
               <img
                 src={featuredArticle.image}
                 alt={featuredArticle.title}
+                onError={(e) => {
+                  e.currentTarget.src = "https://5.imimg.com/data5/ANDROID/Default/2025/10/550586008/TZ/II/HL/4175789/product-jpeg-500x500.jpg";
+                }}
                 className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
               />
             </div>
@@ -152,6 +156,9 @@ export default function Blog() {
                   <img
                     src={article.image}
                     alt={article.title}
+                    onError={(e) => {
+                      e.currentTarget.src = "https://5.imimg.com/data5/ANDROID/Default/2025/10/550586008/TZ/II/HL/4175789/product-jpeg-500x500.jpg";
+                    }}
                     className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
                     loading="lazy"
                   />
@@ -159,6 +166,7 @@ export default function Blog() {
                     {article.category}
                   </div>
                 </div>
+
 
                 <div className="p-5 sm:p-6 space-y-3">
                   <div className="flex items-center gap-3 text-[10px] mono text-white/40">

@@ -170,7 +170,7 @@ Machined from forged EN31 alloy tool steel, every roll is induction hardened, gr
     date: "2026-08-10",
     readTime: "6 min read",
     author: "Gagan Engineering Works",
-    image: "https://5.imimg.com/data5/SELLER/Default/2026/3/591026364/VD/DF/WP/4175789/c-z-purlin-roll-forming-machine-500x500.jpeg",
+    image: "https://5.imimg.com/data5/ANDWEB/Default/2026/3/591020192/NG/CE/TB/4175789/product-jpeg-500x500.jpeg",
     tags: ["C Z Purlin", "Roll Forming", "PEB Structure", "Roofing Machine", "Hydraulic Punching"],
     targetKeywords: "C Z Purlin Roll Forming Machine Manufacturer, Purlin Machine India, PEB Structure Roll Former, Quick Change Purlin Line",
     relatedProducts: [
@@ -224,7 +224,7 @@ A modern C/Z purlin roll forming machine automatically forms, punches mounting b
     date: "2026-08-05",
     readTime: "5 min read",
     author: "Gagan Engineering Works",
-    image: "https://5.imimg.com/data5/SELLER/Default/2026/3/591026048/WN/TL/TR/4175789/10-tons-hydraulic-decoiler-500x500.jpeg",
+    image: "https://5.imimg.com/data5/ANDROID/Default/2026/3/590380757/WL/UR/BT/4175789/product-jpeg-500x500.jpg",
     tags: ["Hydraulic Decoiler", "10 Ton Decoiler", "Uncoiler Machine", "Coil Handling", "Mandrel Expansion"],
     targetKeywords: "10 Ton Hydraulic Decoiler Manufacturer India, Heavy Uncoiler Machine, Motorized Hydraulic Decoiler Khopoli",
     relatedProducts: [
@@ -232,6 +232,7 @@ A modern C/Z purlin roll forming machine automatically forms, punches mounting b
       "automatic-ctl-machine",
       "c-z-purlin-roll-forming-machine"
     ],
+
     tableOfContents: [
       { id: "overview", title: "Why Hydraulic Mandrel Expansion is Essential for 10-Ton Coils" },
       { id: "components", title: "Key Mechanical & Hydraulic Subsystems" },

@@ -62,7 +62,7 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop Navigation Links */}
-        <nav className="hidden lg:flex items-center gap-8">
+        <nav className="hidden lg:flex items-center gap-6 xl:gap-8">
           <NavLink
             to="/"
             data-testid="nav-link-home"
@@ -151,7 +151,7 @@ export default function Navbar() {
               }`
             }
           >
-            Knowledge Hub
+            Blog
           </NavLink>
 
           <NavLink
@@ -163,7 +163,7 @@ export default function Navbar() {
               }`
             }
           >
-            Contact & RFQ
+            Contact
           </NavLink>
         </nav>
 
@@ -174,7 +174,7 @@ export default function Navbar() {
             target="_blank"
             rel="noopener noreferrer"
             data-testid="navbar-whatsapp-btn"
-            className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider bg-green-600/20 hover:bg-green-600 text-green-400 hover:text-white border border-green-500/40 px-3.5 py-2 rounded-sm transition-all"
+            className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider bg-green-600/20 hover:bg-green-600 text-green-400 hover:text-white border border-green-500/40 px-3 py-2 rounded-sm transition-all"
           >
             <MessageCircle className="w-4 h-4" /> WhatsApp
           </a>
@@ -182,7 +182,7 @@ export default function Navbar() {
           <a
             href={`tel:${BUSINESS.phone}`}
             data-testid="navbar-call-btn"
-            className="btn-primary flex items-center gap-2 text-xs py-2 px-4"
+            className="btn-primary flex items-center gap-1.5 text-xs py-2 px-3.5"
           >
             <Phone className="w-3.5 h-3.5" /> {BUSINESS.phoneDisplay}
           </a>
@@ -244,7 +244,7 @@ export default function Navbar() {
                 `text-base tracking-wider uppercase font-semibold ${isActive ? "text-[#FF5722]" : "text-white/80"}`
               }
             >
-              Knowledge Hub & Guides
+              Blog & Technical Guides
             </NavLink>
             <NavLink
               to="/contact"
@@ -255,6 +255,7 @@ export default function Navbar() {
               Contact & Request Quotation
             </NavLink>
           </div>
+
 
 
           <div className="pt-4 border-t border-white/10 flex flex-col gap-3">

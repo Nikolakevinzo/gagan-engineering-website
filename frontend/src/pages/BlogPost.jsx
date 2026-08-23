@@ -90,7 +90,7 @@ export default function BlogPost() {
 
   const breadcrumbs = [
     { name: "Home", url: BUSINESS.websiteUrl },
-    { name: "Knowledge Hub", url: `${BUSINESS.websiteUrl}/blog` },
+    { name: "Blog", url: `${BUSINESS.websiteUrl}/blog` },
     { name: article.title, url: `${BUSINESS.websiteUrl}/blog/${article.slug}` }
   ];
 
@@ -111,7 +111,7 @@ export default function BlogPost() {
         <div className="flex items-center gap-1.5 sm:gap-2 mono text-[10px] sm:text-[11px] text-white/50 mb-6 sm:mb-8 uppercase tracking-wider overflow-x-auto whitespace-nowrap pb-1">
           <Link to="/" className="hover:text-white transition-colors shrink-0">Home</Link>
           <span>/</span>
-          <Link to="/blog" className="hover:text-white transition-colors shrink-0">Knowledge Hub</Link>
+          <Link to="/blog" className="hover:text-white transition-colors shrink-0">Blog</Link>
           <span>/</span>
           <span className="text-[#FF5722] truncate">{article.title}</span>
         </div>
@@ -149,9 +149,13 @@ export default function BlogPost() {
               <img
                 src={article.image}
                 alt={article.title}
+                onError={(e) => {
+                  e.currentTarget.src = "https://5.imimg.com/data5/ANDROID/Default/2025/10/550586008/TZ/II/HL/4175789/product-jpeg-500x500.jpg";
+                }}
                 className="w-full h-full object-contain"
               />
             </div>
+
 
             {/* Render Article Sections */}
             {article.content.map((sec, idx) => {

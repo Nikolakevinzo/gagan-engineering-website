@@ -131,7 +131,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link to="/blog" className="hover:text-[#FF5722] transition-colors font-medium text-[#FF5722]">
-                  Engineering Knowledge Hub
+                  Engineering Blog & Guides
                 </Link>
               </li>
               <li>
