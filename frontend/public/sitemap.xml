@@ -22,6 +22,18 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://www.gaganengineerings.in/factory</loc>
+    <lastmod>2026-08-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://www.gaganengineerings.in/blog</loc>
+    <lastmod>2026-08-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
+  </url>
+  <url>
     <loc>https://www.gaganengineerings.in/contact</loc>
     <lastmod>2026-08-23</lastmod>
     <changefreq>monthly</changefreq>
@@ -33,19 +45,51 @@
     <loc>https://www.gaganengineerings.in/products/category/bra-cup-moulding-machine</loc>
     <lastmod>2026-08-23</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <priority>0.90</priority>
   </url>
   <url>
     <loc>https://www.gaganengineerings.in/products/category/roll-forming-sheet-metal</loc>
     <lastmod>2026-08-23</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <priority>0.90</priority>
   </url>
   <url>
     <loc>https://www.gaganengineerings.in/products/category/cut-to-length-line</loc>
     <lastmod>2026-08-23</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <priority>0.90</priority>
+  </url>
+
+  <!-- Engineering Knowledge Hub Articles (High Authority SEO) -->
+  <url>
+    <loc>https://www.gaganengineerings.in/blog/guide-to-bra-cup-moulding-machines</loc>
+    <lastmod>2026-08-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.88</priority>
+  </url>
+  <url>
+    <loc>https://www.gaganengineerings.in/blog/automatic-cut-to-length-ctl-line-guide</loc>
+    <lastmod>2026-08-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.88</priority>
+  </url>
+  <url>
+    <loc>https://www.gaganengineerings.in/blog/c-z-purlin-roll-forming-machine-guide</loc>
+    <lastmod>2026-08-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.88</priority>
+  </url>
+  <url>
+    <loc>https://www.gaganengineerings.in/blog/10-ton-hydraulic-decoiler-guide</loc>
+    <lastmod>2026-08-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.88</priority>
+  </url>
+  <url>
+    <loc>https://www.gaganengineerings.in/blog/industrial-machinery-export-guide-india</loc>
+    <lastmod>2026-08-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.88</priority>
   </url>
 
   <!-- All 10 Machinery Product Pages -->

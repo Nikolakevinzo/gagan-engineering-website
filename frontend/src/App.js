@@ -15,11 +15,15 @@ import ReturnPolicy from "@/pages/ReturnPolicy";
 import PrivacyPolicy from "@/pages/PrivacyPolicy";
 import Terms from "@/pages/Terms";
 import NotFound from "@/pages/NotFound";
+import Blog from "@/pages/Blog";
+import BlogPost from "@/pages/BlogPost";
+import FactoryTour from "@/pages/Factory";
 import AdminLogin from "@/pages/Admin/Login";
 import AdminDashboard from "@/pages/Admin/Dashboard";
 import AdminProductList from "@/pages/Admin/ProductList";
 import AdminProductForm from "@/pages/Admin/ProductForm";
 import AdminLeadsList from "@/pages/Admin/LeadsList";
+
 
 // Automatically scrolls to top of page on any route / page change
 function ScrollToTop() {
@@ -114,6 +118,22 @@ function App() {
               <About />
             </PublicLayout>
           } />
+          <Route path="/factory" element={
+            <PublicLayout>
+              <FactoryTour />
+            </PublicLayout>
+          } />
+          <Route path="/gallery" element={<Navigate to="/factory" replace />} />
+          <Route path="/blog" element={
+            <PublicLayout>
+              <Blog />
+            </PublicLayout>
+          } />
+          <Route path="/blog/:slug" element={
+            <PublicLayout>
+              <BlogPost />
+            </PublicLayout>
+          } />
           <Route path="/contact" element={
             <PublicLayout>
               <Contact />
@@ -142,6 +162,7 @@ function App() {
             </PublicLayout>
           } />
         </Routes>
+
       </BrowserRouter>
     </AdminAuthProvider>
   );

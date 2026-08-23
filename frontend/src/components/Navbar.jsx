@@ -110,7 +110,7 @@ export default function Navbar() {
                       to="/products"
                       className="block px-3 py-2 text-[11px] mono text-[#FF5722] hover:underline"
                     >
-                      View All 8+ Machine Models →
+                      View All 10 Machine Models →
                     </Link>
                   </div>
                 </div>
@@ -128,6 +128,30 @@ export default function Navbar() {
             }
           >
             About Works
+          </NavLink>
+
+          <NavLink
+            to="/factory"
+            data-testid="nav-link-factory"
+            className={({ isActive }) =>
+              `relative text-xs tracking-[0.15em] uppercase font-semibold transition-colors ${
+                isActive ? "text-[#FF5722]" : "text-white/80 hover:text-white"
+              }`
+            }
+          >
+            Factory Tour
+          </NavLink>
+
+          <NavLink
+            to="/blog"
+            data-testid="nav-link-blog"
+            className={({ isActive }) =>
+              `relative text-xs tracking-[0.15em] uppercase font-semibold transition-colors ${
+                isActive ? "text-[#FF5722]" : "text-white/80 hover:text-white"
+              }`
+            }
+          >
+            Knowledge Hub
           </NavLink>
 
           <NavLink
@@ -196,7 +220,7 @@ export default function Navbar() {
                 `text-base tracking-wider uppercase font-semibold ${isActive ? "text-[#FF5722]" : "text-white/80"}`
               }
             >
-              Machinery Catalogue (8 Models)
+              Machinery Catalogue (10 Models)
             </NavLink>
             <NavLink
               to="/about"
@@ -207,6 +231,22 @@ export default function Navbar() {
               About Khopoli Works
             </NavLink>
             <NavLink
+              to="/factory"
+              className={({ isActive }) =>
+                `text-base tracking-wider uppercase font-semibold ${isActive ? "text-[#FF5722]" : "text-white/80"}`
+              }
+            >
+              Factory Tour & Workshop
+            </NavLink>
+            <NavLink
+              to="/blog"
+              className={({ isActive }) =>
+                `text-base tracking-wider uppercase font-semibold ${isActive ? "text-[#FF5722]" : "text-white/80"}`
+              }
+            >
+              Knowledge Hub & Guides
+            </NavLink>
+            <NavLink
               to="/contact"
               className={({ isActive }) =>
                 `text-base tracking-wider uppercase font-semibold ${isActive ? "text-[#FF5722]" : "text-white/80"}`
@@ -215,6 +255,7 @@ export default function Navbar() {
               Contact & Request Quotation
             </NavLink>
           </div>
+
 
           <div className="pt-4 border-t border-white/10 flex flex-col gap-3">
             <a

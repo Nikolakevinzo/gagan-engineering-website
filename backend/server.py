@@ -1087,6 +1087,48 @@ async def sitemap():
     <priority>0.8</priority>
   </url>""",
         f"""  <url>
+    <loc>{WEBSITE_URL}/factory</loc>
+    <lastmod>{now}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>""",
+        f"""  <url>
+    <loc>{WEBSITE_URL}/blog</loc>
+    <lastmod>{now}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
+  </url>""",
+        f"""  <url>
+    <loc>{WEBSITE_URL}/blog/guide-to-bra-cup-moulding-machines</loc>
+    <lastmod>{now}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.88</priority>
+  </url>""",
+        f"""  <url>
+    <loc>{WEBSITE_URL}/blog/automatic-cut-to-length-ctl-line-guide</loc>
+    <lastmod>{now}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.88</priority>
+  </url>""",
+        f"""  <url>
+    <loc>{WEBSITE_URL}/blog/c-z-purlin-roll-forming-machine-guide</loc>
+    <lastmod>{now}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.88</priority>
+  </url>""",
+        f"""  <url>
+    <loc>{WEBSITE_URL}/blog/10-ton-hydraulic-decoiler-guide</loc>
+    <lastmod>{now}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.88</priority>
+  </url>""",
+        f"""  <url>
+    <loc>{WEBSITE_URL}/blog/industrial-machinery-export-guide-india</loc>
+    <lastmod>{now}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.88</priority>
+  </url>""",
+        f"""  <url>
     <loc>{WEBSITE_URL}/contact</loc>
     <lastmod>{now}</lastmod>
     <changefreq>monthly</changefreq>
@@ -1098,6 +1140,7 @@ async def sitemap():
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>""",
+
         f"""  <url>
     <loc>{WEBSITE_URL}/privacy-policy</loc>
     <lastmod>{now}</lastmod>

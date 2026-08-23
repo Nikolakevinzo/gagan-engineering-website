@@ -125,6 +125,16 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
+                <Link to="/factory" className="hover:text-[#FF5722] transition-colors font-medium text-white">
+                  Factory Tour & Workshop Bays
+                </Link>
+              </li>
+              <li>
+                <Link to="/blog" className="hover:text-[#FF5722] transition-colors font-medium text-[#FF5722]">
+                  Engineering Knowledge Hub
+                </Link>
+              </li>
+              <li>
                 <Link to="/contact" className="hover:text-[#FF5722] transition-colors">
                   Request a Quotation (RFQ)
                 </Link>
@@ -144,6 +154,7 @@ export default function Footer() {
                   Terms & Conditions
                 </Link>
               </li>
+
               <li>
                 <a href="/sitemap.xml" target="_blank" className="hover:text-[#FF5722] transition-colors mono">
                   XML Sitemap
