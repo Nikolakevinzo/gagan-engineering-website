@@ -2,8 +2,8 @@ import { useEffect } from "react";
 import { BUSINESS } from "@/lib/business";
 
 /**
- * Universal SEO & Schema.org JSON-LD Manager for React 19
- * Optimizes Google, Bing, Social Media cards, and Generative AI search (GEO).
+ * Universal Global SEO, Hreflang & Schema.org JSON-LD Manager for React 19
+ * Optimizes Google, Bing, Global Search Engines, and Generative AI search (GEO).
  */
 export default function SEO({
   title,
@@ -19,15 +19,15 @@ export default function SEO({
 }) {
   const siteTitle = title
     ? `${title} | Gagan Engineering Works`
-    : "Gagan Engineering Works | Industrial Machinery Manufacturer in India";
+    : "Gagan Engineering Works | Industrial Machinery Manufacturer & Global Exporter";
 
   const siteDescription =
     description ||
-    "Premier manufacturer of Bra Cup Moulding Machines, 10 Ton Hydraulic Decoilers, Roll Forming Machines, Cut To Length (CTL) Lines, and Roofing Machinery from Khopoli, Maharashtra.";
+    "Premier Indian manufacturer & exporter of Bra Cup Moulding Machines, 10 Ton Hydraulic Decoilers, Roll Forming Machines, Cut To Length (CTL) Lines, and Roofing Machinery from Khopoli, Maharashtra. Worldwide shipping & customized voltage support.";
 
   const siteKeywords =
     keywords ||
-    "Bra Cup Moulding Machine, Roll Forming Machine, 10 Ton Hydraulic Decoiler, Automatic Cut To Length Machine, C Z Purlin Machine, Roofing Sheet Crimping Machine, Industrial Machinery Manufacturer Khopoli Maharashtra India";
+    "Bra Cup Moulding Machine Manufacturer, Bra Cup Moulding Machine Exporter, Roll Forming Machine India, 10 Ton Hydraulic Decoiler, Automatic Cut To Length Machine, C Z Purlin Machine, Roofing Sheet Crimping Machine, Industrial Machinery Manufacturer Khopoli Maharashtra India, Machinery Exporter UAE Bangladesh Sri Lanka Vietnam";
 
   const pathname = typeof window !== "undefined" ? window.location.pathname : "";
   const currentUrl =
@@ -50,11 +50,22 @@ export default function SEO({
       element.setAttribute("content", content);
     };
 
-    // 2. Standard Meta Tags
+    // 2. Standard Global Meta Tags
     updateMetaTag("name", "description", siteDescription);
     updateMetaTag("name", "keywords", siteKeywords);
     updateMetaTag("name", "robots", "index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1");
     updateMetaTag("name", "author", BUSINESS.name);
+    updateMetaTag("name", "language", "English");
+    updateMetaTag("name", "distribution", "Global");
+    updateMetaTag("name", "coverage", "Worldwide");
+    updateMetaTag("name", "rating", "General");
+    updateMetaTag("name", "revisit-after", "7 days");
+
+    // Local & Global Geo Tags
+    updateMetaTag("name", "geo.region", "IN-MH");
+    updateMetaTag("name", "geo.placename", "Khopoli, Maharashtra, India");
+    updateMetaTag("name", "geo.position", `${BUSINESS.geo.latitude};${BUSINESS.geo.longitude}`);
+    updateMetaTag("name", "ICBM", `${BUSINESS.geo.latitude}, ${BUSINESS.geo.longitude}`);
 
     // 3. OpenGraph Tags
     updateMetaTag("property", "og:title", siteTitle);
@@ -63,6 +74,10 @@ export default function SEO({
     updateMetaTag("property", "og:image", metaImage);
     updateMetaTag("property", "og:type", ogType);
     updateMetaTag("property", "og:site_name", BUSINESS.name);
+    updateMetaTag("property", "og:locale", "en_IN");
+    updateMetaTag("property", "og:locale:alternate", "en_US");
+    updateMetaTag("property", "og:locale:alternate", "en_GB");
+    updateMetaTag("property", "og:locale:alternate", "en_AE");
 
     // 4. Twitter Card Tags
     updateMetaTag("name", "twitter:card", "summary_large_image");
@@ -79,10 +94,35 @@ export default function SEO({
     }
     canonicalLink.setAttribute("href", currentUrl);
 
-    // 6. Schema.org JSON-LD Structured Data
+    // 6. International Hreflang Tags
+    const supportedLocales = [
+      { lang: "x-default", href: currentUrl },
+      { lang: "en", href: currentUrl },
+      { lang: "en-IN", href: currentUrl },
+      { lang: "en-US", href: currentUrl },
+      { lang: "en-GB", href: currentUrl },
+      { lang: "en-AE", href: currentUrl },
+      { lang: "en-SA", href: currentUrl },
+      { lang: "en-BD", href: currentUrl },
+      { lang: "en-LK", href: currentUrl },
+      { lang: "en-VN", href: currentUrl },
+    ];
+
+    supportedLocales.forEach(({ lang, href }) => {
+      let hreflangLink = document.querySelector(`link[rel="alternate"][hreflang="${lang}"]`);
+      if (!hreflangLink) {
+        hreflangLink = document.createElement("link");
+        hreflangLink.setAttribute("rel", "alternate");
+        hreflangLink.setAttribute("hreflang", lang);
+        document.head.appendChild(hreflangLink);
+      }
+      hreflangLink.setAttribute("href", href);
+    });
+
+    // 7. Schema.org JSON-LD Structured Data
     const schemas = [];
 
-    // Base Organization & LocalBusiness Schema
+    // Base Organization & LocalBusiness Schema with International Export metadata
     schemas.push({
       "@context": "https://schema.org",
       "@type": ["Organization", "LocalBusiness"],
@@ -96,6 +136,8 @@ export default function SEO({
       "telephone": BUSINESS.phone,
       "email": BUSINESS.email,
       "priceRange": "₹₹₹",
+      "currenciesAccepted": "INR, USD, EUR, AED, GBP",
+      "paymentAccepted": "Letter of Credit (LC), Wire Transfer (T/T), Bank Transfer",
       "address": {
         "@type": "PostalAddress",
         "streetAddress": BUSINESS.streetAddress,
@@ -118,7 +160,19 @@ export default function SEO({
       "sameAs": [
         BUSINESS.indiamartUrl
       ],
-      "areaServed": BUSINESS.serviceAreas
+      "areaServed": BUSINESS.serviceAreas.map(area => ({
+        "@type": "Country",
+        "name": area
+      })),
+      "knowsAbout": [
+        "Bra Cup Moulding Machines",
+        "Hydraulic Decoilers",
+        "Roll Forming Lines",
+        "Automatic Cut to Length Machines",
+        "C & Z Purlin Roll Formers",
+        "Roofing Sheet Crimping Machines",
+        "Industrial Machinery Export"
+      ]
     });
 
     // Product Schema (if on product detail page)
@@ -141,6 +195,10 @@ export default function SEO({
           "name": BUSINESS.name,
           "url": BUSINESS.websiteUrl
         },
+        "countryOfOrigin": {
+          "@type": "Country",
+          "name": "India"
+        },
         "offers": {
           "@type": "Offer",
           "url": currentUrl,
@@ -149,13 +207,41 @@ export default function SEO({
           "priceSpecification": {
             "@type": "UnitPriceSpecification",
             "priceCurrency": "INR",
-            "priceType": "https://schema.org/InvoicePrice"
+            "priceType": "https://schema.org/InvoicePrice",
+            "description": "Custom quotation based on required specifications and export destination"
           },
           "availability": "https://schema.org/InStock",
           "itemCondition": "https://schema.org/NewCondition",
           "seller": {
             "@type": "Organization",
             "name": BUSINESS.name
+          },
+          "shippingDetails": {
+            "@type": "OfferShippingDetails",
+            "shippingRate": {
+              "@type": "MonetaryAmount",
+              "value": "0",
+              "currency": "INR"
+            },
+            "shippingDestination": [
+              {
+                "@type": "DefinedRegion",
+                "addressCountry": "IN"
+              },
+              {
+                "@type": "DefinedRegion",
+                "name": "Worldwide Export (FOB/CIF from JNPT Mumbai Port)"
+              }
+            ],
+            "deliveryTime": {
+              "@type": "ShippingDeliveryTime",
+              "handlingTime": {
+                "@type": "QuantitativeValue",
+                "minValue": 10,
+                "maxValue": 30,
+                "unitCode": "d"
+              }
+            }
           }
         }
       });

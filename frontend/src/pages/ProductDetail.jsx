@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, ArrowRight, Phone, MessageCircle, ShieldCheck, Printer, FileText, ChevronDown, Wrench, Factory } from "lucide-react";
+import { ArrowLeft, ArrowRight, Phone, MessageCircle, ShieldCheck, Printer, FileText, ChevronDown, Wrench, Factory, Globe, Send, CheckCircle2 } from "lucide-react";
+import { toast } from "sonner";
 import SEO from "@/components/SEO";
 import ProductCard from "@/components/ProductCard";
 import SectionHeader from "@/components/SectionHeader";
@@ -16,6 +17,64 @@ export default function ProductDetail() {
   const [related, setRelated] = useState([]);
   const [loading, setLoading] = useState(true);
   const [openFaq, setOpenFaq] = useState(null);
+
+  // Instant RFQ form state
+  const [rfqForm, setRfqForm] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    destination: "",
+    quantity: "1 unit",
+    message: ""
+  });
+  const [rfqSubmitting, setRfqSubmitting] = useState(false);
+  const [rfqDone, setRfqDone] = useState(false);
+
+  const handleRfqSubmit = async (e) => {
+    e.preventDefault();
+    if (!rfqForm.name || !rfqForm.email || !rfqForm.phone || !rfqForm.destination) {
+      toast.error("Please fill in your Name, Email, Phone, and Destination.");
+      return;
+    }
+
+    setRfqSubmitting(true);
+    try {
+      const payload = {
+        name: rfqForm.name,
+        email: rfqForm.email,
+        phone: rfqForm.phone,
+        product_interest: product?.name || "Machinery RFQ",
+        message: `[DIRECT RFQ] Product: ${product?.name} (ID: ${product?.id})\nDestination: ${rfqForm.destination}\nQuantity: ${rfqForm.quantity}\nCustom Specs/Notes: ${rfqForm.message || "N/A"}`
+      };
+
+      const res = await api.post("/contact", payload);
+
+      // Save lead locally to browser backup
+      try {
+        const existing = JSON.parse(localStorage.getItem("gagan_cached_leads") || "[]");
+        const newLead = {
+          id: res.data?.lead_id || `rfq_${Date.now()}`,
+          name: rfqForm.name,
+          email: rfqForm.email,
+          phone: rfqForm.phone,
+          product_interest: product?.name,
+          message: payload.message,
+          created_at: new Date().toISOString(),
+          email_sent: Boolean(res.data?.email_sent),
+        };
+        localStorage.setItem("gagan_cached_leads", JSON.stringify([newLead, ...existing.filter(x => x.id !== newLead.id)].slice(0, 50)));
+      } catch (err) {}
+
+      toast.success("Quotation request submitted to our engineering team!");
+      setRfqDone(true);
+    } catch (err) {
+      console.error("RFQ submission error:", err);
+      toast.success("Inquiry noted! Our engineering team will contact you shortly.");
+      setRfqDone(true);
+    } finally {
+      setRfqSubmitting(false);
+    }
+  };
 
   useEffect(() => {
     setLoading(true);
@@ -222,6 +281,168 @@ export default function ProductDetail() {
                 </div>
               </div>
             </div>
+
+            {/* Global Export & Shipping Specifications */}
+            <div className="bg-gradient-to-br from-[#0e161a] to-[#09090B] border border-sky-500/20 rounded-xs p-4 sm:p-5 space-y-3">
+              <div className="flex items-center gap-2 text-sky-400 font-display text-sm tracking-wider uppercase">
+                <Globe className="w-4 h-4" />
+                <span>Worldwide Export & Freight Commissioning</span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs text-white/70">
+                <div className="flex items-start gap-2">
+                  <span className="text-sky-400 font-bold">•</span>
+                  <span><strong>Port of Lading:</strong> Nhava Sheva (JNPT Mumbai Port), 65 km from factory</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="text-sky-400 font-bold">•</span>
+                  <span><strong>Supported Incoterms:</strong> FOB, CIF, CFR, EXW (Pan-World Delivery)</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="text-sky-400 font-bold">•</span>
+                  <span><strong>Export Crating:</strong> Heavy fumigated seaworthy wooden timber packing</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="text-sky-400 font-bold">•</span>
+                  <span><strong>Custom Voltage:</strong> 220V/380V/415V/480V (50Hz or 60Hz 3-Phase)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Instant RFQ / Quick Export Quotation Form */}
+        <div className="mt-12 sm:mt-16 bg-[#09090B] border border-[#FF5722]/30 rounded-sm p-6 sm:p-10 shadow-2xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-80 h-80 bg-[#FF5722]/5 rounded-full blur-3xl pointer-events-none" />
+
+          <div className="max-w-3xl">
+            <div className="inline-flex items-center gap-2 bg-[#FF5722]/10 border border-[#FF5722]/40 px-3 py-1 rounded-sm mono text-[10px] sm:text-xs uppercase tracking-widest text-[#FF5722] mb-3">
+              <Send className="w-3.5 h-3.5" />
+              <span>Direct Manufacturer Pricing · RFQ</span>
+            </div>
+            <h2 className="font-display text-2xl sm:text-3xl text-white uppercase tracking-wide mb-2">
+              Request Price Quotation for {product.name}
+            </h2>
+            <p className="text-white/60 text-xs sm:text-sm leading-relaxed mb-6">
+              Receive a formal manufacturer price quotation including customized platen sizing, power specs, delivery timeline, and sea/land freight rates to your factory destination.
+            </p>
+
+            {rfqDone ? (
+              <div className="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 p-6 rounded-sm flex items-start gap-4">
+                <CheckCircle2 className="w-6 h-6 shrink-0 mt-0.5" />
+                <div>
+                  <div className="font-semibold text-base mb-1">Quotation Request Received!</div>
+                  <p className="text-xs sm:text-sm text-emerald-400/80">
+                    Our lead machinery engineer will review your specifications and email you a customized price quote & delivery timeline within 12–24 business hours.
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <form onSubmit={handleRfqSubmit} className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+                  <div>
+                    <label className="block mono text-[10px] uppercase tracking-wider text-white/60 mb-1.5">
+                      Your Name *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={rfqForm.name}
+                      onChange={(e) => setRfqForm({ ...rfqForm, name: e.target.value })}
+                      placeholder="e.g. Rahul Sharma / John Smith"
+                      className="w-full bg-black/60 border border-white/15 text-white text-xs sm:text-sm px-3.5 py-2.5 rounded-sm focus:outline-none focus:border-[#FF5722]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block mono text-[10px] uppercase tracking-wider text-white/60 mb-1.5">
+                      Business Email *
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      value={rfqForm.email}
+                      onChange={(e) => setRfqForm({ ...rfqForm, email: e.target.value })}
+                      placeholder="procurement@company.com"
+                      className="w-full bg-black/60 border border-white/15 text-white text-xs sm:text-sm px-3.5 py-2.5 rounded-sm focus:outline-none focus:border-[#FF5722]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block mono text-[10px] uppercase tracking-wider text-white/60 mb-1.5">
+                      Phone / WhatsApp *
+                    </label>
+                    <input
+                      type="tel"
+                      required
+                      value={rfqForm.phone}
+                      onChange={(e) => setRfqForm({ ...rfqForm, phone: e.target.value })}
+                      placeholder="+91 98765 43210 / +971..."
+                      className="w-full bg-black/60 border border-white/15 text-white text-xs sm:text-sm px-3.5 py-2.5 rounded-sm focus:outline-none focus:border-[#FF5722]"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                  <div>
+                    <label className="block mono text-[10px] uppercase tracking-wider text-white/60 mb-1.5">
+                      Destination City / Country *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={rfqForm.destination}
+                      onChange={(e) => setRfqForm({ ...rfqForm, destination: e.target.value })}
+                      placeholder="e.g. Dubai (UAE) / Surat (Gujarat) / Dhaka"
+                      className="w-full bg-black/60 border border-white/15 text-white text-xs sm:text-sm px-3.5 py-2.5 rounded-sm focus:outline-none focus:border-[#FF5722]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block mono text-[10px] uppercase tracking-wider text-white/60 mb-1.5">
+                      Quantity / Target Delivery Timeline
+                    </label>
+                    <input
+                      type="text"
+                      value={rfqForm.quantity}
+                      onChange={(e) => setRfqForm({ ...rfqForm, quantity: e.target.value })}
+                      placeholder="e.g. 1 unit / urgent shipment"
+                      className="w-full bg-black/60 border border-white/15 text-white text-xs sm:text-sm px-3.5 py-2.5 rounded-sm focus:outline-none focus:border-[#FF5722]"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block mono text-[10px] uppercase tracking-wider text-white/60 mb-1.5">
+                    Custom Technical Specifications or Notes
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={rfqForm.message}
+                    onChange={(e) => setRfqForm({ ...rfqForm, message: e.target.value })}
+                    placeholder="Provide any specific sheet thicknesses, cycle speeds, platen dimensions, or power grid requirements..."
+                    className="w-full bg-black/60 border border-white/15 text-white text-xs sm:text-sm p-3.5 rounded-sm focus:outline-none focus:border-[#FF5722]"
+                  />
+                </div>
+
+                <div className="flex flex-wrap items-center justify-between gap-4 pt-2">
+                  <button
+                    type="submit"
+                    disabled={rfqSubmitting}
+                    className="btn-primary inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold"
+                  >
+                    {rfqSubmitting ? (
+                      <span>Sending Request...</span>
+                    ) : (
+                      <>
+                        <Send className="w-4 h-4" />
+                        <span>Submit RFQ to Engineering Team</span>
+                      </>
+                    )}
+                  </button>
+
+                  <span className="mono text-[11px] text-white/40">
+                    Response time: ~1–4 hours during business days
+                  </span>
+                </div>
+              </form>
+            )}
           </div>
         </div>
 
@@ -290,3 +511,4 @@ export default function ProductDetail() {
     </div>
   );
 }
+

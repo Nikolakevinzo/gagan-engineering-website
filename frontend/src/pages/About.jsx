@@ -183,7 +183,7 @@ export default function About() {
         </section>
 
         {/* Operating Values */}
-        <section className="py-14 sm:py-20">
+        <section className="py-14 sm:py-20 border-b border-white/10">
           <SectionHeader
             overline="// Core Principles"
             title="The 4 Rules We Never Compromise"
@@ -204,7 +204,58 @@ export default function About() {
             ))}
           </div>
         </section>
+
+        {/* Global Export Capabilities & International Presence */}
+        <section className="py-14 sm:py-20">
+          <div className="bg-gradient-to-br from-[#0c1318] via-[#09090B] to-[#070709] border border-sky-500/30 rounded-sm p-6 sm:p-10 shadow-2xl">
+            <div className="max-w-3xl">
+              <div className="inline-flex items-center gap-2 bg-sky-500/10 border border-sky-500/40 px-3 py-1 rounded-sm mono text-[10px] sm:text-xs uppercase tracking-widest text-sky-400 mb-4">
+                <span>Worldwide Logistics · Nhava Sheva (JNPT Port)</span>
+              </div>
+              <h2 className="font-display text-3xl sm:text-4xl text-white uppercase tracking-wide leading-tight mb-4">
+                Global Machinery Export & Commissioning
+              </h2>
+              <p className="text-white/70 text-sm sm:text-base leading-relaxed mb-8">
+                Situated just 65 km from India's premier container hub (JNPT Mumbai Port), Gagan Engineering Works serves international clients across the Middle East, Southeast Asia, Africa, Europe, and the Americas with fully compliant export machinery lines.
+              </p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm text-white/80">
+                <div className="bg-black/40 border border-white/10 p-4 rounded-xs">
+                  <div className="font-semibold text-sky-400 uppercase mono text-xs mb-1.5">Supported Incoterms</div>
+                  <p className="text-white/60 text-xs">FOB (Nhava Sheva Port, Mumbai), CIF, CFR, and EXW with full export documentation.</p>
+                </div>
+                <div className="bg-black/40 border border-white/10 p-4 rounded-xs">
+                  <div className="font-semibold text-sky-400 uppercase mono text-xs mb-1.5">Voltage Grid Customization</div>
+                  <p className="text-white/60 text-xs">Custom electricals wired for 220V, 380V, 415V, or 480V @ 50Hz / 60Hz 3-Phase supplies.</p>
+                </div>
+                <div className="bg-black/40 border border-white/10 p-4 rounded-xs">
+                  <div className="font-semibold text-sky-400 uppercase mono text-xs mb-1.5">Heavy Export Packaging</div>
+                  <p className="text-white/60 text-xs">Seaworthy anti-corrosion barrier wrapping inside fumigated heavy timber crates.</p>
+                </div>
+                <div className="bg-black/40 border border-white/10 p-4 rounded-xs">
+                  <div className="font-semibold text-sky-400 uppercase mono text-xs mb-1.5">Export Documentation</div>
+                  <p className="text-white/60 text-xs">Certificate of Origin (COO), Commercial Invoices, Bill of Lading, and QA Test Reports.</p>
+                </div>
+              </div>
+
+              <div className="mt-8 flex flex-wrap items-center gap-4">
+                <Link to="/contact" className="btn-primary">
+                  Inquire for Global Export →
+                </Link>
+                <a
+                  href={`https://wa.me/${BUSINESS.phoneRaw}?text=${encodeURIComponent("Hello Gagan Engineering, I am an international buyer looking to import machinery.")}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold uppercase tracking-wider px-5 py-3 rounded-xs transition-colors"
+                >
+                  Chat with Export Desk
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
     </div>
   );
 }
+

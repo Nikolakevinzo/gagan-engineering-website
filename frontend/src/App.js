@@ -14,6 +14,7 @@ import Contact from "@/pages/Contact";
 import ReturnPolicy from "@/pages/ReturnPolicy";
 import PrivacyPolicy from "@/pages/PrivacyPolicy";
 import Terms from "@/pages/Terms";
+import NotFound from "@/pages/NotFound";
 import AdminLogin from "@/pages/Admin/Login";
 import AdminDashboard from "@/pages/Admin/Dashboard";
 import AdminProductList from "@/pages/Admin/ProductList";
@@ -92,6 +93,16 @@ function App() {
               <Products />
             </PublicLayout>
           } />
+          <Route path="/products/category/:categorySlug" element={
+            <PublicLayout>
+              <Products />
+            </PublicLayout>
+          } />
+          <Route path="/category/:categorySlug" element={
+            <PublicLayout>
+              <Products />
+            </PublicLayout>
+          } />
           <Route path="/product" element={<Navigate to="/products" replace />} />
           <Route path="/products/:id" element={
             <PublicLayout>
@@ -124,10 +135,10 @@ function App() {
               <Terms />
             </PublicLayout>
           } />
-          {/* Catch-all */}
+          {/* 404 Catch-all */}
           <Route path="*" element={
             <PublicLayout>
-              <Home />
+              <NotFound />
             </PublicLayout>
           } />
         </Routes>

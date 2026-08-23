@@ -115,20 +115,20 @@ export default function Home() {
             {/* Key USPs */}
             <div className="mt-5 sm:mt-6 flex flex-wrap gap-2 sm:gap-4 text-xs mono text-white/70">
               <div className="flex items-center gap-1.5 bg-white/5 border border-white/10 px-2.5 sm:px-3 py-1.5 rounded-xs">
-                <CheckCircle2 className="w-3.5 h-3.5 text-green-400 shrink-0" /> 1-Year Warranty
+                <CheckCircle2 className="w-3.5 h-3.5 text-green-400 shrink-0" /> 1-Year Comprehensive Warranty
               </div>
               <div className="flex items-center gap-1.5 bg-white/5 border border-white/10 px-2.5 sm:px-3 py-1.5 rounded-xs">
-                <CheckCircle2 className="w-3.5 h-3.5 text-green-400 shrink-0" /> Pan-India Commissioning
+                <CheckCircle2 className="w-3.5 h-3.5 text-green-400 shrink-0" /> Pan-India & Global Commissioning
               </div>
               <div className="flex items-center gap-1.5 bg-white/5 border border-white/10 px-2.5 sm:px-3 py-1.5 rounded-xs">
-                <CheckCircle2 className="w-3.5 h-3.5 text-green-400 shrink-0" /> In-House Tooling & Spares
+                <CheckCircle2 className="w-3.5 h-3.5 text-sky-400 shrink-0" /> Worldwide Exports (JNPT Mumbai Port)
               </div>
             </div>
 
             {/* Hero CTAs */}
             <div className="mt-8 sm:mt-10 flex flex-col xs:flex-row flex-wrap items-start xs:items-center gap-3 sm:gap-4">
               <Link to="/products" className="btn-primary flex items-center gap-2 w-full xs:w-auto justify-center" data-testid="hero-cta-products">
-                Explore Machinery Catalogue <ArrowRight className="w-4 h-4" />
+                Explore 10 Machinery Lines <ArrowRight className="w-4 h-4" />
               </Link>
               <Link to="/contact" className="btn-ghost flex items-center gap-2 w-full xs:w-auto justify-center" data-testid="hero-cta-quote">
                 Request Price Quotation
@@ -172,9 +172,10 @@ export default function Home() {
               description="Choose your industry sector below to filter our high-performance machinery catalogue."
             />
             <Link to="/products" className="btn-ghost shrink-0 flex items-center gap-2 self-start md:self-auto">
-              Browse All 8+ Models <ArrowRight className="w-4 h-4" />
+              Browse All 10 Models <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
+
 
           {/* Industry Filter — horizontally scrollable on mobile */}
           <div className="flex gap-2 sm:gap-2.5 mb-8 sm:mb-10 overflow-x-auto pb-2 scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap">

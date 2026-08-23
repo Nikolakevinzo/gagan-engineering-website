@@ -1060,21 +1060,58 @@ async def sitemap():
     <loc>{WEBSITE_URL}/products</loc>
     <lastmod>{now}</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <priority>0.95</priority>
+  </url>""",
+        f"""  <url>
+    <loc>{WEBSITE_URL}/products/category/bra-cup-moulding-machine</loc>
+    <lastmod>{now}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
+  </url>""",
+        f"""  <url>
+    <loc>{WEBSITE_URL}/products/category/roll-forming-sheet-metal</loc>
+    <lastmod>{now}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
+  </url>""",
+        f"""  <url>
+    <loc>{WEBSITE_URL}/products/category/cut-to-length-line</loc>
+    <lastmod>{now}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
   </url>""",
         f"""  <url>
     <loc>{WEBSITE_URL}/about</loc>
     <lastmod>{now}</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>""",
         f"""  <url>
     <loc>{WEBSITE_URL}/contact</loc>
     <lastmod>{now}</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.85</priority>
+  </url>""",
+        f"""  <url>
+    <loc>{WEBSITE_URL}/return-policy</loc>
+    <lastmod>{now}</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>""",
+        f"""  <url>
+    <loc>{WEBSITE_URL}/privacy-policy</loc>
+    <lastmod>{now}</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>""",
+        f"""  <url>
+    <loc>{WEBSITE_URL}/terms</loc>
+    <lastmod>{now}</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
   </url>""",
     ]
+
 
     for p in products:
         product_date = now

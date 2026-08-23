@@ -1,81 +1,182 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <!-- Core Public Pages -->
   <url>
     <loc>https://www.gaganengineerings.in/</loc>
-    <lastmod>2026-08-21</lastmod>
+    <lastmod>2026-08-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.gaganengineerings.in/products</loc>
-    <lastmod>2026-08-21</lastmod>
+    <lastmod>2026-08-23</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <priority>0.95</priority>
   </url>
   <url>
     <loc>https://www.gaganengineerings.in/about</loc>
-    <lastmod>2026-08-21</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://www.gaganengineerings.in/contact</loc>
-    <lastmod>2026-08-21</lastmod>
+    <lastmod>2026-08-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.gaganengineerings.in/products/double-head-electric-bra-cup-moulding-machine</loc>
-    <lastmod>2026-08-21</lastmod>
+    <loc>https://www.gaganengineerings.in/contact</loc>
+    <lastmod>2026-08-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
+  </url>
+
+  <!-- Category Landing Pages -->
+  <url>
+    <loc>https://www.gaganengineerings.in/products/category/bra-cup-moulding-machine</loc>
+    <lastmod>2026-08-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.gaganengineerings.in/products/category/roll-forming-sheet-metal</loc>
+    <lastmod>2026-08-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.gaganengineerings.in/products/category/cut-to-length-line</loc>
+    <lastmod>2026-08-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- All 10 Machinery Product Pages -->
+  <url>
+    <loc>https://www.gaganengineerings.in/products/double-head-electric-bra-cup-moulding-machine</loc>
+    <lastmod>2026-08-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.88</priority>
+    <image:image>
+      <image:loc>https://5.imimg.com/data5/ANDROID/Default/2025/10/550586008/TZ/II/HL/4175789/product-jpeg-500x500.jpg</image:loc>
+      <image:title>Double Head Electric Bra Cup Moulding Machine</image:title>
+      <image:caption>Double Head Electric Bra Cup Moulding Machine manufactured by Gagan Engineering Works</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://www.gaganengineerings.in/products/bra-cup-fabric-moulding-machine</loc>
-    <lastmod>2026-08-21</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
+    <lastmod>2026-08-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.88</priority>
+    <image:image>
+      <image:loc>https://5.imimg.com/data5/ANDROID/Default/2025/10/550584110/ET/BP/NY/4175789/product-jpeg-500x500.jpg</image:loc>
+      <image:title>Bra Cup Fabric Moulding Machine</image:title>
+      <image:caption>Bra Cup Fabric Moulding Machine manufactured by Gagan Engineering Works</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://www.gaganengineerings.in/products/foam-bra-cup-moulding-machine</loc>
-    <lastmod>2026-08-21</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
+    <lastmod>2026-08-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.88</priority>
+    <image:image>
+      <image:loc>https://5.imimg.com/data5/ANDROID/Default/2025/10/550582531/TR/XN/QZ/4175789/product-jpeg-500x500.jpg</image:loc>
+      <image:title>Foam Bra Cup Moulding Machine</image:title>
+      <image:caption>Foam Bra Cup Moulding Machine manufactured by Gagan Engineering Works</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://www.gaganengineerings.in/products/padded-bra-cup-moulding-machine</loc>
-    <lastmod>2026-08-21</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
+    <lastmod>2026-08-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.88</priority>
+    <image:image>
+      <image:loc>https://5.imimg.com/data5/SELLER/Default/2026/5/608537665/KG/TS/VJ/4175789/padded-bra-cup-moulding-machine-500x500.png</image:loc>
+      <image:title>Padded Bra Cup Moulding Machine</image:title>
+      <image:caption>Padded Bra Cup Moulding Machine manufactured by Gagan Engineering Works</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://www.gaganengineerings.in/products/10-tons-hydraulic-decoiler</loc>
-    <lastmod>2026-08-21</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
+    <lastmod>2026-08-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.88</priority>
+    <image:image>
+      <image:loc>https://5.imimg.com/data5/SELLER/Default/2026/3/591026048/WN/TL/TR/4175789/10-tons-hydraulic-decoiler-500x500.jpeg</image:loc>
+      <image:title>10 Tons Hydraulic Decoiler</image:title>
+      <image:caption>10 Tons Hydraulic Decoiler manufactured by Gagan Engineering Works</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://www.gaganengineerings.in/products/automatic-roofing-sheet-crimping-machine</loc>
-    <lastmod>2026-08-21</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
+    <lastmod>2026-08-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.88</priority>
+    <image:image>
+      <image:loc>https://5.imimg.com/data5/SELLER/Default/2026/4/596257189/PL/SJ/DO/4175789/456-500x500.png</image:loc>
+      <image:title>Automatic Roofing Sheet Crimping Machine</image:title>
+      <image:caption>Automatic Roofing Sheet Crimping Machine manufactured by Gagan Engineering Works</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://www.gaganengineerings.in/products/c-z-purlin-roll-forming-machine</loc>
-    <lastmod>2026-08-21</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
+    <lastmod>2026-08-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.88</priority>
+    <image:image>
+      <image:loc>https://5.imimg.com/data5/SELLER/Default/2026/3/591026364/VD/DF/WP/4175789/c-z-purlin-roll-forming-machine-500x500.jpeg</image:loc>
+      <image:title>C / Z Purlin Roll Forming Machine</image:title>
+      <image:caption>C / Z Purlin Roll Forming Machine manufactured by Gagan Engineering Works</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://www.gaganengineerings.in/products/automatic-ctl-machine</loc>
-    <lastmod>2026-08-21</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
+    <lastmod>2026-08-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.88</priority>
+    <image:image>
+      <image:loc>https://5.imimg.com/data5/SELLER/Default/2026/4/596257189/PL/SJ/DO/4175789/456-500x500.png</image:loc>
+      <image:title>Automatic Cut To Length (CTL) Machine</image:title>
+      <image:caption>Automatic Cut To Length Line manufactured by Gagan Engineering Works</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://www.gaganengineerings.in/products/corrugated-sheets-making-machine</loc>
-    <lastmod>2026-08-21</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
+    <lastmod>2026-08-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.88</priority>
+    <image:image>
+      <image:loc>https://5.imimg.com/data5/SELLER/Default/2026/3/591026243/LM/XU/AK/4175789/corrugated-sheets-making-machine-500x500.jpeg</image:loc>
+      <image:title>Corrugated Sheets Making Machine</image:title>
+      <image:caption>Corrugated Sheets Making Machine manufactured by Gagan Engineering Works</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://www.gaganengineerings.in/products/semi-automatic-pipe-counter-boring-and-facing-machine</loc>
+    <lastmod>2026-08-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.88</priority>
+    <image:image>
+      <image:loc>https://5.imimg.com/data5/SELLER/Default/2026/4/596257189/PL/SJ/DO/4175789/456-500x500.png</image:loc>
+      <image:title>Semi-Automatic Pipe Counter Boring and Facing Machine</image:title>
+      <image:caption>Semi-Automatic Pipe Counter Boring and Facing Machine manufactured by Gagan Engineering Works</image:caption>
+    </image:image>
+  </url>
+
+  <!-- Legal & Policy Pages -->
+  <url>
+    <loc>https://www.gaganengineerings.in/return-policy</loc>
+    <lastmod>2026-08-23</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.gaganengineerings.in/privacy-policy</loc>
+    <lastmod>2026-08-23</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.gaganengineerings.in/terms</loc>
+    <lastmod>2026-08-23</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
   </url>
 </urlset>

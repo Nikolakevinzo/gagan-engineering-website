@@ -51,17 +51,44 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Col 3: Machinery Products (SEO Links) */}
+          {/* Col 3: Machinery Categories & Lines (SEO Links) */}
           <div className="space-y-3">
             <div className="mono text-xs tracking-[0.2em] uppercase text-[#FF5722] font-semibold">
-              Machinery Lines
+              Machinery Categories
             </div>
             <ul className="space-y-2 text-xs">
-              {CATALOGUE_PRODUCTS.slice(0, 6).map((p) => (
+              <li>
+                <Link
+                  to="/products/category/bra-cup-moulding-machine"
+                  className="hover:text-[#FF5722] transition-colors text-white font-medium flex items-center gap-1"
+                >
+                  <span className="text-[#FF5722]">›</span> Bra Cup Moulding Machines
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/products/category/roll-forming-sheet-metal"
+                  className="hover:text-[#FF5722] transition-colors text-white font-medium flex items-center gap-1"
+                >
+                  <span className="text-[#FF5722]">›</span> Roll Forming & Decoilers
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/products/category/cut-to-length-line"
+                  className="hover:text-[#FF5722] transition-colors text-white font-medium flex items-center gap-1"
+                >
+                  <span className="text-[#FF5722]">›</span> Cut To Length (CTL) Lines
+                </Link>
+              </li>
+              <li className="pt-2 border-t border-white/5 mono text-[10px] text-white/40 uppercase tracking-wider">
+                Popular Machines:
+              </li>
+              {CATALOGUE_PRODUCTS.slice(0, 4).map((p) => (
                 <li key={p.id}>
                   <Link
                     to={`/products/${p.id}`}
-                    className="hover:text-[#FF5722] transition-colors line-clamp-1"
+                    className="hover:text-[#FF5722] transition-colors line-clamp-1 text-white/70"
                   >
                     {p.name}
                   </Link>
@@ -69,11 +96,12 @@ export default function Footer() {
               ))}
               <li>
                 <Link to="/products" className="text-[#FF5722] hover:underline font-mono">
-                  + View All Machinery →
+                  + View Full Machinery Catalogue →
                 </Link>
               </li>
             </ul>
           </div>
+
 
           {/* Col 4: Quick Links & SEO */}
           <div className="space-y-3">

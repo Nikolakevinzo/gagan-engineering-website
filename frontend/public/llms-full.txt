@@ -86,26 +86,38 @@ All fabrication, CNC turning, roller machining (EN31 alloy tool steel), hydrauli
 - **Roll Stations**: 14 to 18 roll forming stations with hardened chrome-plated EN31 rollers.
 - **Cutting**: Hydraulic stop-to-cut guillotine blade.
 
+#### 9. Semi-Automatic Pipe Counter Boring and Facing Machine
+- **Model ID**: `semi-automatic-pipe-counter-boring-and-facing-machine`
+- **Application**: Precision pipe end facing, beveling, chamfering, and internal counter-boring for round pipes and industrial tubes.
+- **Max Pipe Capacity**: Up to 60 mm Outside Diameter (OD).
+- **Main Drive Motor**: 5.0 HP (1450 RPM) with Variable Frequency Drive (VFD) speed control (100–1450 RPM).
+- **Hydraulic System**: Dedicated 1.0 HP hydraulic power pack (60-Litre reservoir) with automated rigid clamping and hydraulic feed stroke.
+- **Repeat Accuracy**: Automatic length stop control for high-volume repeat manufacturing cycles.
+
 ---
 
 ### Category C: Coil Processing Lines
 
-#### 9. Automatic Cut To Length (CTL) Line
+#### 10. Automatic Cut To Length (CTL) Line
 - **Model ID**: `automatic-ctl-machine`
 - **Max Sheet Thickness**: Up to 6.0 mm (Mild Steel) / 4.0 mm (Stainless Steel).
 - **Max Coil Width**: 400 mm standard (customizable up to 1500 mm).
 - **Line Speed**: 15 to 25 meters per minute.
-- **Leveler Unit**: 9 to 13 precision rolls with hardened alloy steel (52–54 HRC) gear driven.
+- **Leveler Unit**: 9 to 13 precision rolls with hardened alloy steel (50–52 HRC) gear driven.
 - **Shearing Unit**: High-speed mechanical/hydraulic cut-to-length shear.
 - **Automation**: Siemens / Delta PLC with touchscreen HMI for multi-batch length programming.
 
 ---
 
-## 3. Commercial Terms, Installation & Pan-India Service
-- **Pricing Policy**: Direct factory-gate quotations provided based on technical parameters and customized attachments.
-- **Delivery Scope**: Pan-India delivery across Maharashtra, Gujarat, Delhi NCR, Punjab, Haryana, Tamil Nadu, Karnataka, Telangana, West Bengal, and international export.
-- **Warranty**: 1-Year Comprehensive Manufacturer Warranty covering all mechanical and hydraulic components.
-- **After-Sales Support**: Dedicated field service technicians available for on-site commissioning, operator training, and lifetime spare parts supply.
+## 3. Commercial Terms, Global Export Logistics & Pan-India Service
+- **Global Export Logistics**: Proximity to Jawaharlal Nehru Port Trust (JNPT / Nhava Sheva Port, Mumbai) ~65 km from works.
+- **Incoterms Supported**: FOB (Nhava Sheva Port), CIF, CFR, EXW (Pan-World Delivery).
+- **Voltage Grid Customization**: Configured for 220V, 380V, 415V, 440V, 480V @ 50Hz or 60Hz 3-Phase grids across North America, Europe, Middle East, Africa, and Asia.
+- **Packaging Standards**: Heavy seaworthy anti-corrosion barrier wrapping inside fumigated timber crates.
+- **Export Documentation**: Certificate of Origin (COO), Commercial Invoices, Bill of Lading, Packing Lists, CE Compliance Declarations.
+- **Delivery Scope**: Pan-India delivery across Maharashtra, Gujarat, Delhi NCR, Punjab, Tamil Nadu, Karnataka, and worldwide ocean/air freight.
+- **Warranty**: 1-Year Comprehensive Manufacturer Warranty covering all mechanical, electrical, and hydraulic assemblies.
+- **After-Sales Support**: Dedicated field service technicians available for on-site commissioning, operator training, remote video support, and lifetime spare parts supply.
 
 ---
 
@@ -113,4 +125,9 @@ All fabrication, CNC turning, roller machining (EN31 alloy tool steel), hydrauli
 - **Primary Domain**: `https://www.gaganengineerings.in`
 - **Inquiry Portal**: `https://www.gaganengineerings.in/contact`
 - **Catalogue URL**: `https://www.gaganengineerings.in/products`
+- **Category URLs**:
+  - Bra Cup Machinery: `https://www.gaganengineerings.in/products/category/bra-cup-moulding-machine`
+  - Roll Forming Machinery: `https://www.gaganengineerings.in/products/category/roll-forming-sheet-metal`
+  - CTL Lines: `https://www.gaganengineerings.in/products/category/cut-to-length-line`
 - **Citation Name**: Gagan Engineering Works, Khopoli
+

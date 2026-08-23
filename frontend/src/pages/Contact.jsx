@@ -309,14 +309,24 @@ export default function Contact() {
               </a>
             </div>
 
-            {/* Logistics Card */}
-            <div className="bg-[#09090B] border border-white/10 p-5 sm:p-6 md:p-8 rounded-xs space-y-3">
-              <div className="flex items-center gap-2 text-white font-semibold text-sm uppercase tracking-wide">
-                <Factory className="w-4 h-4 text-[#FF5722]" /> Strategic Mumbai-Pune Logistics
+            {/* Logistics & Global Export Card */}
+            <div className="bg-gradient-to-br from-[#0c1418] to-[#09090B] border border-sky-500/30 p-5 sm:p-6 md:p-8 rounded-xs space-y-3 shadow-xl">
+              <div className="flex items-center gap-2 text-sky-400 font-semibold text-sm uppercase tracking-wide">
+                <Factory className="w-4 h-4 text-[#FF5722]" /> Global Export Desk & JNPT Mumbai Logistics
               </div>
-              <p className="text-xs text-white/60 leading-relaxed">
-                Located directly on the Mumbai-Pune Highway in Khopoli, our works have seamless heavy transport connectivity for rapid machine dispatch across Maharashtra, Gujarat, South India, and JNPT Port for international exports.
+              <p className="text-xs text-white/70 leading-relaxed">
+                Located directly on the Mumbai-Pune Highway just 65 km from <strong>Jawaharlal Nehru Port Trust (JNPT / Nhava Sheva)</strong>, our factory dispatches heavy industrial machinery globally under <strong>FOB, CIF, CFR, and EXW</strong> terms.
               </p>
+              <div className="pt-2 grid grid-cols-2 gap-2 text-[11px] mono text-white/60">
+                <div className="bg-black/40 border border-white/10 p-2 rounded-xs">
+                  <span className="text-sky-400 block font-bold">Port of Lading:</span>
+                  Nhava Sheva (JNPT)
+                </div>
+                <div className="bg-black/40 border border-white/10 p-2 rounded-xs">
+                  <span className="text-sky-400 block font-bold">Global Power Grid:</span>
+                  220V–480V 50/60Hz
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -324,3 +334,4 @@ export default function Contact() {
     </div>
   );
 }
+

@@ -2,9 +2,10 @@
 
 > **Entity**: Gagan Engineering Works  
 > **Brand**: GSK Machinery  
-> **Type**: Industrial Machinery Manufacturer & Exporter  
+> **Type**: Industrial Machinery Manufacturer & Global Exporter  
 > **Established**: 2006 (19+ years precision engineering experience)  
 > **Headquarters & Works**: Mumbai-Pune Highway, Near Star Garage, Navanath Colony, Yashwant Nagar, Khopoli, Maharashtra 410203, India  
+> **Nearest Port**: Nhava Sheva (JNPT Mumbai Port), 65 km from factory  
 > **Contact**: Phone: +91 8329465245 | Email: gaganengineerings@gmail.com  
 > **GST Registered**: Yes (Maharashtra, Sep 2017)  
 > **IndiaMART Profile**: https://www.indiamart.com/gaganengineeringworks/ (Rating: 4.0 / 5.0)  
@@ -14,14 +15,14 @@
 ---
 
 ## Company Overview
-Gagan Engineering Works is an Indian industrial manufacturer specializing in high-precision machinery for intimate wear manufacturing (bra cup moulding machines), pre-engineered building (PEB) roll formers, hydraulic decoilers, and cut-to-length (CTL) processing lines. All machines are designed, engineered, and assembled at their Khopoli works in Maharashtra.
+Gagan Engineering Works is an Indian industrial manufacturer & exporter specializing in high-precision machinery for intimate wear manufacturing (bra cup moulding machines), pre-engineered building (PEB) roll formers, hydraulic decoilers, and cut-to-length (CTL) processing lines. All machines are designed, engineered, and assembled at their Khopoli works in Maharashtra.
 
 ---
 
-## Primary Machinery Lines
+## Primary Machinery Lines (10 Certified Lines)
 
 ### 1. Bra Cup Moulding Machines (Lingerie & Intimate-Wear Industry)
-- **Double Head Electric Bra Cup Moulding Machine**: Twin-station press enabling simultaneous moulding and loading. Features PID temperature control (0–250°C), pneumatic clamping, ~400–600 pcs/shift output, 3-Phase 415V power.
+- **Double Head Electric Bra Cup Moulding Machine**: Twin-station press enabling simultaneous moulding and loading. Features PID temperature control (0–250°C), pneumatic clamping, ~400–600 pcs/shift output, custom voltage support.
 - **Bra Cup Fabric Moulding Machine**: Specialized press for laminated and woven fabrics with interchangeable aluminium moulds, 25–40s cycle time.
 - **Foam Bra Cup Moulding Machine**: Hot-press moulding for PU, polyester, and memory foam sheets with uniform top/bottom platen heating.
 - **Padded Bra Cup Moulding Machine**: Multi-layer composite cup forming for foam, fabric, and lining simultaneously.
@@ -31,18 +32,21 @@ Gagan Engineering Works is an Indian industrial manufacturer specializing in hig
 - **Automatic Roofing Sheet Crimping Machine**: High-speed curved profile crimping for pre-painted GI/GP/aluminium sheets up to 1250 mm width.
 - **C / Z Purlin Roll Forming Machine**: Quick interchangeable C & Z section purlin line with integrated PLC + HMI, speed 10–18 m/min, thickness 1.5–3.2 mm.
 - **Corrugated Sheets Making Machine**: Heavy-duty continuous corrugated profile roll former with hydraulic cut-to-length guillotine.
+- **Semi-Automatic Pipe Counter Boring and Facing Machine**: Precision pipe end facing, beveling, and internal counter-boring up to 60 mm OD, 5 HP VFD spindle (100–1450 RPM), 1 HP hydraulic power pack with auto clamping.
 
 ### 3. Cut To Length (CTL) Lines
-- **Automatic Cut To Length (CTL) Machine**: 6 mm thickness capacity, 400 mm sheet width, 20 m/min line speed, 10 Ton hydraulic decoiler with sensor control, 9-roll gear-driven leveler (EN31 hardened rolls, 52–54 HRC), mechanical shear up to 6mm, touch-screen VFD PLC control.
+- **Automatic Cut To Length (CTL) Machine**: 6 mm thickness capacity, 400 mm sheet width (customizable to 1500 mm), 20 m/min line speed, 10 Ton hydraulic decoiler with sensor control, 9-roll gear-driven leveler (EN31 hardened rolls, 50–52 HRC), mechanical/hydraulic shear up to 6mm, touch-screen VFD PLC control.
 
 ---
 
-## Services & Support
-- **Custom Engineering**: Customized platens, roll diameters, and automation controls based on factory requirements.
-- **Installation & Commissioning**: Pan-India on-site installation, operator training, 1-year warranty, and lifetime technical support.
-- **Spare Parts & Tooling**: Readily available replacement rolls, PID controllers, hydraulic valves, and heating elements.
+## Global Export & Freight Services
+- **Export Incoterms**: FOB (Nhava Sheva Port, Mumbai), CIF, CFR, EXW.
+- **Voltage Grid Customization**: Wired for destination grids including 220V, 380V, 415V, 440V, 480V @ 50Hz/60Hz 3-Phase.
+- **Export Packaging**: Seaworthy barrier wrapping in fumigated heavy timber crates for ocean container shipping.
+- **Export Documentation**: Certificate of Origin (COO), Commercial Invoices, Bill of Lading, Packing Lists, CE Compliance Declarations.
+- **Commissioning**: Pan-India on-site commissioning and remote video commissioning support worldwide with 1-year manufacturer warranty.
 
 ---
 
 ## Key Search Keywords & Intent Match
-Bra Cup Moulding Machine Manufacturer India, Automatic Cut To Length Machine Khopoli Maharashtra, 10 Ton Hydraulic Decoiler Manufacturer, C Z Purlin Roll Forming Machine India, Roofing Sheet Crimping Machine Manufacturer, Industrial Machinery Khopoli.
+Bra Cup Moulding Machine Manufacturer India, Automatic Cut To Length Machine Khopoli Maharashtra, 10 Ton Hydraulic Decoiler Manufacturer, C Z Purlin Roll Forming Machine India, Roofing Sheet Crimping Machine Manufacturer, Pipe Counter Boring Machine India, Industrial Machinery Exporter Khopoli.

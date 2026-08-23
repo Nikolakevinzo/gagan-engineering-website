@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { useSearchParams, Link } from "react-router-dom";
-import { Search, MessageCircle, ArrowRight, Filter } from "lucide-react";
+import { useSearchParams, useParams, Link } from "react-router-dom";
+import { Search, MessageCircle, ArrowRight, Filter, Layers, Wrench, Cpu, Factory } from "lucide-react";
 import SEO from "@/components/SEO";
 import ProductCard from "@/components/ProductCard";
 import SectionHeader from "@/components/SectionHeader";
@@ -8,12 +8,46 @@ import { CATALOGUE_PRODUCTS, CATEGORIES } from "@/lib/catalogueData";
 import { BUSINESS } from "@/lib/business";
 import { api } from "@/lib/api";
 
+const CATEGORY_META = {
+  "bra-cup-moulding-machine": {
+    name: "Bra Cup Moulding Machine",
+    title: "Bra Cup Moulding Machines Manufacturer & Exporter",
+    description: "High-precision electric, foam, fabric, and padded bra cup moulding presses for intimate wear lingerie manufacturing in India and export.",
+    keywords: "Bra Cup Moulding Machine Manufacturer, Bra Cup Fabric Moulding, Foam Bra Cup Machine, Intimate Wear Machinery, Lingerie Moulding Press India"
+  },
+  "roll-forming-sheet-metal": {
+    name: "Roll Forming & Sheet Metal",
+    title: "Roll Forming & Sheet Metal Machinery Manufacturer",
+    description: "Heavy-duty C/Z purlin roll formers, 10-ton hydraulic decoilers, and automatic roofing sheet crimping machines for industrial fabrication.",
+    keywords: "Roll Forming Machine India, C Z Purlin Machine, 10 Ton Hydraulic Decoiler, Roofing Sheet Crimping Machine, Sheet Metal Machinery"
+  },
+  "cut-to-length-line": {
+    name: "Cut To Length Line",
+    title: "Automatic Cut To Length (CTL) Lines Manufacturer",
+    description: "Precision automated cut-to-length lines with hydraulic decoiling, 9-roll EN31 leveling, and optical encoder PLC shearing for coils up to 6mm.",
+    keywords: "Cut to Length Line Manufacturer, Automatic CTL Machine, Coil Processing Line, Heavy Sheet Leveler Khopoli Maharashtra"
+  }
+};
+
 export default function Products() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const categoryParam = searchParams.get("category") || "All";
+  const { categorySlug } = useParams();
+
+  // Determine initial category from URL path or query param
+  const getInitialCategory = () => {
+    if (categorySlug && CATEGORY_META[categorySlug]) {
+      return CATEGORY_META[categorySlug].name;
+    }
+    const queryCat = searchParams.get("category");
+    if (queryCat) {
+      if (CATEGORY_META[queryCat]) return CATEGORY_META[queryCat].name;
+      return queryCat;
+    }
+    return "All";
+  };
 
   const [products, setProducts] = useState(CATALOGUE_PRODUCTS);
-  const [activeCategory, setActiveCategory] = useState(categoryParam);
+  const [activeCategory, setActiveCategory] = useState(getInitialCategory);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -63,10 +97,18 @@ export default function Products() {
   }, []);
 
   useEffect(() => {
-    if (categoryParam) {
-      setActiveCategory(categoryParam);
+    if (categorySlug && CATEGORY_META[categorySlug]) {
+      setActiveCategory(CATEGORY_META[categorySlug].name);
+    } else {
+      const queryCat = searchParams.get("category");
+      if (queryCat) {
+        if (CATEGORY_META[queryCat]) setActiveCategory(CATEGORY_META[queryCat].name);
+        else setActiveCategory(queryCat);
+      } else if (!categorySlug) {
+        setActiveCategory("All");
+      }
     }
-  }, [categoryParam]);
+  }, [categorySlug, searchParams]);
 
   const handleCategorySelect = (name) => {
     setActiveCategory(name);
@@ -83,9 +125,9 @@ export default function Products() {
     const matchesCategory =
       activeCategory === "All" ||
       p.category === activeCategory ||
-      (activeCategory === "Bra Cup Moulding Machine" && p.category.includes("Bra Cup")) ||
-      (activeCategory === "Roll Forming & Sheet Metal" && (p.category.includes("Roll") || p.category.includes("Decoiler") || p.category.includes("Roofing"))) ||
-      (activeCategory === "Cut To Length Line" && (p.category.includes("Cut") || p.category.includes("CTL")));
+      (activeCategory === "Bra Cup Moulding Machine" && (p.category?.includes("Bra Cup") || p.categorySlug === "bra-cup-moulding-machine")) ||
+      (activeCategory === "Roll Forming & Sheet Metal" && (p.category?.includes("Roll") || p.category?.includes("Decoiler") || p.category?.includes("Roofing") || p.categorySlug === "roll-forming-sheet-metal")) ||
+      (activeCategory === "Cut To Length Line" && (p.category?.includes("Cut") || p.category?.includes("CTL") || p.categorySlug === "cut-to-length-line"));
 
     const matchesSearch =
       searchQuery.trim() === "" ||
@@ -93,22 +135,45 @@ export default function Products() {
       (p.description || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
       (p.tagline && p.tagline.toLowerCase().includes(searchQuery.toLowerCase())) ||
       Object.values(p.specs || {}).some((v) =>
-        v.toLowerCase().includes(searchQuery.toLowerCase())
+        typeof v === "string" && v.toLowerCase().includes(searchQuery.toLowerCase())
       );
 
     return matchesCategory && matchesSearch;
   });
 
+  // Dynamic SEO metadata based on active category
+  const activeSlug = Object.keys(CATEGORY_META).find(
+    (k) => CATEGORY_META[k].name === activeCategory
+  );
+  const currentMeta = activeSlug ? CATEGORY_META[activeSlug] : null;
+
+  const seoTitle = currentMeta
+    ? currentMeta.title
+    : "Industrial Machinery Catalogue | Bra Cup, Roll Forming & CTL Lines";
+
+  const seoDescription = currentMeta
+    ? currentMeta.description
+    : "Comprehensive catalogue of heavy-duty industrial machinery: Bra Cup Moulding Presses, 10-Ton Hydraulic Decoilers, C/Z Purlin Lines, and Automatic Cut-To-Length Lines from Khopoli, Maharashtra.";
+
+  const seoKeywords = currentMeta
+    ? currentMeta.keywords
+    : "Bra Cup Moulding Machine, Hydraulic Decoiler, C Z Purlin Machine, Automatic CTL Line, Roofing Crimping Machine Catalogue, Gagan Engineering Khopoli";
+
+  const canonicalUrl = activeSlug
+    ? `${BUSINESS.websiteUrl}/products/category/${activeSlug}`
+    : `${BUSINESS.websiteUrl}/products`;
+
   return (
     <div className="bg-[#050505] text-white min-h-screen pt-24 sm:pt-28 pb-16 sm:pb-24">
       <SEO
-        title="Industrial Machinery Catalogue"
-        description="Catalogue of Bra Cup Moulding Machines, 10-Ton Hydraulic Decoilers, Roll Formers & Cut-To-Length Lines from Khopoli, Maharashtra."
-        keywords="Bra Cup Moulding Machine, Hydraulic Decoiler, C Z Purlin Machine, Automatic CTL Line, Roofing Crimping Machine Catalogue, Gagan Engineering Khopoli"
-        canonicalUrl={`${BUSINESS.websiteUrl}/products`}
+        title={seoTitle}
+        description={seoDescription}
+        keywords={seoKeywords}
+        canonicalUrl={canonicalUrl}
         breadcrumbs={[
           { name: "Home", url: BUSINESS.websiteUrl },
-          { name: "Machinery Catalogue", url: `${BUSINESS.websiteUrl}/products` }
+          { name: "Machinery Catalogue", url: `${BUSINESS.websiteUrl}/products` },
+          ...(currentMeta ? [{ name: currentMeta.name, url: canonicalUrl }] : [])
         ]}
         itemList={filteredProducts}
       />
@@ -117,10 +182,15 @@ export default function Products() {
         {/* Header */}
         <SectionHeader
           as="h1"
-          overline="// Industrial Machinery Catalogue"
-          title="Engineered for Continuous Shift Operations"
-          description="Browse our range of heavy-duty bra cup moulding presses, coil handling decoilers, cut-to-length lines, and roll forming machinery manufactured at our Khopoli workshop."
+          overline={currentMeta ? `// Machinery Category: ${currentMeta.name}` : "// Industrial Machinery Catalogue"}
+          title={currentMeta ? currentMeta.name : "Engineered for Continuous Shift Operations"}
+          description={
+            currentMeta
+              ? currentMeta.description
+              : "Browse our range of heavy-duty bra cup moulding presses, coil handling decoilers, cut-to-length lines, and roll forming machinery manufactured at our Khopoli workshop."
+          }
         />
+
 
         {/* Search & Count Bar */}
         <div className="mt-8 sm:mt-12 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 bg-[#0A0A0C] border border-white/10 rounded-xs p-3 sm:p-4">
