@@ -37,9 +37,9 @@ const capabilities = [
 
 const INDUSTRIES = [
   { id: "all", name: "All Machinery" },
-  { id: "bra-cup-moulding-machine", name: "Lingerie & Bra Cup Moulding", icon: Layers },
   { id: "roll-forming-sheet-metal", name: "Roofing & Roll Forming", icon: Wrench },
-  { id: "cut-to-length-line", name: "Coil Processing & CTL Lines", icon: Cpu }
+  { id: "cut-to-length-line", name: "Coil Processing & CTL Lines", icon: Cpu },
+  { id: "bra-cup-moulding-machine", name: "Lingerie & Bra Cup Moulding", icon: Layers }
 ];
 
 export default function Home() {
@@ -109,7 +109,7 @@ export default function Home() {
 
             {/* Subtitle */}
             <p className="mt-5 sm:mt-6 text-sm sm:text-base lg:text-lg text-white/80 leading-relaxed max-w-2xl font-normal">
-              Trusted Indian manufacturer of <strong>Bra Cup Moulding Presses</strong>, <strong>10-Ton Hydraulic Decoilers</strong>, <strong>C/Z Purlin Roll Formers</strong>, and <strong>Automatic Cut-to-Length Lines</strong> engineered for continuous 24/7 factory output.
+              Trusted Indian manufacturer of <strong>10-Ton Hydraulic Decoilers</strong>, <strong>Automatic Cut-to-Length Lines</strong>, <strong>C/Z Purlin Roll Formers</strong>, and <strong>Bra Cup Moulding Presses</strong> engineered for continuous 24/7 factory output.
             </p>
 
             {/* Key USPs */}
@@ -200,7 +200,7 @@ export default function Home() {
 
           {/* Dynamic Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {filteredCatalog.slice(0, 6).map((p, idx) => (
+            {filteredCatalog.map((p, idx) => (
               <ProductCard key={p.id} product={p} index={idx} />
             ))}
           </div>
@@ -245,14 +245,14 @@ export default function Home() {
       {/* MARQUEE */}
       <section className="py-4 sm:py-5 bg-[#FF5722] overflow-hidden border-y border-[#E64A19]">
         <div className="marquee-track flex gap-8 sm:gap-12 whitespace-nowrap font-display text-xl sm:text-2xl md:text-3xl tracking-wider uppercase text-white font-bold">
-          <span>★ BRA CUP MOULDING MACHINES</span>
           <span>★ 10-TON HYDRAULIC DECOILERS</span>
           <span>★ AUTOMATIC CUT-TO-LENGTH LINES</span>
           <span>★ C & Z PURLIN ROLL FORMERS</span>
           <span>★ ROOFING SHEET CRIMPING</span>
-          <span>★ KHOPOLI WORKS · SINCE 2006</span>
           <span>★ BRA CUP MOULDING MACHINES</span>
+          <span>★ KHOPOLI WORKS · SINCE 2006</span>
           <span>★ 10-TON HYDRAULIC DECOILERS</span>
+          <span>★ AUTOMATIC CUT-TO-LENGTH LINES</span>
         </div>
       </section>
 

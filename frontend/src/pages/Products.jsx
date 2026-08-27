@@ -9,12 +9,6 @@ import { BUSINESS } from "@/lib/business";
 import { api } from "@/lib/api";
 
 const CATEGORY_META = {
-  "bra-cup-moulding-machine": {
-    name: "Bra Cup Moulding Machine",
-    title: "Bra Cup Moulding Machines Manufacturer & Exporter",
-    description: "High-precision electric, foam, fabric, and padded bra cup moulding presses for intimate wear lingerie manufacturing in India and export.",
-    keywords: "Bra Cup Moulding Machine Manufacturer, Bra Cup Fabric Moulding, Foam Bra Cup Machine, Intimate Wear Machinery, Lingerie Moulding Press India"
-  },
   "roll-forming-sheet-metal": {
     name: "Roll Forming & Sheet Metal",
     title: "Roll Forming & Sheet Metal Machinery Manufacturer",
@@ -26,6 +20,12 @@ const CATEGORY_META = {
     title: "Automatic Cut To Length (CTL) Lines Manufacturer",
     description: "Precision automated cut-to-length lines with hydraulic decoiling, 9-roll EN31 leveling, and optical encoder PLC shearing for coils up to 6mm.",
     keywords: "Cut to Length Line Manufacturer, Automatic CTL Machine, Coil Processing Line, Heavy Sheet Leveler Khopoli Maharashtra"
+  },
+  "bra-cup-moulding-machine": {
+    name: "Bra Cup Moulding Machine",
+    title: "Bra Cup Moulding Machines Manufacturer & Exporter",
+    description: "High-precision electric, foam, fabric, and padded bra cup moulding presses for intimate wear lingerie manufacturing in India and export.",
+    keywords: "Bra Cup Moulding Machine Manufacturer, Bra Cup Fabric Moulding, Foam Bra Cup Machine, Intimate Wear Machinery, Lingerie Moulding Press India"
   }
 };
 
@@ -149,15 +149,15 @@ export default function Products() {
 
   const seoTitle = currentMeta
     ? currentMeta.title
-    : "Industrial Machinery Catalogue | Bra Cup, Roll Forming & CTL Lines";
+    : "Industrial Machinery Catalogue | Roll Forming, CTL Lines & Bra Cup Moulding";
 
   const seoDescription = currentMeta
     ? currentMeta.description
-    : "Comprehensive catalogue of heavy-duty industrial machinery: Bra Cup Moulding Presses, 10-Ton Hydraulic Decoilers, C/Z Purlin Lines, and Automatic Cut-To-Length Lines from Khopoli, Maharashtra.";
+    : "Comprehensive catalogue of heavy-duty industrial machinery: 10-Ton Hydraulic Decoilers, Automatic Cut-To-Length Lines, C/Z Purlin Lines, and Bra Cup Moulding Presses from Khopoli, Maharashtra.";
 
   const seoKeywords = currentMeta
     ? currentMeta.keywords
-    : "Bra Cup Moulding Machine, Hydraulic Decoiler, C Z Purlin Machine, Automatic CTL Line, Roofing Crimping Machine Catalogue, Gagan Engineering Khopoli";
+    : "Hydraulic Decoiler, C Z Purlin Machine, Automatic CTL Line, Roofing Crimping Machine, Bra Cup Moulding Machine Catalogue, Gagan Engineering Khopoli";
 
   const canonicalUrl = activeSlug
     ? `${BUSINESS.websiteUrl}/products/category/${activeSlug}`
@@ -187,7 +187,7 @@ export default function Products() {
           description={
             currentMeta
               ? currentMeta.description
-              : "Browse our range of heavy-duty bra cup moulding presses, coil handling decoilers, cut-to-length lines, and roll forming machinery manufactured at our Khopoli workshop."
+              : "Browse our range of heavy-duty coil handling decoilers, cut-to-length lines, roll forming machinery, and precision bra cup moulding presses manufactured at our Khopoli workshop."
           }
         />
 
