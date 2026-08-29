@@ -5,7 +5,7 @@ import SEO from "@/components/SEO";
 import ProductCard from "@/components/ProductCard";
 import SectionHeader from "@/components/SectionHeader";
 import { BUSINESS, GLOBAL_FAQS } from "@/lib/business";
-import { CATALOGUE_PRODUCTS } from "@/lib/catalogueData";
+import { CATALOGUE_PRODUCTS, getLiveCatalogueProducts } from "@/lib/catalogueData";
 import { api } from "@/lib/api";
 
 const HERO_BG = "/hero-bg.jpg";
@@ -43,29 +43,53 @@ const INDUSTRIES = [
 ];
 
 export default function Home() {
+  const [products, setProducts] = useState(getLiveCatalogueProducts);
   const [featured, setFeatured] = useState([]);
   const [selectedIndustry, setSelectedIndustry] = useState("all");
   const [openFaq, setOpenFaq] = useState(null);
 
   useEffect(() => {
-    api
-      .get("/products/featured")
-      .then((r) => {
-        if (r.data && r.data.products && r.data.products.length > 0) {
-          setFeatured(r.data.products);
+    // Helper: merge array of products with overrides (later wins)
+    const mergeProducts = (base, overrides) => {
+      const merged = [...base];
+      overrides.forEach((item) => {
+        const idx = merged.findIndex((m) => m.id === item.id);
+        if (idx >= 0) {
+          merged[idx] = { ...merged[idx], ...item };
         } else {
-          setFeatured(CATALOGUE_PRODUCTS.filter((p) => p.featured));
+          merged.push(item);
         }
+      });
+      return merged;
+    };
+
+    api
+      .get("/products")
+      .then((r) => {
+        let combined = getLiveCatalogueProducts();
+        if (r.data && r.data.products && r.data.products.length > 0) {
+          combined = mergeProducts(combined, r.data.products);
+        }
+        try {
+          const localProducts = JSON.parse(localStorage.getItem("gagan_custom_products") || "[]");
+          if (localProducts.length > 0) {
+            combined = mergeProducts(combined, localProducts);
+          }
+        } catch (e) {}
+        setProducts(combined);
+        setFeatured(combined.filter((p) => p.featured));
       })
       .catch(() => {
-        setFeatured(CATALOGUE_PRODUCTS.filter((p) => p.featured));
+        const live = getLiveCatalogueProducts();
+        setProducts(live);
+        setFeatured(live.filter((p) => p.featured));
       });
   }, []);
 
   const filteredCatalog =
     selectedIndustry === "all"
-      ? CATALOGUE_PRODUCTS
-      : CATALOGUE_PRODUCTS.filter((p) => p.categorySlug === selectedIndustry);
+      ? products
+      : products.filter((p) => p.categorySlug === selectedIndustry);
 
   return (
     <div className="bg-[#050505] text-white min-h-screen">
