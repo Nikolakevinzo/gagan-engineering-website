@@ -84,20 +84,15 @@ export default function ProductDetail() {
       .get(`/products/${id}`)
       .then((r) => {
         if (r.data && r.data.product) {
-          // DB is the authoritative source — use it directly
-          // Check if localStorage has a *newer* image update (base64 starts with data:)
+          let mergedProd = r.data.product;
           try {
             const localProducts = JSON.parse(localStorage.getItem("gagan_custom_products") || "[]");
             const localProd = localProducts.find((p) => p.id === id);
-            if (localProd && localProd.image && localProd.image.startsWith("data:")) {
-              // Local has a base64 upload that may not be in DB yet
-              setProduct({ ...r.data.product, image: localProd.image });
-            } else {
-              setProduct(r.data.product);
+            if (localProd) {
+              mergedProd = { ...mergedProd, ...localProd };
             }
-          } catch (e) {
-            setProduct(r.data.product);
-          }
+          } catch (e) {}
+          setProduct(mergedProd);
           setRelated(r.data.related || []);
         } else {
           // DB doesn't have it — fall back to live catalogue (includes localStorage)

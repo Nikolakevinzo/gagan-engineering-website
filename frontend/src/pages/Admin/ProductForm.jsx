@@ -607,13 +607,14 @@ export default function AdminProductForm() {
           p = CATALOGUE_PRODUCTS.find((item) => item.id === id);
         }
 
-        // Fallback 2: check localStorage admin cache
-        if (!p) {
-          try {
-            const localProducts = JSON.parse(localStorage.getItem("gagan_custom_products") || "[]");
-            p = localProducts.find((item) => item.id === id);
-          } catch (e) {}
-        }
+        // Merge localStorage admin updates on top of fetched product
+        try {
+          const localProducts = JSON.parse(localStorage.getItem("gagan_custom_products") || "[]");
+          const localProd = localProducts.find((item) => item.id === id);
+          if (localProd) {
+            p = { ...(p || {}), ...localProd };
+          }
+        } catch (e) {}
 
         if (!p) throw new Error("Not found");
 
