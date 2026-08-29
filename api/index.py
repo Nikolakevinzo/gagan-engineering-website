@@ -366,13 +366,15 @@ class ProductCreate(BaseModel):
     name: str
     category: str
     categorySlug: str
-    image: str
+    image: Optional[str] = ""
     tagline: Optional[str] = ""
     shortDesc: Optional[str] = ""
     description: Optional[str] = ""
     specs: Optional[Dict[str, str]] = {}
     featured: Optional[bool] = False
     faqs: Optional[List[FAQItem]] = []
+    images: Optional[List[str]] = []    # up to 5 ordered photo URLs
+    video_url: Optional[str] = None    # YouTube URL only
 
 class ProductUpdate(BaseModel):
     name: Optional[str] = None
@@ -385,6 +387,8 @@ class ProductUpdate(BaseModel):
     specs: Optional[Dict[str, str]] = None
     featured: Optional[bool] = None
     faqs: Optional[List[FAQItem]] = None
+    images: Optional[List[str]] = None  # up to 5 ordered photo URLs
+    video_url: Optional[str] = None    # YouTube URL only
 
 class ContactLead(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
@@ -799,10 +803,19 @@ async def admin_get_product(product_id: str, username: str = Depends(verify_admi
         raise HTTPException(status_code=404, detail="Product not found")
     return {"product": product}
 
+def _validate_youtube_url(url: Optional[str]) -> Optional[str]:
+    """Returns clean URL if valid YouTube, raises HTTPException otherwise."""
+    import re
+    if not url:
+        return None
+    url = url.strip()
+    if not re.search(r'(youtube\.com/(watch|shorts)|youtu\.be/)', url):
+        raise HTTPException(status_code=422, detail="video_url must be a valid YouTube URL (youtube.com/watch?v=..., youtu.be/..., or youtube.com/shorts/...).")
+    return url
+
 @admin_router.post("/products", status_code=201)
 async def admin_create_product(payload: ProductCreate, username: str = Depends(verify_admin)):
     product_id = payload.id or payload.name.lower().replace(" ", "-").replace("/", "-").replace("&", "and")
-    # Slugify
     import re
     product_id = re.sub(r'[^a-z0-9-]', '', re.sub(r'\s+', '-', product_id.lower()))
 
@@ -811,9 +824,17 @@ async def admin_create_product(payload: ProductCreate, username: str = Depends(v
     if existing:
         raise HTTPException(status_code=409, detail=f"Product with id '{product_id}' already exists")
 
+    # Validate media fields
+    images = payload.images or []
+    if len(images) > 5:
+        raise HTTPException(status_code=422, detail="Maximum 5 photos allowed per product.")
+    video_url = _validate_youtube_url(payload.video_url)
+
     new_product = {
         **payload.model_dump(),
         "id": product_id,
+        "images": images,
+        "video_url": video_url,
         "faqs": [f.model_dump() for f in (payload.faqs or [])],
         "createdAt": datetime.now(timezone.utc),
         "updatedAt": datetime.now(timezone.utc),
@@ -840,6 +861,14 @@ async def admin_update_product(product_id: str, payload: ProductUpdate, username
     update_data = {k: v for k, v in payload.model_dump(exclude_unset=True).items() if v is not None}
     if "faqs" in update_data:
         update_data["faqs"] = [f.model_dump() if hasattr(f, 'model_dump') else f for f in update_data["faqs"]]
+
+    # Validate media fields if provided
+    if "images" in update_data:
+        if len(update_data["images"]) > 5:
+            raise HTTPException(status_code=422, detail="Maximum 5 photos allowed per product.")
+    if "video_url" in update_data:
+        update_data["video_url"] = _validate_youtube_url(update_data["video_url"])
+
     update_data["updatedAt"] = datetime.now(timezone.utc)
 
     if db is not None:

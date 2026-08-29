@@ -341,3 +341,32 @@ export function getLiveCatalogueProducts() {
   } catch (e) {}
   return CATALOGUE_PRODUCTS;
 }
+
+// ----------------- Media Helpers -----------------
+
+/**
+ * Returns an ordered array of image URLs for a product.
+ * Normalises old single-image products (p.image) and new multi-image products (p.images[]).
+ */
+export function getProductImages(p) {
+  if (!p) return [];
+  if (Array.isArray(p.images) && p.images.length > 0) return p.images;
+  if (p.image) return [p.image];
+  return [];
+}
+
+/**
+ * Extracts the YouTube video ID from a product's video_url.
+ * Handles youtube.com/watch?v=, youtu.be/, youtube.com/shorts/.
+ * Returns null if no valid video URL is set.
+ */
+export function getProductVideoId(p) {
+  const url = p?.video_url;
+  if (!url) return null;
+  const m =
+    url.match(/[?&]v=([^&#]+)/) ||
+    url.match(/youtu\.be\/([^?&#]+)/) ||
+    url.match(/\/shorts\/([^?&#]+)/);
+  return m ? m[1] : null;
+}
+

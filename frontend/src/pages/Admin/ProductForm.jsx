@@ -72,6 +72,8 @@ const EMPTY_PRODUCT = {
   category: "Bra Cup Moulding Machine",
   categorySlug: "bra-cup-moulding-machine",
   image: "",
+  images: [],
+  video_url: "",
   tagline: "",
   shortDesc: "",
   description: "",
@@ -287,233 +289,208 @@ function SpecificationTableBuilder({ specs, onChange }) {
 }
 
 // -------------------------------------------------------------
-// Image Uploader & URL Manager Component
+// Gallery Uploader — up to 5 image URLs per product
 // -------------------------------------------------------------
-function ImageUploader({ image, onChange, getAuthHeader }) {
-  const [activeTab, setActiveTab] = useState(image?.startsWith("data:") || image?.startsWith("/images/") ? "upload" : "url");
-  const [uploading, setUploading] = useState(false);
-  const [dragActive, setDragActive] = useState(false);
-  const [error, setError] = useState("");
-  const fileInputRef = useRef(null);
+function GalleryUploader({ images, onChange }) {
+  const MAX = 5;
+  const [urlInput, setUrlInput] = useState("");
+  const [urlError, setUrlError] = useState("");
 
-  const processFile = async (file) => {
-    if (!file) return;
-    if (!file.type.startsWith("image/")) {
-      setError("Please select a valid image file (PNG, JPG, JPEG, WEBP).");
+  const addUrl = () => {
+    const trimmed = urlInput.trim();
+    if (!trimmed) return;
+    if (images.length >= MAX) {
+      setUrlError(`Maximum ${MAX} photos allowed.`);
       return;
     }
-    setError("");
-    setUploading(true);
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const img = new Image();
-      img.onload = () => {
-        // High quality client-side canvas compression (max 1200px)
-        // Max 800px to keep base64 well under Vercel 4.5MB body limit
-        const maxDim = 800;
-        let width = img.width;
-        let height = img.height;
-
-        if (width > maxDim || height > maxDim) {
-          if (width > height) {
-            height = Math.round((height * maxDim) / width);
-            width = maxDim;
-          } else {
-            width = Math.round((width * maxDim) / height);
-            height = maxDim;
-          }
-        }
-
-        const canvas = document.createElement("canvas");
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext("2d");
-        ctx.drawImage(img, 0, 0, width, height);
-
-        // 0.75 quality keeps image < 80KB as base64 — safe for Vercel payload limits
-        const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.75);
-        onChange(compressedDataUrl);
-        setUploading(false);
-      };
-      img.onerror = () => {
-        onChange(e.target.result);
-        setUploading(false);
-      };
-      img.src = e.target.result;
-    };
-    reader.onerror = () => {
-      setError("Failed to read image file.");
-      setUploading(false);
-    };
-    reader.readAsDataURL(file);
+    try { new URL(trimmed); } catch { setUrlError("Please enter a valid URL."); return; }
+    setUrlError("");
+    onChange([...images, trimmed]);
+    setUrlInput("");
   };
 
-  const handleFileChange = (e) => {
-    const file = e.target.files?.[0];
-    processFile(file);
+  const remove = (idx) => onChange(images.filter((_, i) => i !== idx));
+
+  const moveUp = (idx) => {
+    if (idx === 0) return;
+    const next = [...images];
+    [next[idx - 1], next[idx]] = [next[idx], next[idx - 1]];
+    onChange(next);
   };
 
-  const handleDrag = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.type === "dragenter" || e.type === "dragover") {
-      setDragActive(true);
-    } else if (e.type === "dragleave") {
-      setDragActive(false);
-    }
+  const moveDown = (idx) => {
+    if (idx === images.length - 1) return;
+    const next = [...images];
+    [next[idx], next[idx + 1]] = [next[idx + 1], next[idx]];
+    onChange(next);
   };
 
-  const handleDrop = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      processFile(e.dataTransfer.files[0]);
-    }
-  };
+  const FALLBACK = "https://5.imimg.com/data5/SELLER/Default/2026/3/591026243/LM/XU/AK/4175789/corrugated-sheets-making-machine-500x500.jpeg";
 
   return (
     <div className="space-y-4">
-      {/* Upload vs URL Tabs */}
-      <div className="flex items-center gap-2 border-b border-white/10 pb-3">
-        <button
-          type="button"
-          onClick={() => setActiveTab("upload")}
-          className={`flex items-center gap-2 px-3 py-1.5 rounded-xs text-xs font-semibold uppercase tracking-wider transition-colors ${
-            activeTab === "upload"
-              ? "bg-[#FF5722] text-white"
-              : "bg-white/5 text-white/60 hover:text-white"
-          }`}
-        >
-          <Upload className="w-3.5 h-3.5" /> Upload File
-        </button>
-        <button
-          type="button"
-          onClick={() => setActiveTab("url")}
-          className={`flex items-center gap-2 px-3 py-1.5 rounded-xs text-xs font-semibold uppercase tracking-wider transition-colors ${
-            activeTab === "url"
-              ? "bg-[#FF5722] text-white"
-              : "bg-white/5 text-white/60 hover:text-white"
-          }`}
-        >
-          <Link2 className="w-3.5 h-3.5" /> External Image URL
-        </button>
-      </div>
+      {/* Current images grid */}
+      {images.length > 0 && (
+        <div className="space-y-2">
+          {images.map((url, idx) => (
+            <div
+              key={idx}
+              className="flex items-center gap-3 bg-black/40 border border-white/10 rounded-xs p-2"
+            >
+              {/* Thumbnail */}
+              <div className="shrink-0 w-14 h-12 bg-[#0c0c0e] border border-white/10 rounded-xs overflow-hidden flex items-center justify-center">
+                <img
+                  src={url}
+                  alt={`Photo ${idx + 1}`}
+                  className="w-full h-full object-contain"
+                  onError={(e) => { e.currentTarget.src = FALLBACK; }}
+                />
+              </div>
 
-      {error && (
-        <div className="bg-red-500/10 border border-red-500/30 text-red-400 text-xs px-3 py-2 rounded-xs">
-          {error}
+              {/* Label */}
+              <div className="flex-1 min-w-0">
+                {idx === 0 && (
+                  <span className="inline-block bg-[#FF5722] text-white mono text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded-xs mb-0.5">★ Primary</span>
+                )}
+                <p className="mono text-[11px] text-white/50 truncate">{url}</p>
+              </div>
+
+              {/* Controls */}
+              <div className="flex items-center gap-0.5 shrink-0">
+                <button type="button" onClick={() => moveUp(idx)} disabled={idx === 0}
+                  className="p-1 text-white/30 hover:text-white disabled:opacity-20 transition-colors" title="Move up">
+                  <ArrowUp className="w-3.5 h-3.5" />
+                </button>
+                <button type="button" onClick={() => moveDown(idx)} disabled={idx === images.length - 1}
+                  className="p-1 text-white/30 hover:text-white disabled:opacity-20 transition-colors" title="Move down">
+                  <ArrowDown className="w-3.5 h-3.5" />
+                </button>
+                <button type="button" onClick={() => remove(idx)}
+                  className="p-1 text-white/30 hover:text-red-400 transition-colors" title="Remove">
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
       )}
 
-      {/* Tab 1: File Upload */}
-      {activeTab === "upload" && (
-        <div>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/png, image/jpeg, image/jpg, image/webp"
-            onChange={handleFileChange}
-            className="hidden"
-          />
-
-          <div
-            onDragEnter={handleDrag}
-            onDragLeave={handleDrag}
-            onDragOver={handleDrag}
-            onDrop={handleDrop}
-            onClick={() => fileInputRef.current?.click()}
-            className={`border-2 border-dashed rounded-sm p-8 text-center cursor-pointer transition-all ${
-              dragActive
-                ? "border-[#FF5722] bg-[#FF5722]/10"
-                : "border-white/20 bg-black/40 hover:border-[#FF5722]/60 hover:bg-black/60"
-            }`}
-          >
-            {uploading ? (
-              <div className="flex flex-col items-center justify-center gap-2 text-white/60">
-                <Loader2 className="w-8 h-8 text-[#FF5722] animate-spin" />
-                <span className="text-xs">Processing image...</span>
-              </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center gap-2 text-white/60">
-                <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-[#FF5722] mb-1">
-                  <Upload className="w-6 h-6" />
-                </div>
-                <div className="text-sm font-medium text-white">
-                  Click to browse or drag & drop machine photo
-                </div>
-                <div className="mono text-[11px] text-white/40">
-                  Supports PNG, JPG, JPEG, WEBP (High Resolution Recommended)
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Tab 2: URL Input */}
-      {activeTab === "url" && (
-        <div>
-          <label className="block mono text-[10px] text-white/50 uppercase tracking-wider mb-1.5">
-            Image Web URL (IndiaMART, CDN, or Cloud Storage)
+      {/* Add URL input */}
+      {images.length < MAX ? (
+        <div className="space-y-2">
+          <label className="block mono text-[10px] text-white/50 uppercase tracking-wider">
+            Add Photo URL ({images.length}/{MAX})
           </label>
+          <div className="flex gap-2">
+            <input
+              type="url"
+              value={urlInput}
+              onChange={(e) => { setUrlInput(e.target.value); setUrlError(""); }}
+              onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addUrl())}
+              placeholder="https://5.imimg.com/data5/... or any CDN image URL"
+              className="flex-1 bg-black/60 border border-white/15 text-white text-sm px-3.5 py-2.5 rounded-sm focus:outline-none focus:border-[#FF5722]"
+            />
+            <button
+              type="button"
+              onClick={addUrl}
+              disabled={!urlInput.trim()}
+              className="flex items-center gap-1.5 px-4 py-2.5 bg-[#FF5722] hover:bg-[#F4511E] text-white text-xs font-semibold uppercase tracking-wider rounded-sm transition-colors disabled:opacity-40"
+            >
+              <Plus className="w-4 h-4" /> Add
+            </button>
+          </div>
+          {urlError && <p className="text-red-400 text-xs">{urlError}</p>}
+          <p className="mono text-[10px] text-white/40">First photo is the primary/cover image. Reorder using arrows. Max {MAX} photos.</p>
+        </div>
+      ) : (
+        <div className="bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs px-3 py-2 rounded-xs">
+          Maximum {MAX} photos reached. Remove one to add another.
+        </div>
+      )}
+    </div>
+  );
+}
+
+// -------------------------------------------------------------
+// YouTube Video URL field
+// -------------------------------------------------------------
+function VideoUrlField({ value, onChange }) {
+  const [error, setError] = useState("");
+
+  const extractVideoId = (url) => {
+    if (!url) return null;
+    const m =
+      url.match(/[?&]v=([^&#]+)/) ||
+      url.match(/youtu\.be\/([^?&#]+)/) ||
+      url.match(/\/shorts\/([^?&#]+)/);
+    return m ? m[1] : null;
+  };
+
+  const handleBlur = () => {
+    if (!value) { setError(""); return; }
+    const vid = extractVideoId(value);
+    if (!vid) {
+      setError("Not a valid YouTube URL. Use youtube.com/watch?v=..., youtu.be/..., or youtube.com/shorts/...");
+    } else {
+      setError("");
+    }
+  };
+
+  const videoId = extractVideoId(value);
+
+  return (
+    <div className="space-y-3">
+      <div className="flex gap-3 items-start">
+        <div className="flex-1">
           <input
             type="url"
-            value={image || ""}
-            onChange={(e) => onChange(e.target.value)}
-            placeholder="https://5.imimg.com/data5/..."
-            className="w-full bg-black/60 border border-white/15 text-white text-sm px-4 py-3 rounded-sm focus:outline-none focus:border-[#FF5722]"
+            value={value}
+            onChange={(e) => { onChange(e.target.value); setError(""); }}
+            onBlur={handleBlur}
+            placeholder="https://www.youtube.com/watch?v=XXXXXXXXXXX"
+            className={`w-full bg-black/60 border text-white text-sm px-3.5 py-2.5 rounded-sm focus:outline-none ${
+              error ? "border-red-500" : "border-white/15 focus:border-[#FF5722]"
+            }`}
           />
+          {error && <p className="text-red-400 text-xs mt-1">{error}</p>}
+        </div>
+        {value && (
+          <button
+            type="button"
+            onClick={() => onChange("")}
+            className="p-2.5 text-white/40 hover:text-red-400 border border-white/10 rounded-xs transition-colors shrink-0"
+            title="Clear video URL"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        )}
+      </div>
+
+      {/* Live thumbnail preview */}
+      {videoId && !error && (
+        <div className="flex items-center gap-3 bg-black/40 border border-white/10 rounded-xs p-2">
+          <div className="shrink-0 w-24 h-16 bg-[#0c0c0e] border border-white/10 rounded-xs overflow-hidden relative">
+            <img
+              src={`https://img.youtube.com/vi/${videoId}/mqdefault.jpg`}
+              alt="YouTube thumbnail"
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-7 h-7 rounded-full bg-[#FF5722]/90 flex items-center justify-center">
+                <Eye className="w-3.5 h-3.5 text-white" />
+              </div>
+            </div>
+          </div>
+          <div className="min-w-0">
+            <span className="mono text-xs text-green-400 flex items-center gap-1.5">
+              <Check className="w-3.5 h-3.5" /> Valid YouTube URL
+            </span>
+            <p className="mono text-[11px] text-white/40 truncate mt-0.5">ID: {videoId}</p>
+          </div>
         </div>
       )}
 
-      {/* Image Preview & Remove Controls */}
-      {image && (
-        <div className="bg-black/60 border border-white/15 rounded-sm p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4">
-          <div className="relative w-32 h-28 sm:w-40 sm:h-32 bg-[#0c0c0e] border border-white/20 rounded-xs overflow-hidden shrink-0 flex items-center justify-center p-1">
-            <img
-              src={image}
-              alt="Machine Preview"
-              className="w-full h-full object-contain"
-              onError={(e) => {
-                e.currentTarget.src = "https://5.imimg.com/data5/SELLER/Default/2026/3/591026243/LM/XU/AK/4175789/corrugated-sheets-making-machine-500x500.jpeg";
-              }}
-            />
-          </div>
-          <div className="flex-1 min-w-0 space-y-2">
-            <div className="flex items-center gap-2">
-              <span className="mono text-xs text-green-400 font-semibold flex items-center gap-1.5 bg-green-500/10 border border-green-500/30 px-2.5 py-0.5 rounded-xs">
-                <Check className="w-3.5 h-3.5" /> Image Attached & Active
-              </span>
-            </div>
-            <p className="mono text-[11px] text-white/50 truncate max-w-md">
-              {image.startsWith("data:")
-                ? `Embedded High-Res Photo (${Math.round(image.length / 1024)} KB)`
-                : image}
-            </p>
-            <div className="pt-1 flex items-center gap-2.5">
-              <button
-                type="button"
-                onClick={() => {
-                  setActiveTab("upload");
-                  setTimeout(() => fileInputRef.current?.click(), 50);
-                }}
-                className="text-xs text-white bg-white/10 hover:bg-white/20 border border-white/20 px-3 py-1.5 rounded-xs transition-colors flex items-center gap-1.5"
-              >
-                <Upload className="w-3 h-3" /> Change File
-              </button>
-              <button
-                type="button"
-                onClick={() => onChange("")}
-                className="text-xs text-red-400 hover:text-red-300 px-3 py-1.5 rounded-xs hover:bg-red-400/10 border border-red-500/30 transition-colors"
-              >
-                Remove
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <p className="mono text-[10px] text-white/40">Optional. Paste a YouTube watch link. The video will play inline on the product page — never redirects to YouTube.com.</p>
     </div>
   );
 }
@@ -644,6 +621,8 @@ export default function AdminProductForm() {
           category: p.category || "Roll Forming & Sheet Metal",
           categorySlug: p.categorySlug || "roll-forming-sheet-metal",
           image: p.image || "",
+          images: Array.isArray(p.images) ? p.images : [],
+          video_url: p.video_url || "",
           tagline: p.tagline || "",
           shortDesc: p.shortDesc || p.short_description || "",
           description: p.description || "",
@@ -673,8 +652,8 @@ export default function AdminProductForm() {
       setError("Product name is required.");
       return;
     }
-    if (!form.image) {
-      setError("Please upload an image or provide an image URL.");
+    if (!form.image && form.images.length === 0) {
+      setError("Please add at least one product photo (URL).");
       return;
     }
 
@@ -682,7 +661,15 @@ export default function AdminProductForm() {
     setError("");
     setSuccess("");
 
-    const payload = { ...form, specs, faqs };
+    const payload = {
+      ...form,
+      specs,
+      faqs,
+      // Sync legacy image field: keep as first image for backward compat
+      image: form.images[0] || form.image || "",
+      images: form.images.length > 0 ? form.images : (form.image ? [form.image] : []),
+      video_url: form.video_url || null,
+    };
 
     try {
       const url = isEdit
@@ -962,15 +949,26 @@ export default function AdminProductForm() {
           </div>
         </div>
 
-        {/* 2. Image Upload & URL Manager */}
+        {/* 2. Photo Gallery */}
         <div className="bg-[#09090B] border border-white/10 rounded-sm p-6 space-y-4">
           <div className="mono text-xs text-[#FF5722] uppercase tracking-[0.2em] mb-1 flex items-center gap-2">
-            <ImageIcon className="w-4 h-4" /> Product Image (Upload File or Enter URL)
+            <ImageIcon className="w-4 h-4" /> Product Photos (up to 5)
           </div>
-          <ImageUploader
-            image={form.image}
-            onChange={(val) => setForm({ ...form, image: val })}
-            getAuthHeader={getAuthHeader}
+          <p className="text-xs text-white/50">Add photos via IndiaMART, Google Drive, or any public CDN URL. First photo is the primary/cover image.</p>
+          <GalleryUploader
+            images={form.images.length > 0 ? form.images : (form.image ? [form.image] : [])}
+            onChange={(imgs) => setForm({ ...form, images: imgs, image: imgs[0] || "" })}
+          />
+        </div>
+
+        {/* 3. Product Video (YouTube) */}
+        <div className="bg-[#09090B] border border-white/10 rounded-sm p-6 space-y-4">
+          <div className="mono text-xs text-[#FF5722] uppercase tracking-[0.2em] mb-1 flex items-center gap-2">
+            <Eye className="w-4 h-4" /> Machine Video (YouTube — Optional)
+          </div>
+          <VideoUrlField
+            value={form.video_url}
+            onChange={(val) => setForm({ ...form, video_url: val })}
           />
         </div>
 

@@ -4,8 +4,9 @@ import { ArrowLeft, ArrowRight, Phone, MessageCircle, ShieldCheck, Printer, File
 import { toast } from "sonner";
 import SEO from "@/components/SEO";
 import ProductCard from "@/components/ProductCard";
+import ProductGallery from "@/components/ProductGallery";
 import SectionHeader from "@/components/SectionHeader";
-import { CATALOGUE_PRODUCTS, getLiveCatalogueProducts } from "@/lib/catalogueData";
+import { CATALOGUE_PRODUCTS, getLiveCatalogueProducts, getProductImages, getProductVideoId } from "@/lib/catalogueData";
 import { BUSINESS } from "@/lib/business";
 import { api } from "@/lib/api";
 
@@ -165,7 +166,7 @@ export default function ProductDetail() {
         faqData={product.faqs}
         breadcrumbs={breadcrumbs}
         canonicalUrl={`${BUSINESS.websiteUrl}/products/${product.id}`}
-        ogImage={product.image}
+        ogImage={getProductImages(product)[0]}
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
@@ -180,22 +181,13 @@ export default function ProductDetail() {
 
         {/* Top Product Overview Grid */}
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-start">
-          {/* Left: Product Image */}
+          {/* Left: Product Gallery */}
           <div className="space-y-3 sm:space-y-4">
-            <div className="relative border border-white/10 bg-[#0c0c0e] aspect-[4/3] sm:aspect-[16/11] rounded-xs overflow-hidden shadow-2xl p-4 sm:p-6 flex items-center justify-center">
-              <img
-                src={product.image || "https://5.imimg.com/data5/SELLER/Default/2026/3/591026243/LM/XU/AK/4175789/corrugated-sheets-making-machine-500x500.jpeg"}
-                alt={`${product.name} - Gagan Engineering Works Khopoli`}
-                className="w-full h-full object-contain"
-                onError={(e) => {
-                  e.currentTarget.src = "https://5.imimg.com/data5/SELLER/Default/2026/3/591026243/LM/XU/AK/4175789/corrugated-sheets-making-machine-500x500.jpeg";
-                }}
-                data-testid="product-image"
-              />
-              <div className="absolute top-3 left-3 bg-black/85 backdrop-blur-md px-2.5 sm:px-3 py-1 sm:py-1.5 mono text-[9px] sm:text-[10px] tracking-[0.15em] sm:tracking-[0.2em] uppercase text-[#FF5722] border border-[#FF5722]/40 rounded-xs">
-                {product.category}
-              </div>
-            </div>
+            <ProductGallery
+              images={getProductImages(product)}
+              videoId={getProductVideoId(product)}
+              productName={product.name}
+            />
 
             {/* Quick Badges */}
             <div className="grid grid-cols-3 gap-2 text-center mono text-white/70">

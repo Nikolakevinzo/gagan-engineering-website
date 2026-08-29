@@ -1,9 +1,11 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, MessageCircle, Eye, CheckCircle2 } from "lucide-react";
 import { BUSINESS } from "@/lib/business";
+import { getProductImages } from "@/lib/catalogueData";
 
 export default function ProductCard({ product, index = 0 }) {
   const specsEntries = Object.entries(product.specs || {}).slice(0, 3);
+  const coverImage = getProductImages(product)[0] || "https://5.imimg.com/data5/SELLER/Default/2026/3/591026243/LM/XU/AK/4175789/corrugated-sheets-making-machine-500x500.jpeg";
 
   return (
     <div
@@ -14,7 +16,7 @@ export default function ProductCard({ product, index = 0 }) {
       <div>
         <div className="relative aspect-[16/10] bg-[#0c0c0e] flex items-center justify-center p-3 sm:p-4 overflow-hidden border-b border-white/10">
           <img
-            src={product.image || "https://5.imimg.com/data5/SELLER/Default/2026/3/591026243/LM/XU/AK/4175789/corrugated-sheets-making-machine-500x500.jpeg"}
+            src={coverImage}
             alt={`${product.name} - Gagan Engineering Works`}
             loading="lazy"
             onError={(e) => {
