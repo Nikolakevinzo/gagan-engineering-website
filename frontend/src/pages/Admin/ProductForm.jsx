@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 
 import { getBackendUrl } from "@/lib/adminConfig";
-import { CATALOGUE_PRODUCTS } from "@/lib/catalogueData";
+import { CATALOGUE_PRODUCTS, normalizeImageUrl } from "@/lib/catalogueData";
 
 const BACKEND_URL = getBackendUrl();
 
@@ -297,12 +297,13 @@ function GalleryUploader({ images, onChange }) {
   const [urlError, setUrlError] = useState("");
 
   const addUrl = () => {
-    const trimmed = urlInput.trim();
+    let trimmed = urlInput.trim();
     if (!trimmed) return;
     if (images.length >= MAX) {
       setUrlError(`Maximum ${MAX} photos allowed.`);
       return;
     }
+    trimmed = normalizeImageUrl(trimmed);
     try { new URL(trimmed); } catch { setUrlError("Please enter a valid URL."); return; }
     setUrlError("");
     onChange([...images, trimmed]);

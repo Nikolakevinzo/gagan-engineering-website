@@ -345,14 +345,42 @@ export function getLiveCatalogueProducts() {
 // ----------------- Media Helpers -----------------
 
 /**
+ * Automatically converts Google Drive, Dropbox, and other cloud share links
+ * into direct embeddable image CDN URLs.
+ */
+export function normalizeImageUrl(url) {
+  if (!url || typeof url !== "string") return url;
+  const trimmed = url.trim();
+
+  // Google Drive conversion (file/d/ID, open?id=ID, uc?id=ID, thumbnail?id=ID)
+  const driveMatch =
+    trimmed.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/) ||
+    trimmed.match(/drive\.google\.com\/open\?id=([a-zA-Z0-9_-]+)/) ||
+    trimmed.match(/drive\.google\.com\/uc\?(?:.*&)?id=([a-zA-Z0-9_-]+)/) ||
+    trimmed.match(/drive\.google\.com\/thumbnail\?(?:.*&)?id=([a-zA-Z0-9_-]+)/);
+  if (driveMatch && driveMatch[1]) {
+    return `https://lh3.googleusercontent.com/d/${driveMatch[1]}`;
+  }
+
+  // Dropbox conversion (?dl=0 -> ?raw=1)
+  if (trimmed.includes("dropbox.com") && trimmed.includes("dl=0")) {
+    return trimmed.replace("dl=0", "raw=1");
+  }
+
+  return trimmed;
+}
+
+/**
  * Returns an ordered array of image URLs for a product.
- * Normalises old single-image products (p.image) and new multi-image products (p.images[]).
+ * Normalises old single-image products (p.image) and new multi-image products (p.images[]),
+ * while converting cloud share links (like Google Drive) into embeddable direct links.
  */
 export function getProductImages(p) {
   if (!p) return [];
-  if (Array.isArray(p.images) && p.images.length > 0) return p.images;
-  if (p.image) return [p.image];
-  return [];
+  let list = [];
+  if (Array.isArray(p.images) && p.images.length > 0) list = p.images;
+  else if (p.image) list = [p.image];
+  return list.map(normalizeImageUrl);
 }
 
 /**
@@ -369,4 +397,5 @@ export function getProductVideoId(p) {
     url.match(/\/shorts\/([^?&#]+)/);
   return m ? m[1] : null;
 }
+
 

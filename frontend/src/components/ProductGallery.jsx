@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import { ChevronLeft, ChevronRight, Play, X } from "lucide-react";
+import { normalizeImageUrl } from "@/lib/catalogueData";
 
 const FALLBACK = "https://5.imimg.com/data5/SELLER/Default/2026/3/591026243/LM/XU/AK/4175789/corrugated-sheets-making-machine-500x500.jpeg";
 
@@ -13,7 +14,7 @@ const FALLBACK = "https://5.imimg.com/data5/SELLER/Default/2026/3/591026243/LM/X
 export default function ProductGallery({ images = [], videoId = null, productName = "" }) {
   // Build the "slots" list: images + optional video at the end
   const hasVideo = Boolean(videoId);
-  const slots = images.map((url, i) => ({ type: "image", url, idx: i }));
+  const slots = images.map((url, i) => ({ type: "image", url: normalizeImageUrl(url), idx: i }));
   if (hasVideo) slots.push({ type: "video", videoId });
 
   const [active, setActive] = useState(0);
