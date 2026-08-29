@@ -170,6 +170,42 @@ export default function AdminDashboard() {
         </Link>
       </div>
 
+      {/* Database Cloud Persistence Status */}
+      <div className="bg-[#09090B] border border-white/10 rounded-sm p-6 mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-start gap-3">
+            <div className={`w-9 h-9 ${stats?.db_connected ? "bg-emerald-500/10 border border-emerald-500/30" : "bg-amber-500/10 border border-amber-500/30"} rounded-sm flex items-center justify-center shrink-0 mt-0.5`}>
+              <Package className={`w-4.5 h-4.5 ${stats?.db_connected ? "text-emerald-400" : "text-amber-400"}`} />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="font-semibold text-white text-sm">Product Database Persistence</span>
+                {stats?.db_connected ? (
+                  <span className="inline-flex items-center gap-1 mono text-[10px] bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                    <CheckCircle2 className="w-3 h-3" /> MongoDB Cloud Connected
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1 mono text-[10px] bg-amber-500/10 border border-amber-500/30 text-amber-400 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                    <AlertTriangle className="w-3 h-3" /> In-Memory Mode
+                  </span>
+                )}
+              </div>
+              <p className="text-white/60 text-xs mt-1 leading-relaxed">
+                {stats?.db_connected
+                  ? "Changes made in this admin panel are saved permanently to MongoDB Cloud and will persist across all Vercel redeployments."
+                  : "To keep changes across redeployments, connect MongoDB Atlas in Vercel settings (MONGO_URL), or copy your product changes into code."}
+              </p>
+            </div>
+          </div>
+          <Link
+            to="/admin/products"
+            className="shrink-0 text-xs font-semibold bg-[#FF5722]/10 hover:bg-[#FF5722]/20 text-[#FF5722] border border-[#FF5722]/30 px-3.5 py-2 rounded-sm transition-all text-center"
+          >
+            Manage Products →
+          </Link>
+        </div>
+      </div>
+
       {/* Resend Email Delivery Status */}
       <div className="bg-[#09090B] border border-white/10 rounded-sm p-6 mb-8">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">

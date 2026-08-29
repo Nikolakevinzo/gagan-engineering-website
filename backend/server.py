@@ -1069,6 +1069,7 @@ async def admin_stats(username: str = Depends(verify_admin)):
         "categories_count": len(categories),
         "categories": list(categories),
         "resend_configured": resend_ready,
+        "db_connected": db is not None,
         "sender_email": sender_mail,
         "business_email": biz_mail,
     }
