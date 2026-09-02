@@ -94,9 +94,9 @@ export default function Home() {
   return (
     <div className="bg-[#050505] text-white min-h-screen">
       <SEO
-        title="Machinery Manufacturer"
-        description="Manufacturer of Bra Cup Moulding Machines, Hydraulic Decoilers, Roll Forming Lines & Industrial Machinery in Khopoli, Maharashtra."
-        keywords="Bra Cup Moulding Machine Manufacturer, Roll Forming Machine India, 10 Ton Hydraulic Decoiler, Automatic Cut To Length Machine, C Z Purlin Machine, Roofing Sheet Crimping Machine Khopoli"
+        title="Industrial Machinery Manufacturer & Exporter | Khopoli India"
+        description="Premier Indian manufacturer & exporter of Bra Cup Moulding Machines, 10 Ton Hydraulic Decoilers, C/Z Purlin Roll Forming Machines, Automatic Cut-To-Length Lines, and Roofing Sheet Machinery. 19+ years precision engineering from Khopoli, Maharashtra. Pan-India & worldwide export."
+        keywords="Industrial Machinery Manufacturer India, Bra Cup Moulding Machine Manufacturer, Roll Forming Machine India, 10 Ton Hydraulic Decoiler, Automatic Cut To Length Machine, C Z Purlin Machine, Roofing Sheet Crimping Machine, Gagan Engineering Works Khopoli Maharashtra"
         faqData={GLOBAL_FAQS}
         breadcrumbs={[{ name: "Home", url: BUSINESS.websiteUrl }]}
       />

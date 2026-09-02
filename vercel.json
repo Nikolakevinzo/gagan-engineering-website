@@ -86,6 +86,17 @@
     },
     {
       "src": "/(.*)",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i).*(googlebot|bingbot|yandexbot|duckduckbot|slurp|baiduspider|facebookexternalhit|twitterbot|linkedinbot|whatsapp|telegrambot|gptbot|chatgpt-user|perplexitybot|google-extended|claudebot|anthropic-ai|oai-searchbot|applebot|semrushbot|ahrefsbot|petalbot).*"
+        }
+      ],
+      "dest": "/api/index.py?__seo_path=$1"
+    },
+    {
+      "src": "/(.*)",
       "dest": "frontend/index.html"
     }
   ]

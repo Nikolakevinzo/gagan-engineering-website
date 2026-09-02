@@ -1,54 +1,55 @@
 User-agent: *
 Allow: /
+Allow: /products
+Allow: /products/
+Allow: /blog
+Allow: /blog/
+Allow: /about
+Allow: /factory
+Allow: /contact
+Allow: /return-policy
+Allow: /privacy-policy
+Allow: /terms
 Disallow: /admin
 Disallow: /admin/*
 Disallow: /api/admin/
 Disallow: /api/admin/*
 
-# AI Search Engine Directives (Explicitly Allowed for Generative Engine Optimization)
-User-agent: GPTBot
-Allow: /
-Disallow: /admin
-Disallow: /api/admin/
-
-User-agent: ChatGPT-User
-Allow: /
-Disallow: /admin
-Disallow: /api/admin/
-
-User-agent: PerplexityBot
-Allow: /
-Disallow: /admin
-Disallow: /api/admin/
-
-User-agent: Google-Extended
-Allow: /
-Disallow: /admin
-Disallow: /api/admin/
-
-User-agent: ClaudeBot
-Allow: /
-Disallow: /admin
-Disallow: /api/admin/
-
-User-agent: anthropic-ai
-Allow: /
-Disallow: /admin
-Disallow: /api/admin/
-
-User-agent: OAI-SearchBot
-Allow: /
-Disallow: /admin
-Disallow: /api/admin/
-
-User-agent: Bingbot
-Allow: /
-Disallow: /admin
-Disallow: /api/admin/
-
+# Google
 User-agent: Googlebot
 Allow: /
 Disallow: /admin
 Disallow: /api/admin/
+Crawl-delay: 1
+
+# Bing
+User-agent: Bingbot
+Allow: /
+Disallow: /admin
+Disallow: /api/admin/
+Crawl-delay: 2
+
+# AI Search Engine Directives (Explicitly Allowed for Generative Engine Optimization)
+User-agent: GPTBot
+Allow: /
+Disallow: /admin
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
 
 Sitemap: https://www.gaganengineerings.in/sitemap.xml

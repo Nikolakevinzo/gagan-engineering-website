@@ -1309,14 +1309,726 @@ async def submit_indexnow(username: str = Depends(verify_admin)):
     except Exception as e:
         return {"status": "error", "message": str(e)}
 
+
+# ----------------- SEO Prerender for Crawlers -----------------
+# Blog article SEO data (matches blogData.js)
+BLOG_ARTICLES_SEO = [
+    {
+        "slug": "guide-to-bra-cup-moulding-machines",
+        "title": "Complete Guide to Bra Cup Moulding Machines: Types, Working Principle, Sizing & Price (2026)",
+        "description": "A comprehensive technical guide for intimate wear manufacturers on choosing between electric, foam, fabric, and padded bra cup moulding presses, cycle times, temperature control, and aluminium die sizing.",
+        "image": "https://5.imimg.com/data5/ANDROID/Default/2025/10/550586008/TZ/II/HL/4175789/product-jpeg-500x500.jpg",
+        "date": "2026-08-20",
+        "keywords": "Bra Cup Moulding Machine Manufacturer, Double Head Electric Bra Cup Machine, Foam Bra Cup Press, Lingerie Manufacturing India"
+    },
+    {
+        "slug": "automatic-cut-to-length-ctl-line-guide",
+        "title": "Automatic Cut To Length (CTL) Lines: Leveling Precision, Shearing & ROI Analysis",
+        "description": "An engineering guide covering 9-roll to 13-roll gear-driven levelers, optical encoder shearing, hydraulic decoiler integration, and ROI calculations for steel service centers.",
+        "image": "https://5.imimg.com/data5/SELLER/Default/2026/4/596257189/PL/SJ/DO/4175789/456-500x500.png",
+        "date": "2026-08-15",
+        "keywords": "Automatic Cut to Length Machine Manufacturer, CTL Line India, Sheet Metal Leveling Line, Coil Shearing Line Khopoli"
+    },
+    {
+        "slug": "c-z-purlin-roll-forming-machine-guide",
+        "title": "C & Z Purlin Roll Forming Machines: Buying Guide for Pre-Engineered Buildings (PEB)",
+        "description": "Essential guide on quick-changeover C/Z purlin lines, hydraulic punching, flying cut-off systems, and roll forming speed optimization.",
+        "image": "https://5.imimg.com/data5/ANDWEB/Default/2026/3/591020192/NG/CE/TB/4175789/product-jpeg-500x500.jpeg",
+        "date": "2026-08-10",
+        "keywords": "C Z Purlin Roll Forming Machine Manufacturer, Purlin Machine India, PEB Structure Roll Former"
+    },
+    {
+        "slug": "10-ton-hydraulic-decoiler-guide",
+        "title": "10-Ton Hydraulic Decoilers: Heavy Coil Uncoiling, Mandrel Expansion & Safety Protocols",
+        "description": "Technical breakdown of 10,000 kg capacity hydraulic uncoilers, hydraulic wedge expansion, pneumatic snubber arms, and safety protocols.",
+        "image": "https://5.imimg.com/data5/ANDROID/Default/2026/3/590380757/WL/UR/BT/4175789/product-jpeg-500x500.jpg",
+        "date": "2026-08-05",
+        "keywords": "10 Ton Hydraulic Decoiler Manufacturer India, Heavy Uncoiler Machine, Motorized Hydraulic Decoiler Khopoli"
+    },
+    {
+        "slug": "industrial-machinery-export-guide-india",
+        "title": "Importing Industrial Machinery from India: Incoterms, Voltage Customization & JNPT Logistics",
+        "description": "Complete guide for international procurement teams on importing machinery from India: seaworthy timber crating, sea freight from JNPT Mumbai Port, Letter of Credit terms.",
+        "image": "https://images.unsplash.com/photo-1496247749665-49cf5b1022e9?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "date": "2026-08-01",
+        "keywords": "Industrial Machinery Exporter India, Machinery Export JNPT Port Mumbai, Import Machinery from India"
+    }
+]
+
+# Static page SEO metadata
+PAGE_META = {
+    "": {
+        "title": "Gagan Engineering Works | Industrial Machinery Manufacturer & Exporter | Khopoli India",
+        "description": "Premier Indian manufacturer & exporter of Bra Cup Moulding Machines, 10 Ton Hydraulic Decoilers, C/Z Purlin Roll Forming Machines, Automatic Cut-To-Length Lines, and Roofing Sheet Machinery. 19+ years precision engineering from Khopoli, Maharashtra.",
+        "keywords": "Industrial Machinery Manufacturer India, Bra Cup Moulding Machine, Hydraulic Decoiler, Roll Forming Machine, Cut To Length Line, Khopoli Maharashtra"
+    },
+    "products": {
+        "title": "Industrial Machinery Catalogue | Roll Forming, CTL Lines & Bra Cup Moulding | Gagan Engineering",
+        "description": "Browse our complete catalogue of heavy-duty industrial machinery: 10-Ton Hydraulic Decoilers, Automatic Cut-To-Length Lines, C/Z Purlin Roll Forming Machines, Roofing Sheet Crimping Machines, and Bra Cup Moulding Presses from Khopoli.",
+        "keywords": "Industrial Machinery Catalogue India, Roll Forming Machine, CTL Line, Bra Cup Moulding Machine, Hydraulic Decoiler, Gagan Engineering"
+    },
+    "about": {
+        "title": "About Gagan Engineering Works | 19+ Years Machinery Manufacturing | Khopoli Maharashtra",
+        "description": "Established in 2006, Gagan Engineering Works is a precision industrial machinery manufacturer in Khopoli, Maharashtra with 19+ years of engineering excellence, ISO certified, serving Pan-India and global markets.",
+        "keywords": "Gagan Engineering Works, Industrial Machinery Manufacturer Khopoli, About Us, ISO Certified Machinery"
+    },
+    "factory": {
+        "title": "Factory Tour | Gagan Engineering Works Manufacturing Facility | Khopoli Maharashtra",
+        "description": "Tour our state-of-the-art machinery manufacturing facility in Khopoli, Maharashtra. See our heavy fabrication bays, CNC machining centers, and quality inspection areas.",
+        "keywords": "Factory Tour, Manufacturing Facility Khopoli, Machinery Workshop, Heavy Engineering India"
+    },
+    "contact": {
+        "title": "Contact Gagan Engineering Works | Request Quotation | +91 83294 65245",
+        "description": "Request a price quotation for industrial machinery. Contact us at +91 83294 65245 or email gaganengineerings@gmail.com. Located on Mumbai-Pune Highway, Khopoli, Maharashtra.",
+        "keywords": "Contact Gagan Engineering, Machinery Quotation, RFQ Industrial Machinery, Khopoli Maharashtra"
+    },
+    "blog": {
+        "title": "Engineering Knowledge Hub | Technical Guides & Machinery Articles | Gagan Engineering",
+        "description": "Expert technical articles on bra cup moulding machines, cut-to-length lines, C/Z purlin roll forming, hydraulic decoilers, and industrial machinery export from India.",
+        "keywords": "Machinery Blog, Engineering Guides, Industrial Machinery Articles, Manufacturing Technology India"
+    },
+    "return-policy": {
+        "title": "Warranty & Return Policy | Gagan Engineering Works",
+        "description": "Warranty terms, return policy, and after-sales support information for machinery purchased from Gagan Engineering Works.",
+        "keywords": "Warranty Policy, Return Policy, Machinery Warranty, After Sales Support"
+    },
+    "privacy-policy": {
+        "title": "Privacy Policy | Gagan Engineering Works",
+        "description": "Privacy policy for Gagan Engineering Works website and services.",
+        "keywords": "Privacy Policy, Data Protection"
+    },
+    "terms": {
+        "title": "Terms & Conditions | Gagan Engineering Works",
+        "description": "Terms and conditions for machinery purchase, delivery, and services from Gagan Engineering Works.",
+        "keywords": "Terms and Conditions, Machinery Purchase Terms"
+    }
+}
+
+CATEGORY_SEO = {
+    "bra-cup-moulding-machine": {
+        "title": "Bra Cup Moulding Machines Manufacturer & Exporter | Gagan Engineering Works",
+        "description": "High-precision electric, foam, fabric, and padded bra cup moulding presses for intimate wear lingerie manufacturing. Manufacturer in Khopoli, Maharashtra with global export.",
+        "keywords": "Bra Cup Moulding Machine Manufacturer, Bra Cup Fabric Moulding, Foam Bra Cup Machine, Intimate Wear Machinery India",
+        "name": "Bra Cup Moulding Machines"
+    },
+    "roll-forming-sheet-metal": {
+        "title": "Roll Forming & Sheet Metal Machinery Manufacturer | Gagan Engineering Works",
+        "description": "Heavy-duty C/Z purlin roll formers, 10-ton hydraulic decoilers, roofing sheet crimping machines, and corrugated sheet making machines. Manufacturer in Khopoli.",
+        "keywords": "Roll Forming Machine India, C Z Purlin Machine, 10 Ton Hydraulic Decoiler, Roofing Sheet Crimping Machine",
+        "name": "Roll Forming & Sheet Metal Machinery"
+    },
+    "cut-to-length-line": {
+        "title": "Automatic Cut To Length (CTL) Lines Manufacturer | Gagan Engineering Works",
+        "description": "Precision automated cut-to-length lines with hydraulic decoiling, 9-roll EN31 leveling, and optical encoder PLC shearing for coils up to 6mm thickness.",
+        "keywords": "Cut to Length Line Manufacturer, Automatic CTL Machine, Coil Processing Line, Sheet Leveler Khopoli",
+        "name": "Cut To Length (CTL) Lines"
+    }
+}
+
+
+def _html_escape(text):
+    """Escape HTML special characters."""
+    if not text:
+        return ""
+    return str(text).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('"', "&quot;").replace("'", "&#x27;")
+
+
+def _build_org_schema():
+    """Build the Organization JSON-LD schema."""
+    import json
+    return json.dumps({
+        "@context": "https://schema.org",
+        "@type": ["Organization", "LocalBusiness"],
+        "@id": f"{WEBSITE_URL}/#organization",
+        "name": "Gagan Engineering Works",
+        "legalName": "Gagan Engineering Works",
+        "url": WEBSITE_URL,
+        "logo": f"{WEBSITE_URL}/logo.png",
+        "description": "Premier Indian manufacturer & exporter of Bra Cup Moulding Machines, Roll Forming Lines, Hydraulic Decoilers, and Cut-To-Length Lines from Khopoli, Maharashtra.",
+        "telephone": "+918329465245",
+        "email": "gaganengineerings@gmail.com",
+        "foundingDate": "2006",
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "Mumbai Pune Highway, Near Star Garage, Navanath Colony, Yashwant Nagar",
+            "addressLocality": "Khopoli",
+            "addressRegion": "Maharashtra",
+            "postalCode": "410203",
+            "addressCountry": "IN"
+        },
+        "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": "18.7903",
+            "longitude": "73.3444"
+        },
+        "areaServed": [
+            {"@type": "Country", "name": "India"},
+            {"@type": "Country", "name": "United Arab Emirates"},
+            {"@type": "Country", "name": "Saudi Arabia"},
+            {"@type": "Country", "name": "Bangladesh"},
+            {"@type": "Country", "name": "Sri Lanka"}
+        ],
+        "priceRange": "₹₹₹",
+        "sameAs": ["https://www.indiamart.com/gaganengineeringworks/"]
+    }, ensure_ascii=False)
+
+
+def _build_product_schema(product, canonical_url):
+    """Build Product + FAQ JSON-LD schema."""
+    import json
+    schemas = []
+    
+    p_name = product.get("name", "")
+    p_desc = product.get("description") or product.get("tagline", "")
+    p_img = product.get("image", f"{WEBSITE_URL}/logo.png")
+    
+    schemas.append({
+        "@context": "https://schema.org",
+        "@type": "Product",
+        "name": p_name,
+        "image": p_img,
+        "description": p_desc,
+        "sku": product.get("id", ""),
+        "mpn": product.get("id", ""),
+        "category": product.get("category", "Industrial Machinery"),
+        "brand": {"@type": "Brand", "name": "Gagan Engineering Works"},
+        "manufacturer": {"@type": "Organization", "name": "Gagan Engineering Works", "url": WEBSITE_URL},
+        "countryOfOrigin": {"@type": "Country", "name": "India"},
+        "offers": {
+            "@type": "Offer",
+            "url": canonical_url,
+            "priceCurrency": "INR",
+            "price": "0",
+            "priceSpecification": {
+                "@type": "UnitPriceSpecification",
+                "priceCurrency": "INR",
+                "priceType": "https://schema.org/InvoicePrice",
+                "description": "Custom quotation based on specifications and destination"
+            },
+            "availability": "https://schema.org/InStock",
+            "itemCondition": "https://schema.org/NewCondition",
+            "seller": {"@type": "Organization", "name": "Gagan Engineering Works"}
+        }
+    })
+    
+    # FAQ schema
+    faqs = product.get("faqs", [])
+    if faqs:
+        schemas.append({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": [{"@type": "Question", "name": f["q"], "acceptedAnswer": {"@type": "Answer", "text": f["a"]}} for f in faqs]
+        })
+    
+    # Breadcrumb schema
+    schemas.append({
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "Home", "item": WEBSITE_URL},
+            {"@type": "ListItem", "position": 2, "name": "Machinery Catalogue", "item": f"{WEBSITE_URL}/products"},
+            {"@type": "ListItem", "position": 3, "name": p_name, "item": canonical_url}
+        ]
+    })
+    
+    return json.dumps(schemas, ensure_ascii=False)
+
+
+def _generate_nav_html():
+    """Generate consistent navigation for all prerendered pages."""
+    return f"""<header>
+    <nav aria-label="Main navigation" style="padding:15px 20px;border-bottom:1px solid #ddd">
+        <a href="/" style="font-weight:bold;font-size:18px;color:#333;text-decoration:none">Gagan Engineering Works</a>
+        <span style="margin:0 10px">|</span>
+        <a href="/products" style="color:#333;text-decoration:none">Machinery Catalogue</a>
+        <span style="margin:0 5px">·</span>
+        <a href="/about" style="color:#333;text-decoration:none">About</a>
+        <span style="margin:0 5px">·</span>
+        <a href="/factory" style="color:#333;text-decoration:none">Factory Tour</a>
+        <span style="margin:0 5px">·</span>
+        <a href="/blog" style="color:#333;text-decoration:none">Engineering Blog</a>
+        <span style="margin:0 5px">·</span>
+        <a href="/contact" style="color:#333;text-decoration:none">Contact / RFQ</a>
+    </nav>
+</header>"""
+
+
+def _generate_footer_html(products):
+    """Generate footer with internal links for crawlability."""
+    product_links = "\n".join(
+        f'        <li><a href="/products/{_html_escape(p.get("id", ""))}">{_html_escape(p.get("name", ""))}</a></li>'
+        for p in products
+    )
+    blog_links = "\n".join(
+        f'        <li><a href="/blog/{_html_escape(b["slug"])}">{_html_escape(b["title"])}</a></li>'
+        for b in BLOG_ARTICLES_SEO
+    )
+    return f"""<footer style="border-top:1px solid #ddd;padding:30px 20px;margin-top:40px;font-size:14px;color:#666">
+    <div style="max-width:960px;margin:0 auto">
+        <h3>All Machinery by Gagan Engineering Works</h3>
+        <ul>
+{product_links}
+        </ul>
+        <h3>Engineering Knowledge Hub</h3>
+        <ul>
+{blog_links}
+        </ul>
+        <h3>Quick Links</h3>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/products">Full Machinery Catalogue</a></li>
+            <li><a href="/about">About Our Khopoli Works</a></li>
+            <li><a href="/factory">Factory Tour</a></li>
+            <li><a href="/contact">Request Quotation (RFQ)</a></li>
+            <li><a href="/return-policy">Warranty & Return Policy</a></li>
+            <li><a href="/privacy-policy">Privacy Policy</a></li>
+            <li><a href="/terms">Terms & Conditions</a></li>
+        </ul>
+        <h3>Contact Gagan Engineering Works</h3>
+        <p><strong>Phone:</strong> <a href="tel:+918329465245">+91 83294 65245</a></p>
+        <p><strong>Email:</strong> <a href="mailto:gaganengineerings@gmail.com">gaganengineerings@gmail.com</a></p>
+        <p><strong>WhatsApp:</strong> <a href="https://wa.me/918329465245">Chat on WhatsApp</a></p>
+        <p><strong>Address:</strong> Mumbai-Pune Highway, Near Star Garage, Navanath Colony, Khopoli, Maharashtra 410203, India</p>
+        <p><strong>Hours:</strong> Monday – Saturday: 9:00 AM – 7:30 PM IST</p>
+        <p style="margin-top:20px">© 2026 Gagan Engineering Works. All Rights Reserved. Manufactured in Khopoli, India.</p>
+    </div>
+</footer>"""
+
+
+def _generate_product_html(product, all_products):
+    """Generate full HTML for a product detail page."""
+    import json
+    p_id = product.get("id", "")
+    p_name = _html_escape(product.get("name", ""))
+    p_desc = _html_escape(product.get("description") or product.get("tagline", ""))
+    p_img = product.get("image", "")
+    p_category = _html_escape(product.get("category", ""))
+    canonical_url = f"{WEBSITE_URL}/products/{p_id}"
+    
+    title = f"{product.get('name', '')} Manufacturer India | Gagan Engineering Works"
+    description = f"Specifications & price for {product.get('name', '')}. {(product.get('description') or '')[:200]}. Manufactured by Gagan Engineering Works, Khopoli Maharashtra."
+    keywords = f"{product.get('name', '')}, {product.get('category', '')}, Industrial Machinery Manufacturer India, Gagan Engineering Khopoli, {product.get('name', '')} price"
+    
+    # Specs table
+    specs = product.get("specs", {})
+    spec_rows = "\n".join(
+        f"            <tr><td style='padding:8px 12px;border-bottom:1px solid #eee;font-weight:600;width:40%'>{_html_escape(k)}</td><td style='padding:8px 12px;border-bottom:1px solid #eee'>{_html_escape(v)}</td></tr>"
+        for k, v in specs.items()
+    )
+    
+    # FAQs
+    faqs = product.get("faqs", [])
+    faq_html = ""
+    if faqs:
+        faq_items = "\n".join(
+            f"        <div style='margin-bottom:15px;padding:15px;border:1px solid #eee;border-radius:4px'>\n            <h3 style='font-size:16px;margin:0 0 8px'>{_html_escape(f['q'])}</h3>\n            <p style='margin:0;color:#555'>{_html_escape(f['a'])}</p>\n        </div>"
+            for f in faqs
+        )
+        faq_html = f"""
+        <section style="margin-top:40px">
+            <h2>Frequently Asked Questions — {p_name}</h2>
+{faq_items}
+        </section>"""
+    
+    # Related products
+    cat_slug = product.get("categorySlug", "")
+    related = [p for p in all_products if p.get("categorySlug") == cat_slug and p.get("id") != p_id][:4]
+    related_html = ""
+    if related:
+        related_items = "\n".join(
+            f'            <li><a href="/products/{_html_escape(r.get("id", ""))}">{_html_escape(r.get("name", ""))}</a> — {_html_escape(r.get("tagline", ""))}</li>'
+            for r in related
+        )
+        related_html = f"""
+        <section style="margin-top:40px">
+            <h2>Related Machinery</h2>
+            <ul>
+{related_items}
+            </ul>
+        </section>"""
+    
+    schemas = _build_product_schema(product, canonical_url)
+    org_schema = _build_org_schema()
+    
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{_html_escape(title)}</title>
+    <meta name="description" content="{_html_escape(description)}">
+    <meta name="keywords" content="{_html_escape(keywords)}">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <meta name="author" content="Gagan Engineering Works">
+    <meta name="geo.region" content="IN-MH">
+    <meta name="geo.placename" content="Khopoli, Maharashtra, India">
+    <link rel="canonical" href="{canonical_url}">
+    <meta property="og:title" content="{_html_escape(title)}">
+    <meta property="og:description" content="{_html_escape(description)}">
+    <meta property="og:url" content="{canonical_url}">
+    <meta property="og:image" content="{_html_escape(p_img)}">
+    <meta property="og:type" content="product">
+    <meta property="og:site_name" content="Gagan Engineering Works">
+    <meta property="og:locale" content="en_IN">
+    <meta property="product:brand" content="Gagan Engineering Works">
+    <meta property="product:availability" content="in stock">
+    <meta property="product:condition" content="new">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{_html_escape(title)}">
+    <meta name="twitter:description" content="{_html_escape(description)}">
+    <meta name="twitter:image" content="{_html_escape(p_img)}">
+    <link rel="alternate" hreflang="x-default" href="{canonical_url}">
+    <link rel="alternate" hreflang="en" href="{canonical_url}">
+    <link rel="alternate" hreflang="en-IN" href="{canonical_url}">
+    <link rel="icon" type="image/png" href="/logo.png">
+    <meta name="google-site-verification" content="QEGoiaBEcRKf2zkIZu9kBOEnvWdghWxictCIfTUy8CM">
+    <meta name="theme-color" content="#050505">
+    <script type="application/ld+json">{schemas}</script>
+    <script type="application/ld+json">{org_schema}</script>
+</head>
+<body style="font-family:Inter,system-ui,sans-serif;max-width:960px;margin:0 auto;padding:20px;color:#333;line-height:1.6">
+{_generate_nav_html()}
+    <main>
+        <nav aria-label="breadcrumb" style="font-size:13px;color:#888;margin:20px 0">
+            <a href="/">Home</a> / <a href="/products">Machinery Catalogue</a> / <span style="color:#FF5722">{p_name}</span>
+        </nav>
+        
+        <article>
+            <h1 style="font-size:28px;line-height:1.2;margin-bottom:10px">{p_name}</h1>
+            <p style="font-size:13px;color:#888;margin-bottom:20px">Category: {p_category} | Manufactured by Gagan Engineering Works, Khopoli, Maharashtra</p>
+            
+            <img src="{_html_escape(p_img)}" alt="{p_name} manufactured by Gagan Engineering Works Khopoli Maharashtra India" width="500" height="500" loading="lazy" style="max-width:100%;height:auto;border-radius:4px">
+            
+            <p style="margin-top:20px;font-size:16px">{p_desc}</p>
+            
+            <section style="margin-top:30px">
+                <h2>Technical Specifications — {p_name}</h2>
+                <table style="width:100%;border-collapse:collapse;border:1px solid #ddd;margin-top:10px">
+                    <thead>
+                        <tr style="background:#f5f5f5">
+                            <th style="padding:10px 12px;text-align:left;border-bottom:2px solid #ddd">Specification</th>
+                            <th style="padding:10px 12px;text-align:left;border-bottom:2px solid #ddd">Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+{spec_rows}
+                    </tbody>
+                </table>
+            </section>
+            
+            <section style="margin-top:30px;padding:20px;background:#f9f9f9;border-radius:4px">
+                <h2>Request Price Quotation for {p_name}</h2>
+                <p>Get direct manufacturer pricing, delivery timeline, and custom specifications from Gagan Engineering Works:</p>
+                <ul>
+                    <li><strong>Phone:</strong> <a href="tel:+918329465245">+91 83294 65245</a></li>
+                    <li><strong>Email:</strong> <a href="mailto:gaganengineerings@gmail.com">gaganengineerings@gmail.com</a></li>
+                    <li><strong>WhatsApp:</strong> <a href="https://wa.me/918329465245?text=Hi%20Gagan%20Engineering%2C%20I%20need%20a%20quote%20for%20{p_name.replace(' ', '%20')}">Chat on WhatsApp</a></li>
+                    <li><strong>Online RFQ:</strong> <a href="/contact?product={p_name.replace(' ', '%20')}">Submit Quotation Request</a></li>
+                </ul>
+                <p><strong>Warranty:</strong> 1 Year Comprehensive Manufacturer Warranty with Pan-India On-Site Commissioning</p>
+                <p><strong>Export:</strong> Worldwide shipping from JNPT Mumbai Port. Custom voltage (220V/380V/415V/480V, 50Hz/60Hz)</p>
+            </section>
+{faq_html}
+{related_html}
+        </article>
+    </main>
+{_generate_footer_html(all_products)}
+</body>
+</html>"""
+
+
+def _generate_blog_html(blog, all_products):
+    """Generate HTML for a blog article page."""
+    import json
+    canonical_url = f"{WEBSITE_URL}/blog/{blog['slug']}"
+    title = f"{blog['title']} | Gagan Engineering Works"
+    
+    schemas = [
+        {
+            "@context": "https://schema.org",
+            "@type": "Article",
+            "headline": blog["title"],
+            "description": blog["description"],
+            "image": blog.get("image", f"{WEBSITE_URL}/logo.png"),
+            "datePublished": blog.get("date", "2026-08-01"),
+            "author": {"@type": "Organization", "name": "Gagan Engineering Works"},
+            "publisher": {"@type": "Organization", "name": "Gagan Engineering Works", "logo": {"@type": "ImageObject", "url": f"{WEBSITE_URL}/logo.png"}},
+            "mainEntityOfPage": canonical_url
+        },
+        {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+                {"@type": "ListItem", "position": 1, "name": "Home", "item": WEBSITE_URL},
+                {"@type": "ListItem", "position": 2, "name": "Engineering Blog", "item": f"{WEBSITE_URL}/blog"},
+                {"@type": "ListItem", "position": 3, "name": blog["title"], "item": canonical_url}
+            ]
+        }
+    ]
+    
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{_html_escape(title)}</title>
+    <meta name="description" content="{_html_escape(blog['description'])}">
+    <meta name="keywords" content="{_html_escape(blog.get('keywords', ''))}">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <meta name="author" content="Gagan Engineering Works">
+    <link rel="canonical" href="{canonical_url}">
+    <meta property="og:title" content="{_html_escape(title)}">
+    <meta property="og:description" content="{_html_escape(blog['description'])}">
+    <meta property="og:url" content="{canonical_url}">
+    <meta property="og:image" content="{_html_escape(blog.get('image', ''))}">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="Gagan Engineering Works">
+    <meta property="article:published_time" content="{blog.get('date', '')}">
+    <meta property="article:author" content="Gagan Engineering Works">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{_html_escape(title)}">
+    <meta name="twitter:description" content="{_html_escape(blog['description'])}">
+    <meta name="twitter:image" content="{_html_escape(blog.get('image', ''))}">
+    <link rel="alternate" hreflang="x-default" href="{canonical_url}">
+    <link rel="alternate" hreflang="en" href="{canonical_url}">
+    <link rel="alternate" hreflang="en-IN" href="{canonical_url}">
+    <link rel="icon" type="image/png" href="/logo.png">
+    <meta name="google-site-verification" content="QEGoiaBEcRKf2zkIZu9kBOEnvWdghWxictCIfTUy8CM">
+    <script type="application/ld+json">{json.dumps(schemas, ensure_ascii=False)}</script>
+    <script type="application/ld+json">{_build_org_schema()}</script>
+</head>
+<body style="font-family:Inter,system-ui,sans-serif;max-width:960px;margin:0 auto;padding:20px;color:#333;line-height:1.6">
+{_generate_nav_html()}
+    <main>
+        <nav aria-label="breadcrumb" style="font-size:13px;color:#888;margin:20px 0">
+            <a href="/">Home</a> / <a href="/blog">Engineering Blog</a> / <span style="color:#FF5722">{_html_escape(blog['title'][:60])}</span>
+        </nav>
+        <article>
+            <h1 style="font-size:28px;line-height:1.3">{_html_escape(blog['title'])}</h1>
+            <p style="font-size:13px;color:#888">Published: {blog.get('date', '')} | By Gagan Engineering Works Technical Team</p>
+            <img src="{_html_escape(blog.get('image', ''))}" alt="{_html_escape(blog['title'])}" width="600" loading="lazy" style="max-width:100%;height:auto;border-radius:4px;margin:15px 0">
+            <p style="font-size:16px">{_html_escape(blog['description'])}</p>
+            <p>Read the full article at <a href="{canonical_url}">{canonical_url}</a></p>
+        </article>
+    </main>
+{_generate_footer_html(all_products)}
+</body>
+</html>"""
+
+
+def _generate_generic_page_html(path, all_products):
+    """Generate HTML for static pages (home, about, contact, etc.)."""
+    import json
+    clean_path = path.strip("/")
+    meta = PAGE_META.get(clean_path, PAGE_META.get("", {}))
+    canonical_url = f"{WEBSITE_URL}/{clean_path}" if clean_path else WEBSITE_URL
+    title = meta.get("title", "Gagan Engineering Works | Machinery Manufacturer")
+    description = meta.get("description", "")
+    keywords = meta.get("keywords", "")
+    
+    # For category pages
+    cat_slug = ""
+    if clean_path.startswith("products/category/"):
+        cat_slug = clean_path.replace("products/category/", "")
+        cat_meta = CATEGORY_SEO.get(cat_slug, {})
+        if cat_meta:
+            title = cat_meta["title"]
+            description = cat_meta["description"]
+            keywords = cat_meta["keywords"]
+    
+    # Product listing for catalogue/homepage
+    product_list_html = "\n".join(
+        f'        <li><a href="/products/{_html_escape(p.get("id", ""))}">{_html_escape(p.get("name", ""))}</a> — {_html_escape(p.get("tagline", ""))}</li>'
+        for p in all_products
+    )
+    
+    breadcrumb_name = clean_path.replace("-", " ").replace("/", " > ").title() or "Home"
+    schemas = [{
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "Home", "item": WEBSITE_URL}
+        ] + ([{"@type": "ListItem", "position": 2, "name": breadcrumb_name, "item": canonical_url}] if clean_path else [])
+    }]
+    
+    # Add ItemList for product pages
+    if clean_path in ("products", "") or clean_path.startswith("products/category/"):
+        filtered = all_products
+        if cat_slug:
+            filtered = [p for p in all_products if p.get("categorySlug") == cat_slug]
+        schemas.append({
+            "@context": "https://schema.org",
+            "@type": "ItemList",
+            "itemListElement": [
+                {"@type": "ListItem", "position": i+1, "url": f"{WEBSITE_URL}/products/{p.get('id','')}", "name": p.get("name","")}
+                for i, p in enumerate(filtered)
+            ]
+        })
+    
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{_html_escape(title)}</title>
+    <meta name="description" content="{_html_escape(description)}">
+    <meta name="keywords" content="{_html_escape(keywords)}">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <meta name="author" content="Gagan Engineering Works">
+    <meta name="geo.region" content="IN-MH">
+    <meta name="geo.placename" content="Khopoli, Maharashtra, India">
+    <link rel="canonical" href="{canonical_url}">
+    <meta property="og:title" content="{_html_escape(title)}">
+    <meta property="og:description" content="{_html_escape(description)}">
+    <meta property="og:url" content="{canonical_url}">
+    <meta property="og:image" content="{WEBSITE_URL}/logo.png">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Gagan Engineering Works">
+    <meta property="og:locale" content="en_IN">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{_html_escape(title)}">
+    <meta name="twitter:description" content="{_html_escape(description)}">
+    <meta name="twitter:image" content="{WEBSITE_URL}/logo.png">
+    <link rel="alternate" hreflang="x-default" href="{canonical_url}">
+    <link rel="alternate" hreflang="en" href="{canonical_url}">
+    <link rel="alternate" hreflang="en-IN" href="{canonical_url}">
+    <link rel="icon" type="image/png" href="/logo.png">
+    <meta name="google-site-verification" content="QEGoiaBEcRKf2zkIZu9kBOEnvWdghWxictCIfTUy8CM">
+    <meta name="theme-color" content="#050505">
+    <script type="application/ld+json">{json.dumps(schemas, ensure_ascii=False)}</script>
+    <script type="application/ld+json">{_build_org_schema()}</script>
+</head>
+<body style="font-family:Inter,system-ui,sans-serif;max-width:960px;margin:0 auto;padding:20px;color:#333;line-height:1.6">
+{_generate_nav_html()}
+    <main>
+        <h1>{_html_escape(title.split('|')[0].strip())}</h1>
+        <p>{_html_escape(description)}</p>
+        
+        <h2>Our Industrial Machinery</h2>
+        <ul>
+{product_list_html}
+        </ul>
+    </main>
+{_generate_footer_html(all_products)}
+</body>
+</html>"""
+
+
+@app.get("/_seo/{path:path}", response_class=Response)
+async def seo_prerender(path: str, request: Request):
+    """
+    Server-side prerender endpoint for search engine crawlers.
+    Generates fully-rendered HTML with correct title, meta, schema, and content
+    so that Googlebot/Bingbot can index every page on the first crawl.
+    """
+    products = await get_products_from_db()
+    clean_path = path.strip("/")
+    
+    # Product detail page: /products/{id}
+    if clean_path.startswith("products/") and not clean_path.startswith("products/category/"):
+        product_id = clean_path.replace("products/", "")
+        product = next((p for p in products if p.get("id") == product_id), None)
+        if product:
+            html = _generate_product_html(product, products)
+            return Response(content=html, media_type="text/html", headers={
+                "Cache-Control": "public, max-age=3600, s-maxage=86400",
+                "X-Prerender": "1"
+            })
+    
+    # Blog article page: /blog/{slug}
+    if clean_path.startswith("blog/") and clean_path != "blog":
+        slug = clean_path.replace("blog/", "")
+        blog = next((b for b in BLOG_ARTICLES_SEO if b["slug"] == slug), None)
+        if blog:
+            html = _generate_blog_html(blog, products)
+            return Response(content=html, media_type="text/html", headers={
+                "Cache-Control": "public, max-age=3600, s-maxage=86400",
+                "X-Prerender": "1"
+            })
+    
+    # All other pages (home, products, about, contact, category, blog listing, etc.)
+    html = _generate_generic_page_html(clean_path, products)
+    return Response(content=html, media_type="text/html", headers={
+        "Cache-Control": "public, max-age=3600, s-maxage=86400",
+        "X-Prerender": "1"
+    })
+
+
+# Middleware to intercept __seo_path query parameter from Vercel rewrites
+@app.middleware("http")
+async def seo_path_middleware(request: Request, call_next):
+    seo_path = request.query_params.get("__seo_path")
+    if seo_path is not None:
+        # Rewrite the request to the /_seo/ endpoint
+        from starlette.datastructures import URL
+        new_path = f"/_seo/{seo_path.lstrip('/')}"
+        request.scope["path"] = new_path
+        # Remove __seo_path from query string
+        query_params = dict(request.query_params)
+        query_params.pop("__seo_path", None)
+        if query_params:
+            from urllib.parse import urlencode
+            request.scope["query_string"] = urlencode(query_params).encode()
+        else:
+            request.scope["query_string"] = b""
+    return await call_next(request)
+
+
 @app.get("/robots.txt", response_class=PlainTextResponse)
 async def robots_txt():
     return f"""User-agent: *
 Allow: /
+Allow: /products
+Allow: /products/
+Allow: /blog
+Allow: /blog/
+Allow: /about
+Allow: /factory
+Allow: /contact
+Allow: /return-policy
+Allow: /privacy-policy
+Allow: /terms
 Disallow: /admin
 Disallow: /admin/*
 Disallow: /api/admin/
 Disallow: /api/admin/*
+
+# Google
+User-agent: Googlebot
+Allow: /
+Disallow: /admin
+Disallow: /api/admin/
+Crawl-delay: 1
+
+# Bing
+User-agent: Bingbot
+Allow: /
+Disallow: /admin
+Disallow: /api/admin/
+Crawl-delay: 2
+
+# AI Crawlers
+User-agent: GPTBot
+Allow: /
+Disallow: /admin
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Anthropic-ai
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
 
 Sitemap: {WEBSITE_URL}/sitemap.xml
 """

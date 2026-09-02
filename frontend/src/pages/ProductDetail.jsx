@@ -154,14 +154,15 @@ export default function ProductDetail() {
   return (
     <div className="bg-[#050505] text-white min-h-screen pt-24 sm:pt-28 pb-16 sm:pb-24">
       <SEO
-        title={`${product.name} Manufacturer India`}
-        description={`Specifications & Price for ${product.name}. ${(product.description || "").slice(0, 150)}... Manufactured by Gagan Engineering Works, Khopoli.`}
-        keywords={`${product.name}, ${product.category}, Industrial Machinery Manufacturer, Gagan Engineering Khopoli, ${product.name} price`}
+        title={`${product.name} Manufacturer India | Price & Specs`}
+        description={`${product.name} — ${product.tagline || ''}. ${(product.description || "").slice(0, 140)}. Get manufacturer pricing from Gagan Engineering Works, Khopoli Maharashtra.`}
+        keywords={`${product.name}, ${product.name} Manufacturer, ${product.name} price India, ${product.category}, Industrial Machinery Manufacturer India, Gagan Engineering Khopoli, ${product.name} specifications`}
         productData={product}
         faqData={product.faqs}
         breadcrumbs={breadcrumbs}
         canonicalUrl={`${BUSINESS.websiteUrl}/products/${product.id}`}
         ogImage={getProductImages(product)[0]}
+        ogType="product"
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
