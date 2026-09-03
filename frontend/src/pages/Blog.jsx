@@ -16,14 +16,38 @@ export default function Blog() {
 
   useEffect(() => {
     let isMounted = true;
+
+    const mergeWithLocal = (baseArticles) => {
+      try {
+        const stored = JSON.parse(localStorage.getItem("gagan_custom_blogs") || "[]");
+        if (Array.isArray(stored) && stored.length > 0) {
+          const merged = [...baseArticles];
+          stored.forEach((item) => {
+            const idx = merged.findIndex((a) => a.slug === item.slug);
+            if (idx >= 0) {
+              merged[idx] = { ...merged[idx], ...item };
+            } else {
+              merged.push(item);
+            }
+          });
+          return merged;
+        }
+      } catch (e) {}
+      return baseArticles;
+    };
+
     fetch("/api/blogs?limit=100")
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (isMounted && data && Array.isArray(data.articles) && data.articles.length > 0) {
-          setArticles(data.articles);
+          setArticles(mergeWithLocal(data.articles));
+        } else if (isMounted) {
+          setArticles(mergeWithLocal(BLOG_ARTICLES));
         }
       })
-      .catch(() => {});
+      .catch(() => {
+        if (isMounted) setArticles(mergeWithLocal(BLOG_ARTICLES));
+      });
     return () => {
       isMounted = false;
     };

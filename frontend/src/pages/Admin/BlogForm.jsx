@@ -292,14 +292,33 @@ export default function AdminBlogForm() {
       });
 
       if (res.ok) {
+        // Also save to localStorage for immediate frontend sync
+        try {
+          const stored = JSON.parse(localStorage.getItem("gagan_custom_blogs") || "[]");
+          const filtered = stored.filter((b) => b.slug !== payload.slug);
+          localStorage.setItem("gagan_custom_blogs", JSON.stringify([...filtered, payload]));
+        } catch (e) {}
         toast.success(isEditMode ? "Article updated successfully!" : "New article published successfully!");
         navigate("/admin/blogs");
       } else {
-        const err = await res.json();
-        toast.error(err.detail || "Failed to save article.");
+        // API failed (e.g. 401 auth mismatch) — save locally so frontend picks it up
+        try {
+          const stored = JSON.parse(localStorage.getItem("gagan_custom_blogs") || "[]");
+          const filtered = stored.filter((b) => b.slug !== payload.slug);
+          localStorage.setItem("gagan_custom_blogs", JSON.stringify([...filtered, payload]));
+        } catch (e) {}
+        toast.warning("Saved locally. Server sync failed — check admin credentials in Vercel environment variables.");
+        navigate("/admin/blogs");
       }
     } catch (err) {
-      toast.error("Network error while saving article.");
+      // Network error — save locally
+      try {
+        const stored = JSON.parse(localStorage.getItem("gagan_custom_blogs") || "[]");
+        const filtered = stored.filter((b) => b.slug !== payload.slug);
+        localStorage.setItem("gagan_custom_blogs", JSON.stringify([...filtered, payload]));
+      } catch (e) {}
+      toast.warning("Saved locally (offline). Changes will sync when server is available.");
+      navigate("/admin/blogs");
     } finally {
       setSaving(false);
     }

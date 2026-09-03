@@ -19,14 +19,34 @@ export default function BlogPost() {
 
   useEffect(() => {
     let isMounted = true;
+
+    const getLocalBlog = (blogSlug) => {
+      try {
+        const stored = JSON.parse(localStorage.getItem("gagan_custom_blogs") || "[]");
+        return stored.find((b) => b.slug === blogSlug);
+      } catch (e) {
+        return null;
+      }
+    };
+
     fetch(`/api/blogs/${slug}`)
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
-        if (isMounted && data && data.article) {
-          setArticle(data.article);
+        if (isMounted) {
+          let art = (data && data.article) ? data.article : staticArticle;
+          const localOverride = getLocalBlog(slug);
+          if (localOverride) art = { ...art, ...localOverride };
+          if (art) setArticle(art);
         }
       })
-      .catch(() => {})
+      .catch(() => {
+        if (isMounted) {
+          let art = staticArticle;
+          const localOverride = getLocalBlog(slug);
+          if (localOverride) art = { ...art, ...localOverride };
+          if (art) setArticle(art);
+        }
+      })
       .finally(() => {
         if (isMounted) setLoadingArticle(false);
       });
