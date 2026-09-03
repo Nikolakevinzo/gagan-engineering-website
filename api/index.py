@@ -14,6 +14,7 @@ from pathlib import Path
 from pydantic import BaseModel, Field, EmailStr
 from typing import List, Optional, Dict, Any, Tuple
 import uuid
+import time
 from datetime import datetime, timezone
 
 from fastapi.staticfiles import StaticFiles
@@ -1073,6 +1074,39 @@ async def admin_stats(username: str = Depends(verify_admin)):
         "sender_email": sender_mail,
         "business_email": biz_mail,
     }
+
+@admin_router.get("/db-health")
+async def admin_db_health(username: str = Depends(verify_admin)):
+    """Live diagnostic check for MongoDB Atlas cloud connectivity and latency."""
+    if db is None:
+        return {
+            "status": "in_memory",
+            "connected": False,
+            "message": "MONGO_URL is not set or unreachable. Running in ephemeral in-memory mode."
+        }
+    try:
+        t0 = time.time()
+        await client.admin.command('ping')
+        latency_ms = round((time.time() - t0) * 1000, 2)
+        prod_count = await db["products"].count_documents({})
+        lead_count = await db["contact_leads"].count_documents({})
+        return {
+            "status": "healthy",
+            "connected": True,
+            "latency_ms": latency_ms,
+            "products_in_db": prod_count,
+            "leads_in_db": lead_count,
+            "database_name": db.name,
+            "message": "MongoDB Atlas connection is live, verified, and operational."
+        }
+    except Exception as e:
+        return {
+            "status": "error",
+            "connected": False,
+            "error": str(e),
+            "message": "MongoDB ping failed."
+        }
+
 
 
 # ----------------- SEO Endpoints -----------------
