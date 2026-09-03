@@ -20,7 +20,14 @@ export default function ProductCard({ product, index = 0 }) {
             alt={`${product.name} - Gagan Engineering Works`}
             loading="lazy"
             onError={(e) => {
-              e.currentTarget.src = "https://5.imimg.com/data5/SELLER/Default/2026/3/591026243/LM/XU/AK/4175789/corrugated-sheets-making-machine-500x500.jpeg";
+              if (!e.currentTarget.dataset.fallbackApplied) {
+                e.currentTarget.dataset.fallbackApplied = "true";
+                if (product.image && e.currentTarget.src !== product.image) {
+                  e.currentTarget.src = product.image;
+                } else {
+                  e.currentTarget.src = "/logo.png";
+                }
+              }
             }}
             className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
           />

@@ -589,7 +589,23 @@ export const CATEGORIES = [
 ];
 
 export function getLiveCatalogueProducts() {
-  return CATALOGUE_PRODUCTS;
+  let base = [...CATALOGUE_PRODUCTS];
+  try {
+    if (typeof window !== "undefined") {
+      const stored = JSON.parse(localStorage.getItem("gagan_custom_products") || "[]");
+      if (Array.isArray(stored) && stored.length > 0) {
+        stored.forEach((item) => {
+          const idx = base.findIndex((p) => p.id === item.id);
+          if (idx >= 0) {
+            base[idx] = { ...base[idx], ...item };
+          } else {
+            base.push(item);
+          }
+        });
+      }
+    }
+  } catch (e) {}
+  return base;
 }
 
 // ----------------- Standard Industrial Product SKUs & Indicative Pricing (SEO & Rich Results) -----------------

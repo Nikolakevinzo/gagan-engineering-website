@@ -80,30 +80,39 @@ export default function ProductDetail() {
   useEffect(() => {
     setLoading(true);
 
+    const getLocalProduct = (prodId) => {
+      try {
+        const stored = JSON.parse(localStorage.getItem("gagan_custom_products") || "[]");
+        return stored.find((p) => p.id === prodId);
+      } catch (e) {
+        return null;
+      }
+    };
+
     api
       .get(`/products/${id}`)
       .then((r) => {
-        if (r.data && r.data.product) {
-          setProduct(r.data.product);
-          setRelated(r.data.related || []);
-        } else {
-          const found = CATALOGUE_PRODUCTS.find((p) => p.id === id);
-          if (found) {
-            setProduct(found);
-            setRelated(
-              CATALOGUE_PRODUCTS.filter((p) => p.categorySlug === found.categorySlug && p.id !== found.id).slice(0, 3)
-            );
-          }
+        let p = (r.data && r.data.product) ? r.data.product : CATALOGUE_PRODUCTS.find((item) => item.id === id);
+        const localOverride = getLocalProduct(id);
+        if (localOverride) p = { ...p, ...localOverride };
+        if (p) {
+          setProduct(p);
+          setRelated(
+            r.data?.related ||
+            CATALOGUE_PRODUCTS.filter((item) => item.categorySlug === p.categorySlug && item.id !== p.id).slice(0, 3)
+          );
         }
         setLoading(false);
         window.scrollTo(0, 0);
       })
       .catch(() => {
-        const found = CATALOGUE_PRODUCTS.find((p) => p.id === id);
-        if (found) {
-          setProduct(found);
+        let p = CATALOGUE_PRODUCTS.find((item) => item.id === id);
+        const localOverride = getLocalProduct(id);
+        if (localOverride) p = { ...p, ...localOverride };
+        if (p) {
+          setProduct(p);
           setRelated(
-            CATALOGUE_PRODUCTS.filter((p) => p.categorySlug === found.categorySlug && p.id !== found.id).slice(0, 3)
+            CATALOGUE_PRODUCTS.filter((item) => item.categorySlug === p.categorySlug && item.id !== p.id).slice(0, 3)
           );
         }
         setLoading(false);

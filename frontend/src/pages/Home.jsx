@@ -63,20 +63,30 @@ export default function Home() {
       return merged;
     };
 
+    const getMerged = (baseList) => {
+      try {
+        const stored = JSON.parse(localStorage.getItem("gagan_custom_products") || "[]");
+        if (Array.isArray(stored) && stored.length > 0) {
+          return mergeProducts(baseList, stored);
+        }
+      } catch (e) {}
+      return baseList;
+    };
+
     api
       .get("/products")
       .then((r) => {
-        if (r.data && Array.isArray(r.data.products) && r.data.products.length > 0) {
-          setProducts(r.data.products);
-          setFeatured(r.data.products.filter((p) => p.featured));
-        } else {
-          setProducts(CATALOGUE_PRODUCTS);
-          setFeatured(CATALOGUE_PRODUCTS.filter((p) => p.featured));
-        }
+        const base = (r.data && Array.isArray(r.data.products) && r.data.products.length > 0)
+          ? r.data.products
+          : CATALOGUE_PRODUCTS;
+        const finalProds = getMerged(base);
+        setProducts(finalProds);
+        setFeatured(finalProds.filter((p) => p.featured));
       })
       .catch(() => {
-        setProducts(CATALOGUE_PRODUCTS);
-        setFeatured(CATALOGUE_PRODUCTS.filter((p) => p.featured));
+        const finalProds = getMerged(CATALOGUE_PRODUCTS);
+        setProducts(finalProds);
+        setFeatured(finalProds.filter((p) => p.featured));
       });
   }, []);
 
