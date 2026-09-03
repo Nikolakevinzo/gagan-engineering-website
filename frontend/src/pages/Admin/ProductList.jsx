@@ -3,7 +3,8 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useAdminAuth } from "@/components/AdminLayout";
 import {
   Plus, Search, Trash2, Edit3, Star, StarOff,
-  Filter, RefreshCw, ChevronLeft, ChevronRight, Eye
+  Filter, RefreshCw, ChevronLeft, ChevronRight, Eye,
+  Download, Copy, Check, X
 } from "lucide-react";
 import { getBackendUrl } from "@/lib/adminConfig";
 import { CATALOGUE_PRODUCTS } from "@/lib/catalogueData";
@@ -28,6 +29,8 @@ export default function AdminProductList() {
   const [error, setError] = useState("");
   const [deletingId, setDeletingId] = useState(null);
   const [togglingId, setTogglingId] = useState(null);
+  const [showExportModal, setShowExportModal] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const page = parseInt(searchParams.get("page") || "1");
   const search = searchParams.get("search") || "";
@@ -171,10 +174,21 @@ export default function AdminProductList() {
             {total} machine{total !== 1 ? "s" : ""} in database
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => {
+              setShowExportModal(true);
+              setCopied(false);
+            }}
+            className="flex items-center gap-1.5 text-xs text-[#FF5722] hover:text-white bg-[#FF5722]/10 hover:bg-[#FF5722] border border-[#FF5722]/30 px-3 py-2.5 rounded-sm transition-all font-semibold uppercase tracking-wider"
+            title="Export updated products to bake into code permanently"
+          >
+            <Download className="w-3.5 h-3.5" /> Export Data (JSON)
+          </button>
           <button
             onClick={fetchProducts}
-            className="flex items-center gap-2 text-xs text-white/60 hover:text-white border border-white/15 hover:border-white/30 px-3 py-2 rounded-sm transition-all"
+            className="flex items-center gap-2 text-xs text-white/60 hover:text-white border border-white/15 hover:border-white/30 px-3 py-2.5 rounded-sm transition-all"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
           </button>
@@ -355,6 +369,59 @@ export default function AdminProductList() {
           </div>
         )}
       </div>
+
+      {/* Export Modal */}
+      {showExportModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+          <div className="bg-[#0c0c0e] border border-white/20 rounded-md p-6 max-w-2xl w-full space-y-4 shadow-2xl relative">
+            <div className="flex items-center justify-between border-b border-white/10 pb-3">
+              <div>
+                <h3 className="text-white font-semibold text-base flex items-center gap-2">
+                  <Download className="w-4 h-4 text-[#FF5722]" /> Export Live Catalogue Data
+                </h3>
+                <p className="text-white/50 text-xs mt-0.5">
+                  Copy this JSON and paste it into the chat to permanently bake all your photos, videos, and specs into the codebase for all devices.
+                </p>
+              </div>
+              <button
+                onClick={() => setShowExportModal(false)}
+                className="text-white/40 hover:text-white p-1 rounded-sm transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <textarea
+              readOnly
+              rows={12}
+              value={JSON.stringify(products, null, 2)}
+              className="w-full bg-black/80 border border-white/15 text-green-400 font-mono text-xs p-3 rounded-sm focus:outline-none select-all"
+            />
+
+            <div className="flex items-center justify-between pt-2">
+              <span className="mono text-xs text-white/50">
+                {products.length} products ready to sync
+              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  navigator.clipboard.writeText(JSON.stringify(products, null, 2));
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 3000);
+                }}
+                className={`flex items-center gap-2 text-xs font-semibold uppercase tracking-wider px-5 py-2.5 rounded-sm transition-all ${
+                  copied
+                    ? "bg-green-600 text-white"
+                    : "bg-[#FF5722] hover:bg-[#F4511E] text-white"
+                }`}
+              >
+                {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                {copied ? "Copied to Clipboard!" : "Copy JSON to Clipboard"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
