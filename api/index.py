@@ -19,6 +19,8 @@ from datetime import datetime, timezone
 
 from fastapi.staticfiles import StaticFiles
 
+import certifi
+
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
@@ -29,10 +31,15 @@ client = None
 db = None
 if mongo_url:
     try:
-        client = AsyncIOMotorClient(mongo_url, serverSelectionTimeoutMS=2000)
+        client = AsyncIOMotorClient(
+            mongo_url,
+            serverSelectionTimeoutMS=5000,
+            tlsCAFile=certifi.where()
+        )
         db = client[db_name]
     except Exception as e:
         logger.warning(f"MongoDB connection deferred or offline: {e}")
+
 
 
 # Resend configuration
