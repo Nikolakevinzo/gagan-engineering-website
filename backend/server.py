@@ -415,6 +415,7 @@ class ContactLeadCreate(BaseModel):
     phone: str
     product_interest: Optional[str] = None
     message: str
+    website_hp: Optional[str] = None  # Honeypot field for bot detection
 
 class AIQuestionRequest(BaseModel):
     question: str
@@ -457,17 +458,11 @@ def verify_admin(request: Request):
             detail="Admin authentication required. Please log in.",
         )
 
-    # Valid usernames and passwords
-    valid_users = ["admin", os.environ.get("ADMIN_USERNAME", "admin").strip()]
-    valid_passwords = [
-        "Enrique7@",
-        "gaganworks2006",
-        os.environ.get("ADMIN_PASSWORD", "Enrique7@").strip(),
-        os.environ.get("ADMIN_PASSWORD", "gaganworks2006").strip()
-    ]
+    expected_user = os.environ.get("ADMIN_USERNAME", "admin").strip()
+    expected_pass = os.environ.get("ADMIN_PASSWORD", "gaganworks2006").strip()
 
-    is_user_valid = any(secrets.compare_digest(username.strip(), u) for u in valid_users if u)
-    is_pass_valid = any(secrets.compare_digest(password.strip(), p) for p in valid_passwords if p)
+    is_user_valid = secrets.compare_digest(username.strip(), expected_user)
+    is_pass_valid = secrets.compare_digest(password.strip(), expected_pass)
 
     if not (is_user_valid and is_pass_valid):
         raise HTTPException(
@@ -685,9 +680,37 @@ async def list_categories():
             pass
     return {"categories": SEED_CATEGORIES}
 
+_rate_limit_map: Dict[str, List[float]] = {}
+
 @api_router.post("/contact")
-async def submit_contact(payload: ContactLeadCreate):
-    lead = ContactLead(**payload.model_dump())
+async def submit_contact(payload: ContactLeadCreate, request: Request):
+    # 1. Honeypot check: Bots fill hidden fields automatically
+    if payload.website_hp:
+        logger.info("Bot lead submission trapped by honeypot.")
+        return {
+            "status": "success",
+            "message": "Thank you! Your quotation request has been received. Our chief engineer will contact you within 24 hours.",
+            "lead_id": str(uuid.uuid4()),
+            "email_sent": True,
+            "email_id": "hp_trap",
+            "email_error": None,
+        }
+
+    # 2. Rate limiting check: Max 5 requests per 10 minutes per IP
+    client_ip = request.client.host if request.client else "unknown"
+    now = time.time()
+    if client_ip != "unknown":
+        timestamps = [t for t in _rate_limit_map.get(client_ip, []) if now - t < 600]
+        if len(timestamps) >= 5:
+            raise HTTPException(
+                status_code=429,
+                detail="Too many quotation requests from your network. Please wait a few minutes or contact us directly via WhatsApp."
+            )
+        timestamps.append(now)
+        _rate_limit_map[client_ip] = timestamps
+
+    clean_payload = payload.model_dump(exclude={"website_hp"})
+    lead = ContactLead(**clean_payload)
     lead_dict = lead.model_dump()
     lead_dict["created_at"] = lead.created_at.isoformat()
 
@@ -1372,11 +1395,28 @@ app.include_router(admin_router)
 app.include_router(api_router, prefix="")
 app.include_router(admin_router, prefix="")
 
+ALLOWED_ORIGINS = [
+    "https://www.gaganengineerings.in",
+    "https://gaganengineerings.in",
+    "https://gagan-engineering-website.vercel.app",
+    "https://gagan-engineering-website-six.vercel.app",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]
+custom_cors = os.environ.get("CORS_ORIGINS", "")
+if custom_cors:
+    for origin in custom_cors.split(","):
+        clean_origin = origin.strip()
+        if clean_origin and clean_origin not in ALLOWED_ORIGINS:
+            ALLOWED_ORIGINS.append(clean_origin)
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
-    allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
-    allow_methods=["*"],
+    allow_origins=ALLOWED_ORIGINS,
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"],
     allow_headers=["*"],
 )
 

@@ -146,8 +146,8 @@ export default function AdminLogin() {
           </button>
         </form>
 
-        <p className="text-center text-white/30 text-xs mt-6 mono">
-          Default: admin / gaganworks2006 (set in .env)
+        <p className="text-center text-white/40 text-xs mt-6 mono">
+          Authorized personnel only. Access is monitored and logged.
         </p>
       </div>
     </div>

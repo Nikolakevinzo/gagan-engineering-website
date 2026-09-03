@@ -69,30 +69,14 @@ export default function Products() {
     api
       .get("/products")
       .then((r) => {
-        let combined = [...CATALOGUE_PRODUCTS];
-        // 1. Merge DB products (DB wins over catalogue)
-        if (r.data && r.data.products && r.data.products.length > 0) {
-          combined = mergeProducts(combined, r.data.products);
+        if (r.data && Array.isArray(r.data.products) && r.data.products.length > 0) {
+          setProducts(r.data.products);
+        } else {
+          setProducts(CATALOGUE_PRODUCTS);
         }
-        // 2. Merge localStorage admin edits (local wins over DB for instant updates)
-        try {
-          const localProducts = JSON.parse(localStorage.getItem("gagan_custom_products") || "[]");
-          if (localProducts.length > 0) {
-            combined = mergeProducts(combined, localProducts);
-          }
-        } catch (e) {}
-        setProducts(combined);
       })
       .catch(() => {
-        // API offline: use catalogue + localStorage fallback
-        let combined = [...CATALOGUE_PRODUCTS];
-        try {
-          const localProducts = JSON.parse(localStorage.getItem("gagan_custom_products") || "[]");
-          if (localProducts.length > 0) {
-            combined = mergeProducts(combined, localProducts);
-          }
-        } catch (e) {}
-        setProducts(combined);
+        setProducts(CATALOGUE_PRODUCTS);
       });
   }, []);
 

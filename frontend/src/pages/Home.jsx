@@ -66,23 +66,17 @@ export default function Home() {
     api
       .get("/products")
       .then((r) => {
-        let combined = getLiveCatalogueProducts();
-        if (r.data && r.data.products && r.data.products.length > 0) {
-          combined = mergeProducts(combined, r.data.products);
+        if (r.data && Array.isArray(r.data.products) && r.data.products.length > 0) {
+          setProducts(r.data.products);
+          setFeatured(r.data.products.filter((p) => p.featured));
+        } else {
+          setProducts(CATALOGUE_PRODUCTS);
+          setFeatured(CATALOGUE_PRODUCTS.filter((p) => p.featured));
         }
-        try {
-          const localProducts = JSON.parse(localStorage.getItem("gagan_custom_products") || "[]");
-          if (localProducts.length > 0) {
-            combined = mergeProducts(combined, localProducts);
-          }
-        } catch (e) {}
-        setProducts(combined);
-        setFeatured(combined.filter((p) => p.featured));
       })
       .catch(() => {
-        const live = getLiveCatalogueProducts();
-        setProducts(live);
-        setFeatured(live.filter((p) => p.featured));
+        setProducts(CATALOGUE_PRODUCTS);
+        setFeatured(CATALOGUE_PRODUCTS.filter((p) => p.featured));
       });
   }, []);
 

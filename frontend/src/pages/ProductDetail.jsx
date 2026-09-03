@@ -84,24 +84,14 @@ export default function ProductDetail() {
       .get(`/products/${id}`)
       .then((r) => {
         if (r.data && r.data.product) {
-          let mergedProd = r.data.product;
-          try {
-            const localProducts = JSON.parse(localStorage.getItem("gagan_custom_products") || "[]");
-            const localProd = localProducts.find((p) => p.id === id);
-            if (localProd) {
-              mergedProd = { ...mergedProd, ...localProd };
-            }
-          } catch (e) {}
-          setProduct(mergedProd);
+          setProduct(r.data.product);
           setRelated(r.data.related || []);
         } else {
-          // DB doesn't have it — fall back to live catalogue (includes localStorage)
-          const liveList = getLiveCatalogueProducts();
-          const localProd = liveList.find((p) => p.id === id);
-          if (localProd) {
-            setProduct(localProd);
+          const found = CATALOGUE_PRODUCTS.find((p) => p.id === id);
+          if (found) {
+            setProduct(found);
             setRelated(
-              liveList.filter((p) => p.categorySlug === localProd.categorySlug && p.id !== localProd.id).slice(0, 3)
+              CATALOGUE_PRODUCTS.filter((p) => p.categorySlug === found.categorySlug && p.id !== found.id).slice(0, 3)
             );
           }
         }
@@ -109,13 +99,11 @@ export default function ProductDetail() {
         window.scrollTo(0, 0);
       })
       .catch(() => {
-        // API offline — use live catalogue with localStorage
-        const liveList = getLiveCatalogueProducts();
-        const localProd = liveList.find((p) => p.id === id);
-        if (localProd) {
-          setProduct(localProd);
+        const found = CATALOGUE_PRODUCTS.find((p) => p.id === id);
+        if (found) {
+          setProduct(found);
           setRelated(
-            liveList.filter((p) => p.categorySlug === localProd.categorySlug && p.id !== localProd.id).slice(0, 3)
+            CATALOGUE_PRODUCTS.filter((p) => p.categorySlug === found.categorySlug && p.id !== found.id).slice(0, 3)
           );
         }
         setLoading(false);

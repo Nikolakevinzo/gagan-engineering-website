@@ -45,7 +45,7 @@ function PublicLayout({ children }) {
   return (
     <div className="App bg-[#050505] min-h-screen text-white flex flex-col justify-between selection:bg-[#FF5722] selection:text-white">
       <Navbar />
-      <main className="flex-grow">{children}</main>
+      <main id="main-content" className="flex-grow">{children}</main>
       <Footer />
       <FloatingCTA />
       <AIAssistant />

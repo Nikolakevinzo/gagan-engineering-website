@@ -18,6 +18,7 @@ export default function Contact() {
     phone: "",
     product_interest: preset || "Double Head Electric Bra Cup Moulding Machine",
     message: "",
+    website_hp: "",
   });
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
@@ -132,6 +133,19 @@ export default function Contact() {
               className="bg-[#09090B] border border-white/10 p-5 sm:p-6 md:p-8 lg:p-10 rounded-xs space-y-5 sm:space-y-6 shadow-2xl"
               data-testid="contact-form"
             >
+              {/* Invisible Honeypot Field for Bot/Spam Protection */}
+              <div style={{ display: "none", position: "absolute", left: "-9999px" }} aria-hidden="true">
+                <label htmlFor="website_hp">Do not fill this field</label>
+                <input
+                  type="text"
+                  id="website_hp"
+                  name="website_hp"
+                  value={form.website_hp || ""}
+                  onChange={handle("website_hp")}
+                  tabIndex={-1}
+                  autoComplete="off"
+                />
+              </div>
               {done && (
                 <div className="flex items-start gap-3 bg-[#FF5722]/10 border border-[#FF5722]/40 p-3 sm:p-4 rounded-xs">
                   <CheckCircle2 className="w-5 h-5 text-[#FF5722] mt-0.5 shrink-0" />

@@ -321,26 +321,6 @@ export const CATEGORIES = [
 ];
 
 export function getLiveCatalogueProducts() {
-  try {
-    if (typeof window !== "undefined") {
-      const stored = localStorage.getItem("gagan_custom_products");
-      if (stored) {
-        const custom = JSON.parse(stored);
-        if (Array.isArray(custom) && custom.length > 0) {
-          const merged = [...CATALOGUE_PRODUCTS];
-          custom.forEach((c) => {
-            const idx = merged.findIndex((m) => m.id === c.id);
-            if (idx >= 0) {
-              merged[idx] = { ...merged[idx], ...c };
-            } else {
-              merged.push(c);
-            }
-          });
-          return merged;
-        }
-      }
-    }
-  } catch (e) {}
   return CATALOGUE_PRODUCTS;
 }
 
