@@ -64,6 +64,16 @@ export default function AdminBlogForm() {
 
     const fetchArticle = async () => {
       setLoading(true);
+
+      const applyLocalOverride = (art) => {
+        try {
+          const stored = JSON.parse(localStorage.getItem("gagan_custom_blogs") || "[]");
+          const local = stored.find((b) => b.slug === slug);
+          if (local) return { ...art, ...local };
+        } catch (e) {}
+        return art;
+      };
+
       try {
         const res = await fetch(`/api/admin/blogs/${slug}`, {
           headers: getAuthHeader()
@@ -71,24 +81,26 @@ export default function AdminBlogForm() {
         if (res.ok) {
           const data = await res.json();
           if (data.article) {
+            const finalArt = applyLocalOverride(data.article);
             setFormData({
-              ...data.article,
-              published: data.article.published !== false,
-              tags: data.article.tags || [],
-              relatedProducts: data.article.relatedProducts || [],
-              content: data.article.content || []
+              ...finalArt,
+              published: finalArt.published !== false,
+              tags: finalArt.tags || [],
+              relatedProducts: finalArt.relatedProducts || [],
+              content: finalArt.content || []
             });
           }
         } else {
           // Fallback to static blogData
           const staticMatch = BLOG_ARTICLES.find((a) => a.slug === slug);
           if (staticMatch) {
+            const finalArt = applyLocalOverride(staticMatch);
             setFormData({
-              ...staticMatch,
+              ...finalArt,
               published: true,
-              tags: staticMatch.tags || [],
-              relatedProducts: staticMatch.relatedProducts || [],
-              content: staticMatch.content || []
+              tags: finalArt.tags || [],
+              relatedProducts: finalArt.relatedProducts || [],
+              content: finalArt.content || []
             });
           } else {
             toast.error("Article not found.");
@@ -99,12 +111,13 @@ export default function AdminBlogForm() {
         console.warn("Failed to fetch from API, falling back to static:", err);
         const staticMatch = BLOG_ARTICLES.find((a) => a.slug === slug);
         if (staticMatch) {
+          const finalArt = applyLocalOverride(staticMatch);
           setFormData({
-            ...staticMatch,
+            ...finalArt,
             published: true,
-            tags: staticMatch.tags || [],
-            relatedProducts: staticMatch.relatedProducts || [],
-            content: staticMatch.content || []
+            tags: finalArt.tags || [],
+            relatedProducts: finalArt.relatedProducts || [],
+            content: finalArt.content || []
           });
         }
       } finally {

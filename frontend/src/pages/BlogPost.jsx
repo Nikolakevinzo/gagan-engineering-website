@@ -54,6 +54,7 @@ export default function BlogPost() {
     return () => {
       isMounted = false;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);
 
   const [rfqForm, setRfqForm] = useState({
