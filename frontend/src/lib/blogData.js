@@ -95,7 +95,7 @@ Bra cup moulding requires an engineered combination of uniform platen heating (t
     date: "2026-08-15",
     readTime: "8 min read",
     author: "Gagan Engineering Works Technical Desk",
-    image: "https://5.imimg.com/data5/SELLER/Default/2026/4/596257189/PL/SJ/DO/4175789/456-500x500.png",
+    image: "/automatic-ctl.png",
     tags: ["CTL Line", "Cut to Length", "Sheet Leveler", "Hydraulic Shear", "Coil Processing"],
     targetKeywords: "Automatic Cut to Length Machine Manufacturer, CTL Line India, Sheet Metal Leveling Line, Coil Shearing Line Khopoli",
     relatedProducts: [

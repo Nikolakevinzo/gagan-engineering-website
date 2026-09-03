@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { BookOpen, Calendar, Clock, ArrowRight, Search, Tag, Sparkles, Filter, Factory, Wrench } from "lucide-react";
 import SEO from "@/components/SEO";
@@ -10,8 +10,24 @@ export default function Blog() {
   const [searchParams, setSearchParams] = useSearchParams();
   const activeCatParam = searchParams.get("category") || "all";
 
+  const [articles, setArticles] = useState(BLOG_ARTICLES);
   const [activeCategory, setActiveCategory] = useState(activeCatParam);
   const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    let isMounted = true;
+    fetch("/api/blogs?limit=100")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (isMounted && data && Array.isArray(data.articles) && data.articles.length > 0) {
+          setArticles(data.articles);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const handleCategorySelect = (id) => {
     setActiveCategory(id);
@@ -24,17 +40,17 @@ export default function Blog() {
     setSearchParams(newParams);
   };
 
-  const filteredArticles = BLOG_ARTICLES.filter((article) => {
+  const filteredArticles = articles.filter((article) => {
     const matchesCat = activeCategory === "all" || article.categorySlug === activeCategory;
     const matchesSearch =
       searchQuery.trim() === "" ||
-      article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      article.summary.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      article.tags.some((t) => t.toLowerCase().includes(searchQuery.toLowerCase()));
+      article.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      article.summary?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (article.tags && article.tags.some((t) => t.toLowerCase().includes(searchQuery.toLowerCase())));
     return matchesCat && matchesSearch;
   });
 
-  const featuredArticle = BLOG_ARTICLES[0];
+  const featuredArticle = articles[0] || BLOG_ARTICLES[0];
 
   return (
     <div className="bg-[#050505] min-h-screen pt-24 sm:pt-28 pb-16 sm:pb-24 text-white">

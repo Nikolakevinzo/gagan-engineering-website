@@ -103,5 +103,32 @@ class TestCatalogDataIntegrity(unittest.TestCase):
         self.assertTrue(pipe_machine["image"].startswith("https://5.imimg.com/"))
 
 
+class TestBlogSystemIntegrity(unittest.TestCase):
+    """Test blog catalog, seeding, models, and image assets."""
+
+    def test_seed_blogs_count(self):
+        """Must have at least 8 core industrial pillar articles."""
+        from api.seed_blogs import SEED_BLOGS
+        self.assertGreaterEqual(len(SEED_BLOGS), 8)
+
+    def test_ctl_blog_image_asset(self):
+        """Automatic CTL Line blog must use authentic /automatic-ctl.png image."""
+        from api.seed_blogs import SEED_BLOGS
+        ctl_blog = next((b for b in SEED_BLOGS if b["slug"] == "automatic-cut-to-length-ctl-line-guide"), None)
+        self.assertIsNotNone(ctl_blog)
+        self.assertEqual(ctl_blog["image"], "/automatic-ctl.png")
+
+    def test_blog_models_validation(self):
+        """Blog models must serialize and validate required fields."""
+        from api.index import BlogArticleCreate
+        payload = BlogArticleCreate(
+            title="Test Rolling Mill Guide",
+            summary="A short summary of rolling mills."
+        )
+        self.assertEqual(payload.title, "Test Rolling Mill Guide")
+        self.assertTrue(payload.published)
+
+
 if __name__ == "__main__":
     unittest.main()
+

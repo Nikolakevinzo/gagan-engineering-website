@@ -2,7 +2,7 @@ import { useState, useEffect, createContext, useContext } from "react";
 import { Link, NavLink, useNavigate, Outlet } from "react-router-dom";
 import {
   LayoutDashboard, Package, Users, LogOut, Menu, X,
-  ChevronRight, Factory, Settings, Upload
+  ChevronRight, Factory, Settings, Upload, FileText, PenTool
 } from "lucide-react";
 
 const AdminAuthContext = createContext(null);
@@ -69,6 +69,8 @@ export default function AdminLayout() {
     { to: "/admin", label: "Dashboard", icon: LayoutDashboard, end: true },
     { to: "/admin/products", label: "Products", icon: Package },
     { to: "/admin/products/new", label: "Add Product", icon: Upload },
+    { to: "/admin/blogs", label: "Blog Articles", icon: FileText },
+    { to: "/admin/blogs/new", label: "Write Article", icon: PenTool },
     { to: "/admin/leads", label: "Leads / Inquiries", icon: Users },
   ];
 

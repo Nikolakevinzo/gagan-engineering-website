@@ -23,6 +23,8 @@ import AdminDashboard from "@/pages/Admin/Dashboard";
 import AdminProductList from "@/pages/Admin/ProductList";
 import AdminProductForm from "@/pages/Admin/ProductForm";
 import AdminLeadsList from "@/pages/Admin/LeadsList";
+import AdminBlogList from "@/pages/Admin/BlogList";
+import AdminBlogForm from "@/pages/Admin/BlogForm";
 
 
 // Automatically scrolls to top of page on any route / page change
@@ -82,6 +84,9 @@ function App() {
             <Route path="products" element={<AdminProductList />} />
             <Route path="products/new" element={<AdminProductForm />} />
             <Route path="products/edit/:id" element={<AdminProductForm />} />
+            <Route path="blogs" element={<AdminBlogList />} />
+            <Route path="blogs/new" element={<AdminBlogForm />} />
+            <Route path="blogs/edit/:slug" element={<AdminBlogForm />} />
             <Route path="leads" element={<AdminLeadsList />} />
             <Route path="*" element={<Navigate to="/admin" replace />} />
           </Route>

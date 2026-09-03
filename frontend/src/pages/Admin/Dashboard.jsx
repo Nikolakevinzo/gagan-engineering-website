@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAdminAuth } from "@/components/AdminLayout";
-import { Package, Users, Star, BarChart3, Plus, ArrowRight, RefreshCw, Mail, CheckCircle2, AlertTriangle } from "lucide-react";
+import { Package, Users, Star, BarChart3, Plus, ArrowRight, RefreshCw, Mail, CheckCircle2, AlertTriangle, FileText, PenTool } from "lucide-react";
 
 import { getBackendUrl } from "@/lib/adminConfig";
 import { CATALOGUE_PRODUCTS } from "@/lib/catalogueData";
@@ -80,6 +80,14 @@ export default function AdminDashboard() {
           link: "/admin/leads",
         },
         {
+          label: "Blog Articles",
+          value: stats.total_blogs || 8,
+          icon: FileText,
+          color: "text-purple-400",
+          bg: "bg-purple-400/10",
+          link: "/admin/blogs",
+        },
+        {
           label: "Categories",
           value: stats.categories_count,
           icon: BarChart3,
@@ -116,9 +124,9 @@ export default function AdminDashboard() {
       )}
 
       {/* Stat Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
         {loading
-          ? Array.from({ length: 4 }).map((_, i) => (
+          ? Array.from({ length: 5 }).map((_, i) => (
               <div key={i} className="bg-[#09090B] border border-white/10 rounded-sm p-6 animate-pulse">
                 <div className="h-4 bg-white/10 rounded mb-3 w-16" />
                 <div className="h-8 bg-white/10 rounded w-12" />
@@ -140,7 +148,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Quick Actions */}
-      <div className="grid sm:grid-cols-2 gap-4 mb-8">
+      <div className="grid sm:grid-cols-3 gap-4 mb-8">
         <Link
           to="/admin/products/new"
           className="bg-[#09090B] border border-white/10 hover:border-[#FF5722]/50 rounded-sm p-6 flex items-center gap-4 group transition-all"
@@ -153,6 +161,20 @@ export default function AdminDashboard() {
             <div className="text-white/50 text-xs mt-0.5">Create machine listing with specs & FAQs</div>
           </div>
           <ArrowRight className="w-4 h-4 text-white/30 ml-auto group-hover:text-[#FF5722] transition-colors" />
+        </Link>
+
+        <Link
+          to="/admin/blogs/new"
+          className="bg-[#09090B] border border-white/10 hover:border-purple-500/40 rounded-sm p-6 flex items-center gap-4 group transition-all"
+        >
+          <div className="w-12 h-12 bg-purple-400/10 border border-purple-500/30 rounded-sm flex items-center justify-center group-hover:bg-purple-400/20 transition-colors">
+            <PenTool className="w-5 h-5 text-purple-400" />
+          </div>
+          <div>
+            <div className="font-semibold text-white text-sm">Write Blog Article</div>
+            <div className="text-white/50 text-xs mt-0.5">Publish SEO guides & technical articles</div>
+          </div>
+          <ArrowRight className="w-4 h-4 text-white/30 ml-auto group-hover:text-purple-400 transition-colors" />
         </Link>
 
         <Link

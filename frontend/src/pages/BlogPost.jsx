@@ -13,7 +13,28 @@ export default function BlogPost() {
   const { slug } = useParams();
   const navigate = useNavigate();
 
-  const article = BLOG_ARTICLES.find((a) => a.slug === slug);
+  const staticArticle = BLOG_ARTICLES.find((a) => a.slug === slug);
+  const [article, setArticle] = useState(staticArticle || null);
+  const [loadingArticle, setLoadingArticle] = useState(!staticArticle);
+
+  useEffect(() => {
+    let isMounted = true;
+    fetch(`/api/blogs/${slug}`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (isMounted && data && data.article) {
+          setArticle(data.article);
+        }
+      })
+      .catch(() => {})
+      .finally(() => {
+        if (isMounted) setLoadingArticle(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [slug]);
 
   const [rfqForm, setRfqForm] = useState({
     name: "",
@@ -24,6 +45,15 @@ export default function BlogPost() {
   });
   const [rfqSubmitting, setRfqSubmitting] = useState(false);
   const [rfqDone, setRfqDone] = useState(false);
+
+  if (loadingArticle) {
+    return (
+      <div className="bg-[#050505] min-h-screen pt-32 flex flex-col items-center justify-center text-center px-4 text-white">
+        <div className="w-8 h-8 border-2 border-[#FF5722] border-t-transparent rounded-full animate-spin mb-4" />
+        <p className="mono text-xs text-white/50 tracking-wider uppercase">Loading Technical Guide...</p>
+      </div>
+    );
+  }
 
   if (!article) {
     return (

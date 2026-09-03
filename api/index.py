@@ -749,6 +749,64 @@ class AIQuestionRequest(BaseModel):
     question: str
 
 
+# ----------------- Blog Models -----------------
+try:
+    from api.seed_blogs import SEED_BLOGS
+except Exception:
+    try:
+        from seed_blogs import SEED_BLOGS
+    except Exception:
+        SEED_BLOGS = []
+
+_mem_blogs = list(SEED_BLOGS)
+
+class BlogContentItem(BaseModel):
+    type: str = "section"  # "section" or "table"
+    id: Optional[str] = None
+    heading: str = ""
+    text: Optional[str] = ""
+    items: Optional[List[str]] = []
+    headers: Optional[List[str]] = []
+    rows: Optional[List[List[str]]] = []
+
+class BlogTOCItem(BaseModel):
+    id: str
+    title: str
+
+class BlogArticleCreate(BaseModel):
+    slug: Optional[str] = None
+    title: str
+    summary: str
+    category: Optional[str] = "Engineering & Machinery"
+    categorySlug: Optional[str] = "engineering-machinery"
+    date: Optional[str] = None
+    readTime: Optional[str] = "6 min read"
+    author: Optional[str] = "Gagan Engineering Works Technical Desk"
+    image: Optional[str] = ""
+    tags: Optional[List[str]] = []
+    targetKeywords: Optional[str] = ""
+    relatedProducts: Optional[List[str]] = []
+    tableOfContents: Optional[List[BlogTOCItem]] = []
+    content: Optional[List[BlogContentItem]] = []
+    published: Optional[bool] = True
+
+class BlogArticleUpdate(BaseModel):
+    title: Optional[str] = None
+    summary: Optional[str] = None
+    category: Optional[str] = None
+    categorySlug: Optional[str] = None
+    date: Optional[str] = None
+    readTime: Optional[str] = None
+    author: Optional[str] = None
+    image: Optional[str] = None
+    tags: Optional[List[str]] = None
+    targetKeywords: Optional[str] = None
+    relatedProducts: Optional[List[str]] = None
+    tableOfContents: Optional[List[BlogTOCItem]] = None
+    content: Optional[List[BlogContentItem]] = None
+    published: Optional[bool] = None
+
+
 # ----------------- Admin Auth -----------------
 def verify_admin(request: Request):
     """Robust admin authenticator supporting custom headers & Bearer tokens without browser popup."""
@@ -827,11 +885,57 @@ async def get_product_by_id(product_id: str) -> Optional[Dict]:
         pass
     return next((p for p in _mem_products if p["id"] == product_id), None)
 
+async def get_blogs_from_db(published_only: bool = True) -> List[Dict]:
+    """Fetch blog articles from MongoDB, fallback to in-memory/seed."""
+    if db is None:
+        if published_only:
+            return [b for b in _mem_blogs if b.get("published", True)]
+        return list(_mem_blogs)
+    try:
+        query = {"published": True} if published_only else {}
+        cursor = db["blogs"].find(query, {"_id": 0}).sort("date", -1)
+        docs = await cursor.to_list(length=500)
+        if docs:
+            return docs
+        if published_only:
+            return [b for b in _mem_blogs if b.get("published", True)]
+        return list(_mem_blogs)
+    except Exception as e:
+        logger.warning(f"Error fetching blogs from DB: {e}")
+        if published_only:
+            return [b for b in _mem_blogs if b.get("published", True)]
+        return list(_mem_blogs)
+
+async def get_blog_by_slug(slug: str, published_only: bool = False) -> Optional[Dict]:
+    """Fetch single blog article by slug."""
+    if db is None:
+        for b in _mem_blogs:
+            if b.get("slug") == slug:
+                if published_only and not b.get("published", True):
+                    return None
+                return b
+        return None
+    try:
+        query = {"slug": slug}
+        if published_only:
+            query["published"] = True
+        doc = await db["blogs"].find_one(query, {"_id": 0})
+        if doc:
+            return doc
+    except Exception as e:
+        logger.warning(f"Error fetching blog {slug} from DB: {e}")
+    for b in _mem_blogs:
+        if b.get("slug") == slug:
+            if published_only and not b.get("published", True):
+                return None
+            return b
+    return None
+
 
 # ----------------- Startup Seeder -----------------
 @app.on_event("startup")
 async def seed_database():
-    """Seed database with default products if collection is empty."""
+    """Seed database with default products and blogs if collections are empty."""
     if db is None:
         logger.warning("MongoDB not connected — using in-memory data.")
         return
@@ -847,6 +951,17 @@ async def seed_database():
             logger.info(f"Seeded {len(SEED_PRODUCTS)} products successfully.")
         else:
             logger.info(f"Products collection already has {count} documents, skipping seed.")
+        
+        blog_count = await db["blogs"].count_documents({})
+        if blog_count == 0:
+            logger.info("Seeding blogs collection with default articles...")
+            await db["blogs"].insert_many([
+                {**b, "_id_excluded": True} for b in SEED_BLOGS
+            ])
+            await db["blogs"].update_many({}, {"$unset": {"_id_excluded": ""}})
+            logger.info(f"Seeded {len(SEED_BLOGS)} blogs successfully.")
+        else:
+            logger.info(f"Blogs collection already has {blog_count} documents, skipping seed.")
     except Exception as e:
         logger.warning(f"Could not seed database: {e}")
 
@@ -1119,6 +1234,40 @@ async def business_info():
         "review_count": 9,
     }
 
+@api_router.get("/blogs")
+async def list_public_blogs(
+    category: Optional[str] = None,
+    search: Optional[str] = None,
+    tag: Optional[str] = None,
+    page: int = Query(default=1, ge=1),
+    limit: int = Query(default=20, le=100)
+):
+    blogs = await get_blogs_from_db(published_only=True)
+    if category and category != "all":
+        blogs = [b for b in blogs if b.get("categorySlug") == category or b.get("category", "").lower() == category.lower()]
+    if tag:
+        t = tag.lower()
+        blogs = [b for b in blogs if any(t in str(x).lower() for x in b.get("tags", []))]
+    if search:
+        s = search.lower()
+        blogs = [
+            b for b in blogs
+            if s in b.get("title", "").lower()
+            or s in b.get("summary", "").lower()
+            or any(s in str(x).lower() for x in b.get("tags", []))
+        ]
+    total = len(blogs)
+    start = (page - 1) * limit
+    paginated = blogs[start:start + limit]
+    return {"articles": paginated, "total": total, "page": page, "limit": limit}
+
+@api_router.get("/blogs/{slug}")
+async def get_public_blog(slug: str):
+    blog = await get_blog_by_slug(slug, published_only=True)
+    if not blog:
+        raise HTTPException(status_code=404, detail="Blog article not located")
+    return {"article": blog}
+
 
 # ----------------- Admin Routes -----------------
 admin_router = APIRouter(prefix="/api/admin", tags=["Admin"])
@@ -1318,7 +1467,7 @@ async def admin_upload_image(file: UploadFile = File(...), username: str = Depen
         clean_ext = Path(file.filename).suffix.lower() if file.filename else ".jpg"
         if clean_ext not in [".jpg", ".jpeg", ".png", ".webp", ".svg"]:
             clean_ext = ".jpg"
-        unique_name = f"product_{uuid.uuid4().hex[:12]}{clean_ext}"
+        unique_name = f"upload_{uuid.uuid4().hex[:12]}{clean_ext}"
         dest_path = UPLOAD_DIR / unique_name
         contents = await file.read()
         with open(dest_path, "wb") as f:
@@ -1327,6 +1476,120 @@ async def admin_upload_image(file: UploadFile = File(...), username: str = Depen
     except Exception as e:
         logger.error(f"Image upload failed: {e}")
         raise HTTPException(status_code=500, detail=f"Image upload failed: {str(e)}")
+
+# ----------------- Admin Blog Endpoints -----------------
+@admin_router.get("/blogs")
+async def admin_list_blogs(
+    category: Optional[str] = None,
+    search: Optional[str] = None,
+    published: Optional[bool] = None,
+    page: int = Query(default=1, ge=1),
+    limit: int = Query(default=50, le=200),
+    username: str = Depends(verify_admin)
+):
+    blogs = await get_blogs_from_db(published_only=False)
+    if category and category != "all":
+        blogs = [b for b in blogs if b.get("categorySlug") == category or b.get("category", "").lower() == category.lower()]
+    if published is not None:
+        blogs = [b for b in blogs if b.get("published", True) == published]
+    if search:
+        s = search.lower()
+        blogs = [
+            b for b in blogs
+            if s in b.get("title", "").lower()
+            or s in b.get("summary", "").lower()
+            or s in b.get("slug", "").lower()
+            or any(s in str(t).lower() for t in b.get("tags", []))
+        ]
+    total = len(blogs)
+    start = (page - 1) * limit
+    paginated = blogs[start:start + limit]
+    return {"articles": paginated, "total": total, "page": page, "limit": limit}
+
+@admin_router.get("/blogs/{slug}")
+async def admin_get_blog(slug: str, username: str = Depends(verify_admin)):
+    blog = await get_blog_by_slug(slug, published_only=False)
+    if not blog:
+        raise HTTPException(status_code=404, detail="Blog article not found")
+    return {"article": blog}
+
+@admin_router.post("/blogs", status_code=201)
+async def admin_create_blog(payload: BlogArticleCreate, username: str = Depends(verify_admin)):
+    import re
+    slug = payload.slug or payload.title.lower()
+    slug = re.sub(r'[^a-z0-9-]', '', re.sub(r'[\s_]+', '-', slug.lower())).strip('-')
+    if not slug:
+        slug = f"post-{int(datetime.now(timezone.utc).timestamp())}"
+
+    existing = await get_blog_by_slug(slug, published_only=False)
+    if existing:
+        raise HTTPException(status_code=409, detail=f"Blog article with slug '{slug}' already exists")
+
+    now = datetime.now(timezone.utc)
+    new_article = {
+        **payload.model_dump(),
+        "slug": slug,
+        "date": payload.date or now.strftime("%Y-%m-%d"),
+        "createdAt": now,
+        "updatedAt": now,
+    }
+
+    if db is not None:
+        try:
+            await db["blogs"].insert_one({**new_article})
+            await db["blogs"].update_one({"slug": slug}, {"$unset": {"_id": ""}})
+        except Exception as e:
+            logger.warning(f"Failed to insert blog to MongoDB: {e}")
+            _mem_blogs.append(new_article)
+    else:
+        _mem_blogs.append(new_article)
+
+    return {"status": "created", "article": new_article}
+
+@admin_router.put("/blogs/{slug}")
+async def admin_update_blog(slug: str, payload: BlogArticleUpdate, username: str = Depends(verify_admin)):
+    existing = await get_blog_by_slug(slug, published_only=False)
+    if not existing:
+        raise HTTPException(status_code=404, detail="Blog article not found")
+
+    update_data = {k: v for k, v in payload.model_dump(exclude_unset=True).items() if v is not None}
+    update_data["updatedAt"] = datetime.now(timezone.utc)
+
+    if db is not None:
+        try:
+            await db["blogs"].update_one({"slug": slug}, {"$set": update_data})
+        except Exception as e:
+            logger.warning(f"MongoDB blog update failed: {e}")
+            for i, b in enumerate(_mem_blogs):
+                if b["slug"] == slug:
+                    _mem_blogs[i] = {**b, **update_data}
+                    break
+    else:
+        for i, b in enumerate(_mem_blogs):
+            if b["slug"] == slug:
+                _mem_blogs[i] = {**b, **update_data}
+                break
+
+    updated = await get_blog_by_slug(slug, published_only=False)
+    return {"status": "updated", "article": updated}
+
+@admin_router.delete("/blogs/{slug}")
+async def admin_delete_blog(slug: str, username: str = Depends(verify_admin)):
+    existing = await get_blog_by_slug(slug, published_only=False)
+    if not existing:
+        raise HTTPException(status_code=404, detail="Blog article not found")
+
+    if db is not None:
+        try:
+            await db["blogs"].delete_one({"slug": slug})
+        except Exception as e:
+            logger.warning(f"MongoDB delete blog failed: {e}")
+            global _mem_blogs
+            _mem_blogs = [b for b in _mem_blogs if b["slug"] != slug]
+    else:
+        _mem_blogs = [b for b in _mem_blogs if b["slug"] != slug]
+
+    return {"status": "deleted", "slug": slug}
 
 @admin_router.get("/leads")
 async def admin_list_leads(
@@ -1774,7 +2037,7 @@ BLOG_ARTICLES_SEO = [
         "slug": "automatic-cut-to-length-ctl-line-guide",
         "title": "Automatic Cut To Length (CTL) Lines: Leveling Precision, Shearing & ROI Analysis",
         "description": "An engineering guide covering 9-roll to 13-roll gear-driven levelers, optical encoder shearing, hydraulic decoiler integration, and ROI calculations for steel service centers.",
-        "image": "https://5.imimg.com/data5/SELLER/Default/2026/4/596257189/PL/SJ/DO/4175789/456-500x500.png",
+        "image": "https://www.gaganengineerings.in/automatic-ctl.png",
         "date": "2026-08-15",
         "keywords": "Automatic Cut to Length Machine Manufacturer, CTL Line India, Sheet Metal Leveling Line, Coil Shearing Line Khopoli"
     },
