@@ -324,6 +324,41 @@ export function getLiveCatalogueProducts() {
   return CATALOGUE_PRODUCTS;
 }
 
+// ----------------- Standard Industrial Product SKUs & Indicative Pricing (SEO & Rich Results) -----------------
+
+export const PRODUCT_SKUS = {
+  "10-tons-hydraulic-decoiler": "GSK-DEC-10T",
+  "automatic-ctl-machine": "GSK-CTL-01",
+  "c-z-purlin-roll-forming-machine": "GSK-PUR-CZ",
+  "automatic-roofing-sheet-crimping-machine": "GSK-ROOF-CRM",
+  "corrugated-sheets-making-machine": "GSK-CORR-01",
+  "semi-automatic-pipe-counter-boring-and-facing-machine": "GSK-PCB-60M",
+  "double-head-electric-bra-cup-moulding-machine": "GSK-BRA-DH",
+  "bra-cup-fabric-moulding-machine": "GSK-BRA-FAB",
+  "foam-bra-cup-moulding-machine": "GSK-BRA-FOAM",
+  "padded-bra-cup-moulding-machine": "GSK-BRA-PAD"
+};
+
+export function getProductSku(id) {
+  if (!id) return "GSK-MACH-01";
+  if (PRODUCT_SKUS[id]) return PRODUCT_SKUS[id];
+  const clean = id.replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
+  return `GSK-${clean.slice(0, 16)}`;
+}
+
+export const PRODUCT_ESTIMATED_PRICES = {
+  "10-tons-hydraulic-decoiler": "350000",
+  "automatic-ctl-machine": "950000",
+  "c-z-purlin-roll-forming-machine": "1200000",
+  "automatic-roofing-sheet-crimping-machine": "450000",
+  "corrugated-sheets-making-machine": "650000",
+  "semi-automatic-pipe-counter-boring-and-facing-machine": "250000",
+  "double-head-electric-bra-cup-moulding-machine": "150000",
+  "bra-cup-fabric-moulding-machine": "125000",
+  "foam-bra-cup-moulding-machine": "135000",
+  "padded-bra-cup-moulding-machine": "165000"
+};
+
 // ----------------- Media Helpers -----------------
 
 /**

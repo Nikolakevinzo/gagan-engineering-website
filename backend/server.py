@@ -1144,6 +1144,41 @@ async def admin_db_health(username: str = Depends(verify_admin)):
 _raw_site_url = os.environ.get("WEBSITE_URL") or os.environ.get("VERCEL_PROJECT_PRODUCTION_URL") or "https://www.gaganengineerings.in"
 WEBSITE_URL = _raw_site_url if _raw_site_url.startswith("http") else f"https://{_raw_site_url}"
 
+PRODUCT_SKUS = {
+    "10-tons-hydraulic-decoiler": "GSK-DEC-10T",
+    "automatic-ctl-machine": "GSK-CTL-01",
+    "c-z-purlin-roll-forming-machine": "GSK-PUR-CZ",
+    "automatic-roofing-sheet-crimping-machine": "GSK-ROOF-CRM",
+    "corrugated-sheets-making-machine": "GSK-CORR-01",
+    "semi-automatic-pipe-counter-boring-and-facing-machine": "GSK-PCB-60M",
+    "double-head-electric-bra-cup-moulding-machine": "GSK-BRA-DH",
+    "bra-cup-fabric-moulding-machine": "GSK-BRA-FAB",
+    "foam-bra-cup-moulding-machine": "GSK-BRA-FOAM",
+    "padded-bra-cup-moulding-machine": "GSK-BRA-PAD",
+}
+
+def get_product_sku(p_id: str) -> str:
+    if not p_id:
+        return "GSK-MACH-01"
+    if p_id in PRODUCT_SKUS:
+        return PRODUCT_SKUS[p_id]
+    import re
+    clean = re.sub(r'[^a-zA-Z0-9]', '', p_id).upper()
+    return f"GSK-{clean[:16]}"
+
+PRODUCT_ESTIMATED_PRICES = {
+    "10-tons-hydraulic-decoiler": "350000.00",
+    "automatic-ctl-machine": "950000.00",
+    "c-z-purlin-roll-forming-machine": "1200000.00",
+    "automatic-roofing-sheet-crimping-machine": "450000.00",
+    "corrugated-sheets-making-machine": "650000.00",
+    "semi-automatic-pipe-counter-boring-and-facing-machine": "250000.00",
+    "double-head-electric-bra-cup-moulding-machine": "150000.00",
+    "bra-cup-fabric-moulding-machine": "125000.00",
+    "foam-bra-cup-moulding-machine": "135000.00",
+    "padded-bra-cup-moulding-machine": "165000.00",
+}
+
 @app.get("/sitemap.xml", response_class=Response)
 async def sitemap():
     products = await get_products_from_db()
@@ -1295,17 +1330,21 @@ async def google_merchant_feed():
 
     for p in products:
         p_id = p.get("id", "")
+        p_sku = get_product_sku(p_id)
         p_name = p.get("name", "").replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
         p_desc = (p.get("description") or p.get("tagline") or p_name).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-        p_img = p.get("image") or f"{WEBSITE_URL}/logo.png"
+        raw_img = p.get("image") or f"{WEBSITE_URL}/logo.png"
+        p_img = raw_img if raw_img.startswith("http") else f"{WEBSITE_URL}{'' if raw_img.startswith('/') else '/'}{raw_img}"
         p_link = f"{WEBSITE_URL}/products/{p_id}"
         category = p.get("category", "Industrial Machinery")
+        price_val = PRODUCT_ESTIMATED_PRICES.get(p_id, "150000.00")
         
         # Industrial category mapping
         google_cat = "Business &amp; Industrial &gt; Manufacturing &gt; Manufacturing Machinery"
         
         items.append(f"""    <item>
-      <g:id>{p_id}</g:id>
+      <g:id>{p_sku}</g:id>
+      <g:mpn>{p_sku}</g:mpn>
       <g:title>{p_name}</g:title>
       <g:description>{p_desc}</g:description>
       <g:link>{p_link}</g:link>
@@ -1313,7 +1352,7 @@ async def google_merchant_feed():
       <g:brand>Gagan Engineering Works</g:brand>
       <g:condition>new</g:condition>
       <g:availability>in_stock</g:availability>
-      <g:price>150000.00 INR</g:price>
+      <g:price>{price_val} INR</g:price>
       <g:google_product_category>{google_cat}</g:google_product_category>
       <g:product_type>{category}</g:product_type>
       <g:identifier_exists>no</g:identifier_exists>

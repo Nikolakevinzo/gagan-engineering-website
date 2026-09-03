@@ -5,7 +5,128 @@
     <link>https://www.gaganengineerings.in</link>
     <description>Industrial Machinery &amp; Equipment Manufacturer in Khopoli, Maharashtra, India</description>
     <item>
-      <g:id>double-head-electric-bra-cup-moulding-machine</g:id>
+      <g:id>GSK-DEC-10T</g:id>
+      <g:mpn>GSK-DEC-10T</g:mpn>
+      <g:title>10 Tons Hydraulic Decoiler</g:title>
+      <g:description>Heavy-duty 10,000 kg capacity hydraulic uncoiler for roll forming lines. Features hydraulic mandrel expansion (480-520mm ID) and pneumatic disc braking.</g:description>
+      <g:link>https://www.gaganengineerings.in/products/10-tons-hydraulic-decoiler</g:link>
+      <g:image_link>https://5.imimg.com/data5/ANDROID/Default/2026/3/590380757/WL/UR/BT/4175789/product-jpeg-500x500.jpg</g:image_link>
+      <g:brand>Gagan Engineering Works</g:brand>
+      <g:condition>new</g:condition>
+      <g:availability>in_stock</g:availability>
+      <g:price>350000.00 INR</g:price>
+      <g:google_product_category>Business &amp; Industrial &gt; Manufacturing &gt; Manufacturing Machinery</g:google_product_category>
+      <g:product_type>Hydraulic Decoiler</g:product_type>
+      <g:identifier_exists>no</g:identifier_exists>
+      <g:shipping>
+        <g:country>IN</g:country>
+        <g:service>Freight Delivery (Pan-India)</g:service>
+        <g:price>0.00 INR</g:price>
+      </g:shipping>
+    </item>
+    <item>
+      <g:id>GSK-CTL-01</g:id>
+      <g:mpn>GSK-CTL-01</g:mpn>
+      <g:title>Automatic Cut To Length (CTL) Machine</g:title>
+      <g:description>High-speed precision Cut-to-Length Line for heavy-duty metal coil processing up to 6mm with 10-ton decoiler, 9-roll leveler, and hydraulic shear.</g:description>
+      <g:link>https://www.gaganengineerings.in/products/automatic-ctl-machine</g:link>
+      <g:image_link>https://www.gaganengineerings.in/automatic-ctl.png</g:image_link>
+      <g:brand>Gagan Engineering Works</g:brand>
+      <g:condition>new</g:condition>
+      <g:availability>in_stock</g:availability>
+      <g:price>950000.00 INR</g:price>
+      <g:google_product_category>Business &amp; Industrial &gt; Manufacturing &gt; Manufacturing Machinery</g:google_product_category>
+      <g:product_type>Cut To Length Line</g:product_type>
+      <g:identifier_exists>no</g:identifier_exists>
+      <g:shipping>
+        <g:country>IN</g:country>
+        <g:service>Freight Delivery (Pan-India)</g:service>
+        <g:price>0.00 INR</g:price>
+      </g:shipping>
+    </item>
+    <item>
+      <g:id>GSK-PUR-CZ</g:id>
+      <g:mpn>GSK-PUR-CZ</g:mpn>
+      <g:title>C / Z Purlin Roll Forming Machine</g:title>
+      <g:description>Interchangeable C and Z section roll forming line with PLC touchscreen for pre-engineered building structural steel.</g:description>
+      <g:link>https://www.gaganengineerings.in/products/c-z-purlin-roll-forming-machine</g:link>
+      <g:image_link>https://5.imimg.com/data5/ANDWEB/Default/2026/3/591020192/NG/CE/TB/4175789/product-jpeg-500x500.jpeg</g:image_link>
+      <g:brand>Gagan Engineering Works</g:brand>
+      <g:condition>new</g:condition>
+      <g:availability>in_stock</g:availability>
+      <g:price>1200000.00 INR</g:price>
+      <g:google_product_category>Business &amp; Industrial &gt; Manufacturing &gt; Manufacturing Machinery</g:google_product_category>
+      <g:product_type>Roll Forming Machine</g:product_type>
+      <g:identifier_exists>no</g:identifier_exists>
+      <g:shipping>
+        <g:country>IN</g:country>
+        <g:service>Freight Delivery (Pan-India)</g:service>
+        <g:price>0.00 INR</g:price>
+      </g:shipping>
+    </item>
+    <item>
+      <g:id>GSK-ROOF-CRM</g:id>
+      <g:mpn>GSK-ROOF-CRM</g:mpn>
+      <g:title>Automatic Roofing Sheet Crimping Machine</g:title>
+      <g:description>High-speed hydraulic curved profile crimping for pre-painted GI/GP/aluminium roofing sheets up to 1250mm width.</g:description>
+      <g:link>https://www.gaganengineerings.in/products/automatic-roofing-sheet-crimping-machine</g:link>
+      <g:image_link>https://5.imimg.com/data5/SELLER/Default/2026/4/596257189/PL/SJ/DO/4175789/456-500x500.png</g:image_link>
+      <g:brand>Gagan Engineering Works</g:brand>
+      <g:condition>new</g:condition>
+      <g:availability>in_stock</g:availability>
+      <g:price>450000.00 INR</g:price>
+      <g:google_product_category>Business &amp; Industrial &gt; Manufacturing &gt; Manufacturing Machinery</g:google_product_category>
+      <g:product_type>Roofing Machinery</g:product_type>
+      <g:identifier_exists>no</g:identifier_exists>
+      <g:shipping>
+        <g:country>IN</g:country>
+        <g:service>Freight Delivery (Pan-India)</g:service>
+        <g:price>0.00 INR</g:price>
+      </g:shipping>
+    </item>
+    <item>
+      <g:id>GSK-CORR-01</g:id>
+      <g:mpn>GSK-CORR-01</g:mpn>
+      <g:title>Corrugated Sheets Making Machine</g:title>
+      <g:description>Continuous corrugated profile roll forming machine with hardened EN31 chrome rollers and hydraulic guillotine.</g:description>
+      <g:link>https://www.gaganengineerings.in/products/corrugated-sheets-making-machine</g:link>
+      <g:image_link>https://5.imimg.com/data5/SELLER/Default/2026/3/591026243/LM/XU/AK/4175789/corrugated-sheets-making-machine-500x500.jpeg</g:image_link>
+      <g:brand>Gagan Engineering Works</g:brand>
+      <g:condition>new</g:condition>
+      <g:availability>in_stock</g:availability>
+      <g:price>650000.00 INR</g:price>
+      <g:google_product_category>Business &amp; Industrial &gt; Manufacturing &gt; Manufacturing Machinery</g:google_product_category>
+      <g:product_type>Roll Forming Machine</g:product_type>
+      <g:identifier_exists>no</g:identifier_exists>
+      <g:shipping>
+        <g:country>IN</g:country>
+        <g:service>Freight Delivery (Pan-India)</g:service>
+        <g:price>0.00 INR</g:price>
+      </g:shipping>
+    </item>
+    <item>
+      <g:id>GSK-PCB-60M</g:id>
+      <g:mpn>GSK-PCB-60M</g:mpn>
+      <g:title>Semi-Automatic Pipe Counter Boring and Facing Machine</g:title>
+      <g:description>High-precision pipe end preparation machine for simultaneous internal boring, external chamfering, and facing up to 60 mm OD.</g:description>
+      <g:link>https://www.gaganengineerings.in/products/semi-automatic-pipe-counter-boring-and-facing-machine</g:link>
+      <g:image_link>https://5.imimg.com/data5/ANDROID/Default/2025/10/550582531/TR/XN/QZ/4175789/product-jpeg-500x500.jpg</g:image_link>
+      <g:brand>Gagan Engineering Works</g:brand>
+      <g:condition>new</g:condition>
+      <g:availability>in_stock</g:availability>
+      <g:price>250000.00 INR</g:price>
+      <g:google_product_category>Business &amp; Industrial &gt; Manufacturing &gt; Manufacturing Machinery</g:google_product_category>
+      <g:product_type>Pipe Machining</g:product_type>
+      <g:identifier_exists>no</g:identifier_exists>
+      <g:shipping>
+        <g:country>IN</g:country>
+        <g:service>Freight Delivery (Pan-India)</g:service>
+        <g:price>0.00 INR</g:price>
+      </g:shipping>
+    </item>
+    <item>
+      <g:id>GSK-BRA-DH</g:id>
+      <g:mpn>GSK-BRA-DH</g:mpn>
       <g:title>Double Head Electric Bra Cup Moulding Machine</g:title>
       <g:description>Twin-station electric moulding press engineered for seamless bra cup manufacturing with PID thermal control. 400-600 pcs/shift capacity.</g:description>
       <g:link>https://www.gaganengineerings.in/products/double-head-electric-bra-cup-moulding-machine</g:link>
@@ -24,7 +145,8 @@
       </g:shipping>
     </item>
     <item>
-      <g:id>bra-cup-fabric-moulding-machine</g:id>
+      <g:id>GSK-BRA-FAB</g:id>
+      <g:mpn>GSK-BRA-FAB</g:mpn>
       <g:title>Bra Cup Fabric Moulding Machine</g:title>
       <g:description>Specialized press for moulding laminated and woven fabrics into seamless bra cup profiles with interchangeable CNC aluminium moulds.</g:description>
       <g:link>https://www.gaganengineerings.in/products/bra-cup-fabric-moulding-machine</g:link>
@@ -43,11 +165,12 @@
       </g:shipping>
     </item>
     <item>
-      <g:id>foam-bra-cup-moulding-machine</g:id>
+      <g:id>GSK-BRA-FOAM</g:id>
+      <g:mpn>GSK-BRA-FOAM</g:mpn>
       <g:title>Foam Bra Cup Moulding Machine</g:title>
       <g:description>Thermal compression moulding machine for high-density foam, PU foam, and memory foam padding.</g:description>
       <g:link>https://www.gaganengineerings.in/products/foam-bra-cup-moulding-machine</g:link>
-      <g:image_link>https://5.imimg.com/data5/ANDROID/Default/2025/10/550585698/CP/TN/OI/4175789/product-jpeg-500x500.jpg</g:image_link>
+      <g:image_link>https://5.imimg.com/data5/ANDROID/Default/2025/10/550586856/YP/VU/KK/4175789/product-jpeg-500x500.jpg</g:image_link>
       <g:brand>Gagan Engineering Works</g:brand>
       <g:condition>new</g:condition>
       <g:availability>in_stock</g:availability>
@@ -62,112 +185,18 @@
       </g:shipping>
     </item>
     <item>
-      <g:id>padded-bra-cup-moulding-machine</g:id>
+      <g:id>GSK-BRA-PAD</g:id>
+      <g:mpn>GSK-BRA-PAD</g:mpn>
       <g:title>Padded Bra Cup Moulding Machine</g:title>
-      <g:description>Multi-layer composite cup forming for foam, fabric, and lining simultaneously with uniform heating.</g:description>
+      <g:description>Multi-layer composite moulding machine for graduated push-up pads and laminated fabric-foam cups with digital timer.</g:description>
       <g:link>https://www.gaganengineerings.in/products/padded-bra-cup-moulding-machine</g:link>
-      <g:image_link>https://5.imimg.com/data5/ANDROID/Default/2025/10/550584483/WD/VN/XQ/4175789/product-jpeg-500x500.jpg</g:image_link>
+      <g:image_link>https://5.imimg.com/data5/SELLER/Default/2026/5/608537665/KG/TS/VJ/4175789/padded-bra-cup-moulding-machine-500x500.png</g:image_link>
       <g:brand>Gagan Engineering Works</g:brand>
       <g:condition>new</g:condition>
       <g:availability>in_stock</g:availability>
-      <g:price>140000.00 INR</g:price>
+      <g:price>165000.00 INR</g:price>
       <g:google_product_category>Business &amp; Industrial &gt; Manufacturing &gt; Manufacturing Machinery</g:google_product_category>
       <g:product_type>Bra Cup Moulding Machine</g:product_type>
-      <g:identifier_exists>no</g:identifier_exists>
-      <g:shipping>
-        <g:country>IN</g:country>
-        <g:service>Freight Delivery (Pan-India)</g:service>
-        <g:price>0.00 INR</g:price>
-      </g:shipping>
-    </item>
-    <item>
-      <g:id>10-tons-hydraulic-decoiler</g:id>
-      <g:title>10 Tons Hydraulic Decoiler</g:title>
-      <g:description>Heavy-duty motorised uncoiler with hydraulic wedge expansion for 10-ton steel coils up to 1250mm width.</g:description>
-      <g:link>https://www.gaganengineerings.in/products/10-tons-hydraulic-decoiler</g:link>
-      <g:image_link>https://5.imimg.com/data5/ANDROID/Default/2025/10/550587747/FC/CF/WD/4175789/product-jpeg-500x500.jpg</g:image_link>
-      <g:brand>Gagan Engineering Works</g:brand>
-      <g:condition>new</g:condition>
-      <g:availability>in_stock</g:availability>
-      <g:price>350000.00 INR</g:price>
-      <g:google_product_category>Business &amp; Industrial &gt; Manufacturing &gt; Manufacturing Machinery</g:google_product_category>
-      <g:product_type>Hydraulic Decoiler</g:product_type>
-      <g:identifier_exists>no</g:identifier_exists>
-      <g:shipping>
-        <g:country>IN</g:country>
-        <g:service>Freight Delivery (Pan-India)</g:service>
-        <g:price>0.00 INR</g:price>
-      </g:shipping>
-    </item>
-    <item>
-      <g:id>automatic-roofing-sheet-crimping-machine</g:id>
-      <g:title>Automatic Roofing Sheet Crimping Machine</g:title>
-      <g:description>High-speed hydraulic curved profile crimping for pre-painted GI/GP/aluminium roofing sheets up to 1250mm width.</g:description>
-      <g:link>https://www.gaganengineerings.in/products/automatic-roofing-sheet-crimping-machine</g:link>
-      <g:image_link>https://5.imimg.com/data5/ANDROID/Default/2025/10/550586940/GB/CV/CS/4175789/product-jpeg-500x500.jpg</g:image_link>
-      <g:brand>Gagan Engineering Works</g:brand>
-      <g:condition>new</g:condition>
-      <g:availability>in_stock</g:availability>
-      <g:price>450000.00 INR</g:price>
-      <g:google_product_category>Business &amp; Industrial &gt; Manufacturing &gt; Manufacturing Machinery</g:google_product_category>
-      <g:product_type>Roofing Machinery</g:product_type>
-      <g:identifier_exists>no</g:identifier_exists>
-      <g:shipping>
-        <g:country>IN</g:country>
-        <g:service>Freight Delivery (Pan-India)</g:service>
-        <g:price>0.00 INR</g:price>
-      </g:shipping>
-    </item>
-    <item>
-      <g:id>c-z-purlin-roll-forming-machine</g:id>
-      <g:title>C / Z Purlin Roll Forming Machine</g:title>
-      <g:description>Interchangeable C and Z section roll forming line with PLC touchscreen for pre-engineered building structural steel.</g:description>
-      <g:link>https://www.gaganengineerings.in/products/c-z-purlin-roll-forming-machine</g:link>
-      <g:image_link>https://5.imimg.com/data5/ANDROID/Default/2025/10/550588636/FB/PB/TB/4175789/product-jpeg-500x500.jpg</g:image_link>
-      <g:brand>Gagan Engineering Works</g:brand>
-      <g:condition>new</g:condition>
-      <g:availability>in_stock</g:availability>
-      <g:price>1200000.00 INR</g:price>
-      <g:google_product_category>Business &amp; Industrial &gt; Manufacturing &gt; Manufacturing Machinery</g:google_product_category>
-      <g:product_type>Roll Forming Machine</g:product_type>
-      <g:identifier_exists>no</g:identifier_exists>
-      <g:shipping>
-        <g:country>IN</g:country>
-        <g:service>Freight Delivery (Pan-India)</g:service>
-        <g:price>0.00 INR</g:price>
-      </g:shipping>
-    </item>
-    <item>
-      <g:id>automatic-ctl-machine</g:id>
-      <g:title>Automatic Cut To Length (CTL) Machine</g:title>
-      <g:description>Heavy-duty cut-to-length line with 9-roll gear-driven leveler, 10 Ton hydraulic decoiler, and high-speed shear up to 6mm.</g:description>
-      <g:link>https://www.gaganengineerings.in/products/automatic-ctl-machine</g:link>
-      <g:image_link>https://5.imimg.com/data5/ANDROID/Default/2025/10/550588145/VJ/TK/YB/4175789/product-jpeg-500x500.jpg</g:image_link>
-      <g:brand>Gagan Engineering Works</g:brand>
-      <g:condition>new</g:condition>
-      <g:availability>in_stock</g:availability>
-      <g:price>950000.00 INR</g:price>
-      <g:google_product_category>Business &amp; Industrial &gt; Manufacturing &gt; Manufacturing Machinery</g:google_product_category>
-      <g:product_type>Cut To Length Line</g:product_type>
-      <g:identifier_exists>no</g:identifier_exists>
-      <g:shipping>
-        <g:country>IN</g:country>
-        <g:service>Freight Delivery (Pan-India)</g:service>
-        <g:price>0.00 INR</g:price>
-      </g:shipping>
-    </item>
-    <item>
-      <g:id>corrugated-sheets-making-machine</g:id>
-      <g:title>Corrugated Sheets Making Machine</g:title>
-      <g:description>Continuous corrugated profile roll forming machine with hardened EN31 chrome rollers and hydraulic guillotine.</g:description>
-      <g:link>https://www.gaganengineerings.in/products/corrugated-sheets-making-machine</g:link>
-      <g:image_link>https://5.imimg.com/data5/ANDROID/Default/2025/10/550587288/WC/EQ/TD/4175789/product-jpeg-500x500.jpg</g:image_link>
-      <g:brand>Gagan Engineering Works</g:brand>
-      <g:condition>new</g:condition>
-      <g:availability>in_stock</g:availability>
-      <g:price>650000.00 INR</g:price>
-      <g:google_product_category>Business &amp; Industrial &gt; Manufacturing &gt; Manufacturing Machinery</g:google_product_category>
-      <g:product_type>Roll Forming Machine</g:product_type>
       <g:identifier_exists>no</g:identifier_exists>
       <g:shipping>
         <g:country>IN</g:country>
