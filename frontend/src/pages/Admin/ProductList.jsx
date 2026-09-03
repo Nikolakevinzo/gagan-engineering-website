@@ -4,7 +4,7 @@ import { useAdminAuth } from "@/components/AdminLayout";
 import {
   Plus, Search, Trash2, Edit3, Star, StarOff,
   Filter, RefreshCw, ChevronLeft, ChevronRight, Eye,
-  Download, Copy, Check, X
+  Download, Copy, Check, X, RotateCcw
 } from "lucide-react";
 import { getBackendUrl } from "@/lib/adminConfig";
 import { CATALOGUE_PRODUCTS } from "@/lib/catalogueData";
@@ -175,6 +175,19 @@ export default function AdminProductList() {
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => {
+              if (window.confirm("Reset browser cache and reload live data strictly from MongoDB Atlas?")) {
+                localStorage.removeItem("gagan_custom_products");
+                window.location.reload();
+              }
+            }}
+            className="flex items-center gap-1.5 text-xs text-amber-400 hover:text-white bg-amber-400/10 hover:bg-amber-500 border border-amber-400/30 px-3 py-2.5 rounded-sm transition-all font-semibold uppercase tracking-wider"
+            title="Clear browser local overrides and load strictly from cloud database"
+          >
+            <RotateCcw className="w-3.5 h-3.5" /> Clear Local Cache
+          </button>
           <button
             type="button"
             onClick={() => {
