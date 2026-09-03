@@ -196,20 +196,59 @@ SEED_PRODUCTS = [
         "category": "Roll Forming & Sheet Metal",
         "categorySlug": "roll-forming-sheet-metal",
         "image": "https://5.imimg.com/data5/SELLER/Default/2026/3/591026243/LM/XU/AK/4175789/corrugated-sheets-making-machine-500x500.jpeg",
-        "tagline": "High-yield corrugated wave profile roll former for industrial shed roofing",
-        "shortDesc": "Continuous wave-profile roll forming line for galvanized and colour-coated corrugated roofing sheets.",
-        "description": "Engineered for rapid continuous forming of standard wave-corrugated roofing sheets from coil stock. Features high-strength chrome-plated forming rollers, synchronous hydraulic shearing, and programmable length control for industrial and agricultural roofing.",
+        "images": [
+            "https://5.imimg.com/data5/SELLER/Default/2026/3/591026243/LM/XU/AK/4175789/corrugated-sheets-making-machine-500x500.jpeg",
+            "https://5.imimg.com/data5/SELLER/Default/2026/4/596257189/PL/SJ/DO/4175789/456-500x500.png"
+        ],
+        "tagline": "High-Speed Sinusoidal Wave Profile Roll Forming Machine for Industrial GI, GP & PPGI Roofing Sheets",
+        "shortDesc": "Continuous 16–18 station wave-profile roll forming line with hydraulic post-cut guillotine and PLC touchscreen control for galvanized and colour-coated corrugated roofing sheets.",
+        "description": "The Corrugated Sheets Making Machine manufactured by Gagan Engineering Works in Khopoli, Maharashtra is an industrial-grade continuous roll forming line designed for high-speed production of sinusoidal round-wave metal roofing and cladding panels. Engineered to process Galvanized Iron (GI), Pre-Painted Galvanized Iron (PPGI), Galvalume, and Aluminium coils from 0.15 mm to 0.80 mm thickness, the machine features 16 to 18 precision forming roller stations crafted from EN31/Cr12 forged tool steel with hard chrome electroplating (0.05 mm) to guarantee scratch-free finish on colour-coated stock. Driven by a 7.5 HP heavy-duty motor through precision chain/gearbox transmission and paired with a high-speed hydraulic post-cut shear (Cr12MoV vacuum heat-treated blade), the line achieves stable continuous line speeds of 15 to 20 meters per minute. A centralized Delta/Siemens PLC touchscreen console allows operators to program sheet batches, cutting lengths with ±1.0 mm precision, and real-time production metrics. Widely used for manufacturing industrial factory sheds, warehouse roofing, agricultural poultry sheds, disaster relief housing, and perimeter barricading across India and international export markets.",
         "specs": {
-            "Profile Type": "Standard Sinusoidal Corrugated Wave",
-            "Raw Material": "GI, GP, PPGI, Colour-Coated Galvanized Steel",
-            "Forming Speed": "12–18 meters per minute",
-            "Roller Material": "Hardened 45# Steel with Hard Chrome Plating",
-            "Shearing Method": "Hydraulic Post-Cut Guillotine",
-            "Control System": "Microprocessor PLC with length counter",
-            "Application": "Industrial factory sheds, agricultural roofing, boundary fencing"
+            "Profile Type": "Standard Sinusoidal Corrugated Round Wave (Pitch 76 mm, Depth 18 mm)",
+            "Raw Material": "GI, GP, PPGI, Galvalume, Colour-Coated Steel, Aluminium",
+            "Sheet Thickness Capacity": "0.15 mm – 0.80 mm",
+            "Suitable Coil Width": "914 mm / 1000 mm / 1220 mm / 1250 mm",
+            "Effective Formed Width": "800 mm / 900 mm / 1050 mm (Customizable)",
+            "Roll Forming Stations": "16 to 18 Progressive Forming Stages",
+            "Roller Material": "Hardened EN31 / Cr12 Forged Alloy Steel with Hard Chrome (0.05 mm)",
+            "Shaft Diameter": "70 mm / 75 mm Solid 40Cr Alloy Steel",
+            "Forming Speed": "15 – 20 meters per minute (VFD Regulated)",
+            "Main Drive Motor": "7.5 HP Geared Motor with Heavy-Duty Transmission",
+            "Hydraulic Station": "5.0 HP Power Pack with Yuken Valves & Continuous Cooling",
+            "Shearing Mechanism": "Hydraulic Post-Cut Stop-to-Shear (Cr12MoV Blade, 60–62 HRC)",
+            "Control System": "Delta / Siemens PLC Touchscreen with High-Accuracy Encoder",
+            "Cutting Length Tolerance": "± 1.0 mm per 10-meter sheet",
+            "Decoiler Compatibility": "5-Ton Manual / 10-Ton Motorized Hydraulic Decoiler",
+            "Application": "Factory roofing, warehouse cladding, agricultural sheds, commercial buildings",
+            "Origin & Port": "Khopoli, Maharashtra (65 km from Nhava Sheva / JNPT Mumbai Port)"
         },
-        "featured": False,
-        "faqs": [],
+        "featured": True,
+        "faqs": [
+            {
+                "q": "What raw materials and sheet thicknesses can this corrugated sheet roll forming machine process?",
+                "a": "Our machine is engineered to form Galvanized Iron (GI), Pre-Painted Galvanized Iron (PPGI), Galvalume (Alu-Zinc), and Aluminium coils with thickness ranging from 0.15 mm up to 0.80 mm. The heavy-duty 40Cr shafts ensure rigidity across the full thickness spectrum."
+            },
+            {
+                "q": "What is the daily production capacity and output speed of this machine?",
+                "a": "Operating at continuous speeds of 15 to 20 meters per minute, a standard 8-hour shift easily yields 7,000 to 9,000 linear meters of corrugated roofing panels (approximately 15 to 20 metric tons depending on sheet gauge)."
+            },
+            {
+                "q": "How does the machine prevent scratching on colour-coated and printed roofing coils?",
+                "a": "All 16–18 forming rollers are CNC precision-contoured, heat-treated, and electroplated with 0.05 mm hard chrome mirror polish. This eliminates friction scuffing and ensures 100% scratch-free profile forming on pre-painted coils."
+            },
+            {
+                "q": "Can the machine automatically cut different custom sheet lengths on the fly?",
+                "a": "Yes. The integrated Delta/Siemens PLC touchscreen console allows the operator to pre-program multiple batch quantities with variable lengths (e.g. 100 sheets at 3.0 m, 50 sheets at 4.5 m). An optical rotary encoder ensures ±1.0 mm precision cutting without manual marking."
+            },
+            {
+                "q": "What decoiler / uncoiler should be used with this corrugated roll forming line?",
+                "a": "For entry-level or mobile workshops, a 5-ton passive manual uncoiler is standard. For continuous high-volume industrial lines, we integrate our 10-Ton Motorized Hydraulic Decoiler with motorized mandrel expansion and pneumatic tension braking."
+            },
+            {
+                "q": "What warranty and after-sales support does Gagan Engineering Works provide?",
+                "a": "We provide a 1-year comprehensive manufacturer warranty covering mechanical drives, hydraulic power packs, and PLC electronics. Our factory technicians provide on-site installation, commissioning, and operator training across all Indian states and overseas export markets."
+            }
+        ],
         "createdAt": datetime.now(timezone.utc),
         "updatedAt": datetime.now(timezone.utc),
     },
@@ -1263,6 +1302,12 @@ async def sitemap():
     <priority>0.88</priority>
   </url>""",
         f"""  <url>
+    <loc>{WEBSITE_URL}/blog/guide-to-corrugated-sheet-making-machines</loc>
+    <lastmod>{now}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.92</priority>
+  </url>""",
+        f"""  <url>
     <loc>{WEBSITE_URL}/contact</loc>
     <lastmod>{now}</lastmod>
     <changefreq>monthly</changefreq>
@@ -1455,20 +1500,28 @@ BLOG_ARTICLES_SEO = [
         "image": "https://images.unsplash.com/photo-1496247749665-49cf5b1022e9?crop=entropy&cs=srgb&fm=jpg&q=85",
         "date": "2026-08-01",
         "keywords": "Industrial Machinery Exporter India, Machinery Export JNPT Port Mumbai, Import Machinery from India"
+    },
+    {
+        "slug": "guide-to-corrugated-sheet-making-machines",
+        "title": "Complete Guide to Corrugated Sheet Making Machines: Types, Roll Forming Stations, Wave Profiles & Price in India (2026)",
+        "description": "A comprehensive engineering guide for roofing manufacturers on industrial corrugated sheet making machines: 16–18 progressive forming stations, EN31 hard chrome tooling, sinusoidal wave geometry, hydraulic post-cutting, and factory price breakdown.",
+        "image": "https://5.imimg.com/data5/SELLER/Default/2026/3/591026243/LM/XU/AK/4175789/corrugated-sheets-making-machine-500x500.jpeg",
+        "date": "2026-08-28",
+        "keywords": "Corrugated Sheet Making Machine Manufacturer India, Corrugated Sheet Making Machine Price, GI Roofing Sheet Roll Former, Sinusoidal Wave Profile Corrugation Machine Khopoli"
     }
 ]
 
 # Static page SEO metadata
 PAGE_META = {
     "": {
-        "title": "Gagan Engineering Works | Industrial Machinery Manufacturer & Exporter | Khopoli India",
-        "description": "Premier Indian manufacturer & exporter of Bra Cup Moulding Machines, 10 Ton Hydraulic Decoilers, C/Z Purlin Roll Forming Machines, Automatic Cut-To-Length Lines, and Roofing Sheet Machinery. 19+ years precision engineering from Khopoli, Maharashtra.",
-        "keywords": "Industrial Machinery Manufacturer India, Bra Cup Moulding Machine, Hydraulic Decoiler, Roll Forming Machine, Cut To Length Line, Khopoli Maharashtra"
+        "title": "Gagan Engineering Works | Corrugated Sheet Making Machines & Industrial Machinery Manufacturer | Khopoli India",
+        "description": "Premier Indian manufacturer of Corrugated Sheets Making Machines, Bra Cup Moulding Machines, 10-Ton Hydraulic Decoilers, C/Z Purlin Roll Forming Machines, and Automatic Cut-To-Length Lines from Khopoli, Maharashtra.",
+        "keywords": "Corrugated Sheet Making Machine, Corrugated Sheet Making Machine Manufacturer India, Bra Cup Moulding Machine, Hydraulic Decoiler, Roll Forming Machine, Cut To Length Line, Khopoli Maharashtra"
     },
     "products": {
-        "title": "Industrial Machinery Catalogue | Roll Forming, CTL Lines & Bra Cup Moulding | Gagan Engineering",
-        "description": "Browse our complete catalogue of heavy-duty industrial machinery: 10-Ton Hydraulic Decoilers, Automatic Cut-To-Length Lines, C/Z Purlin Roll Forming Machines, Roofing Sheet Crimping Machines, and Bra Cup Moulding Presses from Khopoli.",
-        "keywords": "Industrial Machinery Catalogue India, Roll Forming Machine, CTL Line, Bra Cup Moulding Machine, Hydraulic Decoiler, Gagan Engineering"
+        "title": "Industrial Machinery Catalogue | Corrugated Sheet Machines, Roll Forming & CTL Lines | Gagan Engineering",
+        "description": "Browse heavy-duty industrial machinery: Corrugated Sheet Making Machines, 10-Ton Hydraulic Decoilers, Automatic Cut-To-Length Lines, C/Z Purlin Roll Forming Machines, and Bra Cup Moulding Presses from Khopoli.",
+        "keywords": "Corrugated Sheet Making Machine India, Industrial Machinery Catalogue, Roll Forming Machine, CTL Line, Bra Cup Moulding Machine, Hydraulic Decoiler, Gagan Engineering"
     },
     "about": {
         "title": "About Gagan Engineering Works | 19+ Years Machinery Manufacturing | Khopoli Maharashtra",

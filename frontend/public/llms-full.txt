@@ -83,8 +83,16 @@ All fabrication, CNC turning, roller machining (EN31 alloy tool steel), hydrauli
 
 #### 8. Corrugated Sheets Making Machine
 - **Model ID**: `corrugated-sheets-making-machine`
-- **Roll Stations**: 14 to 18 roll forming stations with hardened chrome-plated EN31 rollers.
-- **Cutting**: Hydraulic stop-to-cut guillotine blade.
+- **SKU**: `GSK-CORR-01`
+- **Profile**: Standard Sinusoidal Round Wave (Pitch 76 mm, Wave Depth 18 mm).
+- **Sheet Thickness**: 0.15 mm to 0.80 mm GI, GP, PPGI, Galvalume & Aluminium.
+- **Roll Stations**: 16 to 18 progressive forming stages with hardened EN31/Cr12 tool steel rollers (0.05 mm hard chrome mirror plating).
+- **Shafts**: Solid 70 mm / 75 mm 40Cr alloy steel shafts with dual heavy-duty bearings.
+- **Speed**: 15 to 20 meters per minute with VFD regulation.
+- **Drive & Power**: 7.5 HP main geared motor + 5.0 HP hydraulic station with Yuken valves.
+- **Cutting**: Hydraulic post-cut guillotine with Cr12MoV vacuum heat-treated shear blade.
+- **Control**: Delta / Siemens PLC touchscreen with optical rotary encoder (±1.0 mm accuracy).
+- **Output**: 15 to 22 Metric Tons / 8-hour shift (~7,000 to 9,000 meters).
 
 #### 9. Semi-Automatic Pipe Counter Boring and Facing Machine
 - **Model ID**: `semi-automatic-pipe-counter-boring-and-facing-machine`
