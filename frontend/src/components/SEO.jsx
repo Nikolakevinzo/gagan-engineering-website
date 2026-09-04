@@ -189,6 +189,8 @@ export default function SEO({
         "@context": "https://schema.org",
         "@type": "Product",
         "name": productData.name,
+        ...(productData.alternateName ? { "alternateName": productData.alternateName } : {}),
+        ...(productData.keywords ? { "keywords": productData.keywords } : {}),
         "image": [absoluteImage],
         "description": productData.description || productData.tagline,
         "sku": skuCode,

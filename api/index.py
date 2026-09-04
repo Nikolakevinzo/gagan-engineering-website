@@ -275,7 +275,15 @@ SEED_PRODUCTS = [
         "images": [
                     "https://5.imimg.com/data5/SELLER/Default/2026/4/596257189/PL/SJ/DO/4175789/456-500x500.png"
         ],
-        "tagline": "Curved Roof Sheet Crimping — High-Speed Automatic Hydraulic Profile Forming",
+        "tagline": "Curved Roof Sheet Crimping — High-Speed Automatic Hydraulic Profile Forming for Arch Sheds",
+        "alternateName": [
+            "Curved Roofing Sheet Crimping Machine",
+            "Arch Roofing Sheet Curving Machine",
+            "Crimping Curving Machine",
+            "Curved Metal Sheet Bending Machine",
+            "Self-Supporting Curved Roof Crimper"
+        ],
+        "keywords": "Automatic Roofing Sheet Crimping Machine, Curved Roofing Sheet Crimping Machine, Arch Roofing Sheet Curving Machine, Crimping Curving Machine India, Curved Sheet Bending Machine Price, PEB Curved Roof Crimper Khopoli",
         "shortDesc": "Automated crimping machine for curved roofing sheets used in industrial sheds, warehouses, and stadiums.",
         "description": "The Automatic Roofing Sheet Crimping Machine manufactured by Gagan Engineering Works in Khopoli, Maharashtra is a high-speed hydraulic curved profile forming machine designed for bending pre-painted galvanized iron (PPGI), galvanized steel (GP), and aluminium roofing panels into smooth, uniform curved arches. Extensively deployed for constructing curved factory sheds, warehouse barrel canopies, petrol pump forecourts, aircraft hangars, agricultural grain silos, and modern architectural curved roofing, the machine accepts pre-profiled trapezoidal or corrugated sheets up to 1250 mm width and 0.3 mm to 0.8 mm thickness. Utilizing a precision CNC-contoured upper and lower crimping tool set driven by a 5.0 HP heavy hydraulic power pack, the machine introduces sequential micro-crimps at mathematically calibrated pitches to produce smooth, non-kinked circular arcs from a 2-meter radius up to infinity. A centralized Delta/Siemens PLC touchscreen interface allows the operator to input the building span, arch height, sheet length, and desired radius; the automated feed table then automatically steps the sheet through the crimping jaws with micrometer-level step indexing. Engineered with hardened alloy steel dies that prevent paint cracking or zinc coating peeling, this crimper delivers unmatched arch consistency and structural rigidity for heavy commercial roofing fabricators across India and global export markets.",
         "specs": {
@@ -335,12 +343,22 @@ SEED_PRODUCTS = [
                     "https://5.imimg.com/data5/SELLER/Default/2026/3/591026243/LM/XU/AK/4175789/corrugated-sheets-making-machine-500x500.jpeg",
                     "https://5.imimg.com/data5/SELLER/Default/2026/4/596257189/PL/SJ/DO/4175789/456-500x500.png"
         ],
-        "tagline": "High-Speed Sinusoidal Wave Profile Roll Forming Machine for Industrial GI, GP & PPGI Roofing Sheets",
-        "shortDesc": "Continuous 16–18 station wave-profile roll forming line with hydraulic post-cut guillotine and PLC touchscreen control for galvanized and colour-coated corrugated roofing sheets.",
-        "description": "The Corrugated Sheets Making Machine manufactured by Gagan Engineering Works in Khopoli, Maharashtra is an industrial-grade continuous roll forming line designed for high-speed production of sinusoidal round-wave metal roofing and cladding panels. Engineered to process Galvanized Iron (GI), Pre-Painted Galvanized Iron (PPGI), Galvalume, and Aluminium coils from 0.15 mm to 0.80 mm thickness, the machine features 16 to 18 precision forming roller stations crafted from EN31/Cr12 forged tool steel with hard chrome electroplating (0.05 mm) to guarantee scratch-free finish on colour-coated stock. Driven by a 7.5 HP heavy-duty motor through precision chain/gearbox transmission and paired with a high-speed hydraulic post-cut shear (Cr12MoV vacuum heat-treated blade), the line achieves stable continuous line speeds of 15 to 20 meters per minute. A centralized Delta/Siemens PLC touchscreen console allows operators to program sheet batches, cutting lengths with ±1.0 mm precision, and real-time production metrics. Widely used for manufacturing industrial factory sheds, warehouse roofing, agricultural poultry sheds, disaster relief housing, and perimeter barricading across India and international export markets.",
+        "alternateName": [
+            "Tata Nali Sheet Making Machine",
+            "GC Sheet Machine",
+            "Galvanized Corrugated Sheet Roll Forming Machine",
+            "Roofing Sheet Making Machine",
+            "Liner Roofing Sheet Machine",
+            "Tata Nali Roll Former",
+            "Nali Sheet Machine"
+        ],
+        "keywords": "Tata Nali Sheet Making Machine, GC Sheet Machine, Corrugated Sheets Making Machine, Roofing Sheet Making Machine, Liner Roofing Sheet Machine, Galvanized Corrugated Sheet Roll Forming, Tata Nali Machine Price India, GC Sheet Machine Manufacturer Khopoli Maharashtra, Nali Patra Machine",
+        "tagline": "Tata Nali & GC Corrugated Sheet Roll Forming Machine — High-Speed Sinusoidal Wave Profile Line for Industrial Roofing Sheets",
+        "shortDesc": "Continuous 16–18 station sinusoidal wave roll forming line (Tata Nali & GC sheet profile) with hydraulic post-cut shear and PLC touchscreen control for GI, GP, PPGI, and liner roofing sheets.",
+        "description": "The Corrugated Sheets Making Machine (widely known in India as the Tata Nali Sheet Making Machine or GC Sheet Machine) manufactured by Gagan Engineering Works in Khopoli, Maharashtra is an industrial-grade continuous roll forming line designed for high-speed production of sinusoidal round-wave metal roofing, cladding, and liner panels. Engineered to process Galvanized Iron (GI), Pre-Painted Galvanized Iron (PPGI), Galvalume, and Aluminium coils from 0.15 mm to 0.80 mm thickness, the machine features 16 to 18 precision forming roller stations crafted from EN31/Cr12 forged tool steel with hard chrome electroplating (0.05 mm) to guarantee scratch-free finish on colour-coated stock. Producing the traditional high-demand Tata Nali circular wave profile (76 mm pitch, 18 mm depth) as well as commercial GC sheet and industrial liner roofing profiles, the machine is driven by a 7.5 HP heavy-duty motor through precision chain/gearbox transmission and paired with a high-speed hydraulic post-cut shear (Cr12MoV vacuum heat-treated blade) achieving line speeds of 15 to 20 meters per minute. A centralized Delta/Siemens PLC touchscreen console allows operators to program sheet batches with ±1.0 mm cutting precision. Widely used across India for manufacturing industrial factory sheds, warehouse roofing, agricultural poultry sheds, disaster relief housing, PEB wall liners, and perimeter barricading.",
         "specs": {
-                    "Profile Type": "Standard Sinusoidal Corrugated Round Wave (Pitch 76 mm, Depth 18 mm)",
-                    "Raw Material": "GI, GP, PPGI, Galvalume, Colour-Coated Steel, Aluminium",
+                    "Profile Type": "Standard Sinusoidal Corrugated Round Wave (Tata Nali / GC Profile: Pitch 76 mm, Depth 18 mm)",
+                    "Raw Material": "GI, GP, PPGI, Galvalume, Colour-Coated Steel, Liner Sheet Coils, Aluminium",
                     "Sheet Thickness Capacity": "0.15 mm – 0.80 mm",
                     "Suitable Coil Width": "914 mm / 1000 mm / 1220 mm / 1250 mm",
                     "Effective Formed Width": "800 mm / 900 mm / 1050 mm (Customizable)",
@@ -354,7 +372,7 @@ SEED_PRODUCTS = [
                     "Control System": "Delta / Siemens PLC Touchscreen with High-Accuracy Encoder",
                     "Cutting Length Tolerance": "± 1.0 mm per 10-meter sheet",
                     "Decoiler Compatibility": "5-Ton Manual / 10-Ton Motorized Hydraulic Decoiler",
-                    "Application": "Factory roofing, warehouse cladding, agricultural sheds, commercial buildings",
+                    "Application": "Tata Nali roofing, GC sheets, liner roofing sheets, factory cladding, warehouse sheds",
                     "Origin & Port": "Khopoli, Maharashtra (65 km from Nhava Sheva / JNPT Mumbai Port)"
         },
         "featured": True,
@@ -2230,7 +2248,7 @@ def _build_product_schema(product, canonical_url):
     p_img = raw_img if raw_img.startswith("http") else f"{WEBSITE_URL}{'' if raw_img.startswith('/') else '/'}{raw_img}"
     p_price = PRODUCT_ESTIMATED_PRICES.get(p_id, "150000.00").split(".")[0]
     
-    schemas.append({
+    prod_schema = {
         "@context": "https://schema.org",
         "@type": "Product",
         "name": p_name,
@@ -2241,6 +2259,14 @@ def _build_product_schema(product, canonical_url):
         "category": product.get("category", "Industrial Machinery"),
         "brand": {"@type": "Brand", "name": "Gagan Engineering Works"},
         "manufacturer": {"@type": "Organization", "name": "Gagan Engineering Works", "url": WEBSITE_URL},
+    }
+    if product.get("alternateName"):
+        prod_schema["alternateName"] = product["alternateName"]
+    if product.get("keywords"):
+        prod_schema["keywords"] = product["keywords"]
+    
+    schemas.append(prod_schema)
+    prod_schema.update({
         "countryOfOrigin": {"@type": "Country", "name": "India"},
         "aggregateRating": {
             "@type": "AggregateRating",
@@ -2809,14 +2835,12 @@ User-agent: Googlebot
 Allow: /
 Disallow: /admin
 Disallow: /api/admin/
-Crawl-delay: 1
 
 # Bing
 User-agent: Bingbot
 Allow: /
 Disallow: /admin
 Disallow: /api/admin/
-Crawl-delay: 2
 
 # AI Crawlers
 User-agent: GPTBot
