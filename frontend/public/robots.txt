@@ -20,14 +20,12 @@ User-agent: Googlebot
 Allow: /
 Disallow: /admin
 Disallow: /api/admin/
-Crawl-delay: 1
 
 # Bing
 User-agent: Bingbot
 Allow: /
 Disallow: /admin
 Disallow: /api/admin/
-Crawl-delay: 2
 
 # AI Search Engine Directives (Explicitly Allowed for Generative Engine Optimization)
 User-agent: GPTBot

@@ -82,9 +82,9 @@ export default function Footer() {
                 </Link>
               </li>
               <li className="pt-2 border-t border-white/5 mono text-[10px] text-white/40 uppercase tracking-wider">
-                Popular Machines:
+                Industrial Machinery ({CATALOGUE_PRODUCTS.length} Models):
               </li>
-              {CATALOGUE_PRODUCTS.slice(0, 4).map((p) => (
+              {CATALOGUE_PRODUCTS.map((p) => (
                 <li key={p.id}>
                   <Link
                     to={`/products/${p.id}`}
@@ -94,8 +94,8 @@ export default function Footer() {
                   </Link>
                 </li>
               ))}
-              <li>
-                <Link to="/products" className="text-[#FF5722] hover:underline font-mono">
+              <li className="pt-1">
+                <Link to="/products" className="text-[#FF5722] hover:underline font-mono text-xs">
                   + View Full Machinery Catalogue →
                 </Link>
               </li>
