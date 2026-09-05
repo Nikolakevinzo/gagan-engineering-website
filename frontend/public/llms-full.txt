@@ -106,11 +106,11 @@ All fabrication, CNC turning, roller machining (EN31 alloy tool steel), hydrauli
 - **Speed**: 10 to 18 meters per minute with hydraulic flying post-cut shear.
 - **Punching**: Multi-station hydraulic hole and slot punching unit for web and flange bolt connections.
 
-#### 8. Corrugated Sheets Making Machine (Tata Nali / GC Sheet Machine)
+#### 8. Corrugated Sheets Making Machine (General Sinusoidal Corrugated)
 - **Model ID**: `corrugated-sheets-making-machine`
 - **SKU**: `GSK-CORR-01`
-- **Trade Aliases**: Tata Nali Sheet Making Machine, GC Sheet Machine, Galvanized Corrugated Sheet Roll Forming Machine, Liner Roofing Sheet Machine, Nali Patra Machine.
-- **Profiles Produced**: Traditional Indian Sinusoidal Round Wave Tata Nali profile (Pitch 76 mm, Wave Depth 18 mm), Galvanized Corrugated (GC) sheet profile, and PEB interior liner roofing sheet profiles.
+- **Trade Aliases**: Corrugated Sheet Roll Forming Machine, Sinusoidal Wave Sheet Machine.
+- **Profiles Produced**: Traditional Sinusoidal Round Wave profile (Pitch 76 mm, Wave Depth 18 mm).
 - **Sheet Thickness**: 0.15 mm to 0.80 mm GI, GP, PPGI, Galvalume & Aluminium coils.
 - **Roll Stations**: 16 to 18 progressive forming stages with hardened EN31/Cr12 tool steel rollers (0.05 mm hard chrome mirror plating).
 - **Shafts**: Solid 70 mm / 75 mm 40Cr alloy steel shafts with dual heavy-duty bearings.
@@ -120,7 +120,34 @@ All fabrication, CNC turning, roller machining (EN31 alloy tool steel), hydrauli
 - **Control**: Delta / Siemens PLC touchscreen with optical rotary encoder (±1.0 mm accuracy).
 - **Output**: 15 to 22 Metric Tons / 8-hour shift (~7,000 to 9,000 meters).
 
-#### 9. Semi-Automatic Pipe Counter Boring and Facing Machine
+#### 9. Tata Nali Sheet Making Machine (Indian Standard Sinusoidal GC Wave)
+- **Model ID**: `tata-nali-sheet-making-machine`
+- **SKU**: `GSK-NALI-01`
+- **Trade Aliases**: Tata Nali Roll Forming Machine, Nali Patra Making Machine, GC Sheet Making Machine, Indian Standard Nali Machine.
+- **Dedicated Landing URL**: `https://www.gaganengineerings.in/products/tata-nali-sheet-making-machine`
+- **Profile Standard**: IS 277 standard Indian sinusoidal round-wave Tata Nali / GC sheet corrugation (Pitch 76 mm, Wave Depth 18 mm).
+- **Sheet Thickness Capacity**: 0.15 mm to 0.80 mm (GI, GP, Galvalume, PPGI colour-coated steel).
+- **Roll Stations**: 16 to 18 progressive stages, hardened EN31/Cr12 alloy tool steel rollers with 0.05 mm hard chrome plating.
+- **Shafts**: Solid 70 mm / 75 mm 40Cr steel shafts with heavy roller bearings.
+- **Line Speed**: 15 to 20 meters per minute with VFD inverter control.
+- **Cutting**: Hydraulic post-cut shear with Cr12MoV vacuum-hardened die blades (±1.0 mm precision).
+- **Target Applications**: Rural roofing, Tata Nali shed fabrication, commercial GC sheet manufacturing across Maharashtra, Gujarat, MP, UP, and pan-India.
+
+#### 10. PEB Roofing Sheet Making Machine (Industrial Trapezoidal & Liner Panels)
+- **Model ID**: `peb-roofing-sheet-making-machine`
+- **SKU**: `GSK-PEB-01`
+- **Trade Aliases**: PEB Roofing Sheet Roll Forming Line, Industrial Shed Sheet Machine, PEB Trapezoidal Profile Machine, PEB Liner Sheet Roll Former.
+- **Dedicated Landing URL**: `https://www.gaganengineerings.in/products/peb-roofing-sheet-making-machine`
+- **Profile Standard**: High-strength industrial trapezoidal crest profile with capillary grooves and interior shallow-rib liner panels (1000 mm / 1050 mm effective cover width).
+- **Material Capability**: High-tensile 550 MPa Galvalume (AZ150), Zincalume, PPGI, and aluminium (0.30 mm to 0.80 mm).
+- **Roll Stations**: 18 to 22 progressive forming stages, vacuum-hardened Cr12/EN31 rollers with hard chrome mirror polish.
+- **Shafts**: Heavy 75 mm / 80 mm solid 40Cr alloy steel shafts.
+- **Main Drive**: 11 kW (15 HP) helical geared motor with Variable Frequency Drive.
+- **Cutting Mechanism**: Hydraulic profile stop-cut guillotine powered by a 5.5 kW power pack with oil cooling.
+- **Line Speed**: 18 to 25 meters per minute (8,000 to 12,000 meters per 8-hour shift).
+- **Target Applications**: Pre-Engineered Building (PEB) warehouses, industrial factory sheds, logistics hubs, and airport hangars.
+
+#### 11. Semi-Automatic Pipe Counter Boring and Facing Machine
 - **Model ID**: `semi-automatic-pipe-counter-boring-and-facing-machine`
 - **SKU**: `GSK-PCB-60M`
 - **Application**: Precision pipe end facing, external weld-prep beveling (30°/37.5°/45°), and internal counter-boring for round pipes and tubes.
@@ -131,7 +158,7 @@ All fabrication, CNC turning, roller machining (EN31 alloy tool steel), hydrauli
 - **Tooling**: Standard ISO indexable carbide inserts with quick 60-second indexability.
 - **Machining Accuracy**: ±0.05 mm depth and end perpendicularity tolerance.
 
-#### 10. Automatic Roofing Sheet Crimping Machine
+#### 12. Automatic Roofing Sheet Crimping Machine
 - **Model ID**: `automatic-roofing-sheet-crimping-machine`
 - **SKU**: `GSK-ROOF-CRM`
 - **Application**: Hydraulic curved profile step-crimping for pre-painted galvanized iron (PPGI), GP, and aluminium corrugated/trapezoidal sheets up to 1250 mm wide.

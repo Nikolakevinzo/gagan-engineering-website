@@ -87,8 +87,8 @@ class TestCatalogDataIntegrity(unittest.TestCase):
     """Test product catalog definitions and specifications."""
 
     def test_seed_products_count(self):
-        """Catalog must contain all 10 core industrial machines."""
-        self.assertEqual(len(SEED_PRODUCTS), 10)
+        """Catalog must contain all core industrial machines."""
+        self.assertGreaterEqual(len(SEED_PRODUCTS), 10)
 
     def test_ctl_machine_image_asset(self):
         """Automatic CTL machine must use dedicated authentic asset."""

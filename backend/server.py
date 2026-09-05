@@ -388,6 +388,136 @@ SEED_PRODUCTS = [
         "updatedAt": datetime.now(timezone.utc),
     },
     {
+        "id": "tata-nali-sheet-making-machine",
+        "name": "Tata Nali Sheet Making Machine",
+        "category": "Roll Forming & Sheet Metal",
+        "categorySlug": "roll-forming-sheet-metal",
+        "image": "https://5.imimg.com/data5/SELLER/Default/2026/3/591026243/LM/XU/AK/4175789/corrugated-sheets-making-machine-500x500.jpeg",
+        "images": [
+                    "https://5.imimg.com/data5/SELLER/Default/2026/3/591026243/LM/XU/AK/4175789/corrugated-sheets-making-machine-500x500.jpeg",
+                    "https://5.imimg.com/data5/SELLER/Default/2026/4/596257189/PL/SJ/DO/4175789/456-500x500.png"
+        ],
+        "alternateName": [
+            "Tata Nali Roll Forming Machine",
+            "Nali Patra Making Machine",
+            "GC Sheet Making Machine",
+            "Galvanized Corrugated Sheet Making Machine",
+            "Round Wave Corrugated Sheet Machine"
+        ],
+        "keywords": "Tata Nali Sheet Making Machine, Tata Nali Machine Price India, Nali Patra Machine Khopoli, GC Sheet Making Machine Maharashtra, Galvanized Corrugated Roll Forming Machine, Indian Standard Nali Machine",
+        "tagline": "Industrial Round Wave Sinusoidal Roll Forming Line for Tata Nali, GC Sheets & Galvanized Roofing Panels",
+        "shortDesc": "Heavy-duty 16–18 station roll forming line engineered for standard Indian 76 mm pitch sinusoidal wave Tata Nali and GC roofing sheets with hydraulic cutting and PLC automation.",
+        "description": "The Tata Nali Sheet Making Machine manufactured by Gagan Engineering Works in Khopoli, Maharashtra is an industrial-grade continuous roll forming machine specially engineered for the high-speed production of standard Indian sinusoidal round-wave Tata Nali sheets, Galvanized Corrugated (GC) sheets, and agricultural roofing panels. Operating on standard Indian 76 mm wave pitch with 18 mm corrugation depth, the machine processes Galvanized Iron (GI), Pre-Painted Galvanized Iron (PPGI), and Galvalume steel coils from 0.15 mm to 0.80 mm thickness. Featuring 16 to 18 precision-engineered roll forming stations machined from high-carbon EN31/Cr12 forged tool steel and finished with 0.05 mm hard chrome electroplating, the line ensures scratch-free, mirror-smooth output even on pre-painted coils. Driven by a 7.5 HP heavy-duty motor paired with a 5.0 HP hydraulic power pack and optical rotary encoder, the machine delivers ±1.0 mm cutting accuracy at speeds of 15 to 20 meters per minute. It is the premier choice for roofing sheet manufacturers, rural infrastructure suppliers, and export contractors across India.",
+        "specs": {
+                    "Profile Type": "Standard Indian Tata Nali / Sinusoidal Wave (Pitch 76 mm, Wave Depth 18 mm)",
+                    "Raw Material": "GI, GP, PPGI, Galvalume, Colour-Coated Steel, Aluminium",
+                    "Sheet Thickness Capacity": "0.15 mm – 0.80 mm",
+                    "Suitable Coil Width": "914 mm / 1000 mm / 1220 mm / 1250 mm",
+                    "Effective Cover Width": "800 mm / 900 mm / 1050 mm (Customizable)",
+                    "Roll Forming Stations": "16 to 18 Progressive Forming Stages",
+                    "Roller Tooling Material": "Forged EN31 / Cr12 Tool Steel with 0.05 mm Hard Chrome Finish",
+                    "Shaft Diameter": "70 mm / 75 mm Solid 40Cr Alloy Steel",
+                    "Operating Line Speed": "15 – 20 meters per minute (Continuous VFD Speed)",
+                    "Main Motor Power": "7.5 HP (5.5 kW) Heavy Helical Geared Motor",
+                    "Shearing Mechanism": "Hydraulic Post-Cut Guillotine (Cr12MoV Vacuum Hardened Blade)",
+                    "Hydraulic Power Unit": "5.0 HP Power Pack with Yuken Hydraulic Directional Valves",
+                    "Control Console": "Delta / Siemens PLC Touchscreen with Preset Length & Batch Counter",
+                    "Length Cutting Accuracy": "± 1.0 mm via High-Precision Optical Rotary Encoder",
+                    "Coil Handling Recommendation": "Compatible with 5-Ton Uncoiler or 10-Ton Hydraulic Decoiler",
+                    "Origin & Port": "Khopoli, Maharashtra (65 km from Nhava Sheva / JNPT Port)"
+        },
+        "featured": True,
+        "faqs": [
+                    {
+                                "q": "What is a 'Tata Nali' sheet and why is this machine specifically designed for it?",
+                                "a": "Tata Nali is the traditional Indian commercial term for sinusoidal round-wave galvanized corrugated (GC) roofing sheets, typically featuring a 76 mm wave pitch and 18 mm crest depth. This machine is precision-tooled to produce this exact profile to IS 277 industrial specifications."
+                    },
+                    {
+                                "q": "Can the machine run thin gauge 0.18 mm or 0.20 mm GC sheets without edge waving?",
+                                "a": "Yes. Our 16–18 progressive forming stations ensure gentle, gradual deformation with calibrated inter-station clearances, preventing edge distortion, cracking, or fish-scaling on ultra-thin gauges."
+                    },
+                    {
+                                "q": "Can it process colour-coated PPGI coils without scratching the paint?",
+                                "a": "Yes. All roller dies are hard chrome plated (0.05 mm) and mirror-buffed to ensure scratch-free operation on high-gloss and matte PPGI/PPGL coils."
+                    },
+                    {
+                                "q": "What is the daily production capacity of the Tata Nali machine?",
+                                "a": "At 15 to 20 meters per minute, the machine produces approximately 7,000 to 9,000 linear meters (15 to 22 metric tons) per 8-hour shift."
+                    },
+                    {
+                                "q": "What commissioning support does Gagan Engineering Works provide?",
+                                "a": "We provide complete foundation layout drawings, on-site mechanical alignment, electrical commissioning, and operator training across all Indian states and overseas export markets with a 1-year comprehensive warranty."
+                    }
+        ],
+        "createdAt": datetime.now(timezone.utc),
+        "updatedAt": datetime.now(timezone.utc),
+    },
+    {
+        "id": "peb-roofing-sheet-making-machine",
+        "name": "PEB Roofing Sheet Making Machine",
+        "category": "Roll Forming & Sheet Metal",
+        "categorySlug": "roll-forming-sheet-metal",
+        "image": "https://5.imimg.com/data5/SELLER/Default/2026/4/596257189/PL/SJ/DO/4175789/456-500x500.png",
+        "images": [
+                    "https://5.imimg.com/data5/SELLER/Default/2026/4/596257189/PL/SJ/DO/4175789/456-500x500.png",
+                    "https://5.imimg.com/data5/SELLER/Default/2026/3/591026243/LM/XU/AK/4175789/corrugated-sheets-making-machine-500x500.jpeg"
+        ],
+        "alternateName": [
+            "PEB Roofing Sheet Roll Forming Line",
+            "Industrial Shed Roofing Sheet Machine",
+            "PEB Trapezoidal Profile Machine",
+            "PEB Liner Roofing Sheet Machine",
+            "Pre-Engineered Building Sheet Former"
+        ],
+        "keywords": "PEB Roofing Sheet Making Machine, PEB Roofing Line Price India, Industrial Shed Sheet Machine, PEB Liner Sheet Roll Former, Trapezoidal Roofing Sheet Machine Khopoli Maharashtra, Industrial PEB Sheet Line",
+        "tagline": "Industrial Roll Forming Line for Pre-Engineered Building (PEB) Roofing, Liner & Cladding Panels",
+        "shortDesc": "Automated continuous roll forming line engineered for industrial Pre-Engineered Building (PEB) roofing panels, interior liner sheets, and warehouse cladding with hydraulic post-cut guillotine and PLC automation.",
+        "description": "The PEB Roofing Sheet Making Machine manufactured by Gagan Engineering Works in Khopoli, Maharashtra is an automated continuous roll forming line specifically designed for manufacturing Pre-Engineered Building (PEB) roofing sheets, interior wall liner panels, and warehouse cladding. Engineered to process high-tensile 550 MPa Galvalume, Zincalume, Pre-Painted Galvanized Iron (PPGI), and colour-coated steel coils from 0.30 mm to 0.80 mm gauge, the line features 18 to 22 precision roll forming stations driven by an 11 kW heavy motor. Equipped with a hydraulic post-cut shear with Cr12MoV vacuum heat-treated blades and an optical rotary encoder, the machine delivers line speeds of 18 to 25 meters per minute with cutting length tolerances within ±1.0 mm. Supported by dual infeed guides, run-out collection tables, and optional 10-Ton motorized hydraulic decoilers, it is the primary choice for PEB steel building contractors, industrial shed fabricators, and commercial roofing suppliers across India and export markets.",
+        "specs": {
+                    "Profile Type": "Industrial PEB Trapezoidal Rib / Liner Profile (Standard 1000 mm / 1050 mm cover)",
+                    "Raw Material": "PPGI, Pre-Painted Galvalume (AZ150), High-Tensile 550 MPa Steel, Aluminium",
+                    "Material Thickness": "0.30 mm to 0.80 mm",
+                    "Infeed Coil Width": "1220 mm / 1250 mm Standard Steel Coils",
+                    "Roll Forming Stations": "18 to 22 Progressive Forming Stations",
+                    "Roller Tooling Material": "Forged EN31 / Cr12 Tool Steel with 0.05 mm Hard Chrome Finish",
+                    "Shaft Diameter": "75 mm / 80 mm Solid 40Cr Alloy Steel",
+                    "Operating Line Speed": "18 – 25 meters per minute (Continuous VFD Speed)",
+                    "Main Motor Power": "11 kW (15 HP) Helical Geared Motor with VFD Inverter",
+                    "Cutting Mechanism": "Hydraulic Profile Stop-Cut Guillotine (Cr12MoV Blade, 60–62 HRC)",
+                    "Hydraulic Unit": "5.5 kW Heavy-Duty Power Pack with Integrated Oil Cooler",
+                    "Control System": "Delta / Siemens PLC Touchscreen with Job Memory & Batch Counter",
+                    "Cutting Tolerance": "± 1.0 mm Length Tolerance on 12-Meter Industrial Sheets",
+                    "Decoiler Compatibility": "10-Ton Motorized Hydraulic Decoiler with Mandrel Expansion",
+                    "Application": "PEB industrial warehouses, factory sheds, agricultural buildings, airport hangars",
+                    "Origin & Port": "Khopoli, Maharashtra (65 km from Nhava Sheva / JNPT Mumbai Port)"
+        },
+        "featured": True,
+        "faqs": [
+                    {
+                                "q": "What makes this machine suitable for Pre-Engineered Building (PEB) projects?",
+                                "a": "PEB structures require high-tensile 550 MPa steel sheets with precise overlapping crests, anti-capillary grooves, and exact length tolerances for watertight roof sealing. This line is specifically calibrated for these rigorous engineering standards."
+                    },
+                    {
+                                "q": "Can this line produce both roof panels and wall liner cladding?",
+                                "a": "Yes. With tooling adjustments or dual-deck configurations, the line produces primary roof profiles as well as shallow-rib interior liner sheets widely used in insulated PEB buildings."
+                    },
+                    {
+                                "q": "What is the typical production speed and output capacity?",
+                                "a": "The line operates at 18 to 25 meters per minute, yielding 8,000 to 12,000 linear meters (approx. 20 to 30 metric tons) per 8-hour shift."
+                    },
+                    {
+                                "q": "What decoiler is recommended for a continuous PEB sheet line?",
+                                "a": "For continuous production, our 10-Ton Motorized Hydraulic Decoiler with hydraulic mandrel expansion and pneumatic tension brake is recommended to handle full commercial mother coils."
+                    },
+                    {
+                                "q": "What warranty and after-sales support are provided?",
+                                "a": "Gagan Engineering Works provides a 1-year comprehensive warranty, foundation engineering support, on-site alignment, and lifelong technical assistance from our Khopoli engineering team."
+                    }
+        ],
+        "createdAt": datetime.now(timezone.utc),
+        "updatedAt": datetime.now(timezone.utc),
+    },
+    {
         "id": "semi-automatic-pipe-counter-boring-and-facing-machine",
         "name": "Semi-Automatic Pipe Counter Boring and Facing Machine",
         "category": "Roll Forming & Sheet Metal",
