@@ -17,6 +17,10 @@ const CATEGORY_OPTIONS = [
   { slug: "bra-cup-moulding-machine", name: "Bra Cup Moulding Machine" },
   { slug: "roll-forming-sheet-metal", name: "Roll Forming & Sheet Metal" },
   { slug: "cut-to-length-line", name: "Cut To Length Line" },
+  { slug: "bending-machines", name: "Bending Machines" },
+  { slug: "facing-machines", name: "Facing Machines" },
+  { slug: "threading-machines", name: "Threading Machines" },
+  { slug: "recoiling-decoiling-machines", name: "Re-coiling & De-coiling Machines" },
 ];
 
 const SPEC_TEMPLATES = {
@@ -63,6 +67,60 @@ const SPEC_TEMPLATES = {
       "Length Measuring": "Optical Rotary Encoder PLC (±0.5mm accuracy)",
       "Total Connected Power": "18 HP",
       "Warranty": "1 Year Warranty + Pan-India Commissioning"
+    }
+  },
+  "bending": {
+    name: "Bending Machine Preset",
+    specs: {
+      "Machine Type": "Hydraulic / Mechanical Bending Machine",
+      "Bending Capacity": "",
+      "Material Thickness": "",
+      "Bending Length": "",
+      "Motor Power": "",
+      "Control System": "",
+      "Application": "Metal bending, Pipe bending, Plate bending",
+      "Warranty": "1 Year Comprehensive Warranty",
+      "Origin": "Manufactured in Khopoli, Maharashtra, India"
+    }
+  },
+  "facing": {
+    name: "Facing Machine Preset",
+    specs: {
+      "Machine Type": "Pipe Facing / Counter Boring Machine",
+      "Pipe Diameter Range": "",
+      "Facing Speed": "",
+      "Motor Power": "",
+      "Feed Mechanism": "",
+      "Application": "Pipe end preparation, Counter boring, Surface finishing",
+      "Warranty": "1 Year Comprehensive Warranty",
+      "Origin": "Manufactured in Khopoli, Maharashtra, India"
+    }
+  },
+  "threading": {
+    name: "Threading Machine Preset",
+    specs: {
+      "Machine Type": "Pipe / Bolt Threading Machine",
+      "Threading Range": "",
+      "Thread Type": "",
+      "Motor Power": "",
+      "Spindle Speed": "",
+      "Application": "Pipe threading, Bolt threading, Rebar threading",
+      "Warranty": "1 Year Comprehensive Warranty",
+      "Origin": "Manufactured in Khopoli, Maharashtra, India"
+    }
+  },
+  "recoiling-decoiling": {
+    name: "Re-coiling & De-coiling Preset",
+    specs: {
+      "Machine Type": "Motorized Re-coiler / De-coiler",
+      "Load Capacity": "",
+      "Coil Width": "",
+      "Material Thickness": "",
+      "Motor Power": "",
+      "Control System": "",
+      "Application": "Coil rewinding, Coil unwinding, Metal processing lines",
+      "Warranty": "1 Year Comprehensive Warranty",
+      "Origin": "Manufactured in Khopoli, Maharashtra, India"
     }
   }
 };

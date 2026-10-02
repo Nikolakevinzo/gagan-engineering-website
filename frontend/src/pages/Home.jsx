@@ -39,7 +39,11 @@ const INDUSTRIES = [
   { id: "all", name: "All Machinery" },
   { id: "roll-forming-sheet-metal", name: "Roofing & Roll Forming", icon: Wrench },
   { id: "cut-to-length-line", name: "Coil Processing & CTL Lines", icon: Cpu },
-  { id: "bra-cup-moulding-machine", name: "Lingerie & Bra Cup Moulding", icon: Layers }
+  { id: "bra-cup-moulding-machine", name: "Lingerie & Bra Cup Moulding", icon: Layers },
+  { id: "bending-machines", name: "Bending Machines", icon: Wrench },
+  { id: "facing-machines", name: "Facing Machines", icon: Cog },
+  { id: "threading-machines", name: "Threading Machines", icon: Cog },
+  { id: "recoiling-decoiling-machines", name: "Re-coiling & De-coiling", icon: Cpu }
 ];
 
 export default function Home() {

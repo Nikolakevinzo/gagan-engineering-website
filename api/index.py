@@ -83,6 +83,65 @@ except Exception as e:
 
 # ----------------- Seed Data (matches catalogueData.js) -----------------
 SEED_PRODUCTS = [
+{
+    "id": "23-nali-liner-sheet-roll-forming-machine---1220-mm",
+    "name": "23 Nali Liner Sheet Roll Forming Machine - 1220 mm",
+    "category": "Roll Forming & Sheet Metal",
+    "categorySlug": "roll-forming-sheet-metal",
+    "image": "https://lh3.googleusercontent.com/d/11mvvORHsgk4-1FY0FDBM2VfmoCPBmPPE",
+    "tagline": "High-Speed 23 Nali Liner Profile Production with PLC-Controlled Precision",
+    "shortDesc": "Automatic 23 Nali liner sheet roll forming machine for 1220 mm PPGL, PPGI and galvanized steel coils, featuring 18 forming stations, precision rollers and PLC-controlled hydraulic cutting.",
+    "description": "The Gagan Engineering Works 23 Nali Liner Sheet Roll Forming Machine is designed for continuous production of precision liner and cladding profiles from colour-coated and galvanized steel coils. The machine handles 0.30-0.80 mm material with 1220 mm input width and uses an 18-station roll forming system for smooth, consistent profile formation.\n\nThe high-speed configuration features EN9 hard-chrome rollers, PLC automation, automatic length measurement and hydraulic cutting for repeatable production and clean finished sheets. It is suitable for manufacturing liner sheets used in industrial wall cladding, ceilings, partitions, side walls, facades and PEB applications. Liner-profile industry references similarly describe these products as multi-rib sheets primarily intended for wall and ceiling/cladding applications.",
+    "specs": {
+        "Machine Type": "Automatic 23 Nali Liner Sheet Roll Forming Machine",
+        "Profile Type": "23 Nali / Multi-Rib Liner Profile",
+        "Input Coil Width": "1220 mm",
+        "Material Thickness": "0.30-0.80 mm",
+        "Suitable Material": "PPGL / PPGI / GC / BGL / Galvanized & Colour-Coated Steel",
+        "Forming Stations": "18 Stations",
+        "Forming Speed": "50-60 m/min (High-Speed Configuration)",
+        "Main Motor": "7.5 HP",
+        "Shaft Diameter": "80 mm",
+        "Length Accuracy": "±1 mm",
+        "Cutting System": "PLC-Controlled Hydraulic Shearing",
+        "Cutter Blade": "Cr12 Hardened / Quenched Tool Steel",
+        "Hydraulic Power Pack": "5.5 kW",
+        "Decoiler": "7 Ton Hydraulic Decoiler - Available with Line",
+        "Automation": "Automatic Length & Quantity Measurement",
+        "Machine Workflow": "Decoiling → Feeding → Roll Forming → Length Measurement → Hydraulic Cutting → Output",
+        "Origin": "Manufactured in Khopoli, Maharashtra, India"
+    },
+    "featured": True,
+    "faqs": [
+        {
+            "q": "What material thickness can the liner machine process?",
+            "a": "The machine is designed for 0.30 mm to 0.80 mm sheet thickness."
+        },
+        {
+            "q": "What is the input coil width?",
+            "a": "The standard configuration is designed for 1220 mm wide coils."
+        },
+        {
+            "q": "Which materials can be processed?",
+            "a": "The machine supports PPGI, PPGL, GC, BGL and other suitable colour-coated or galvanized steel coils."
+        },
+        {
+            "q": "What profile does the machine manufacture?",
+            "a": "It is designed for the 23 Nali multi-rib liner profile, with tooling manufactured according to the approved profile/sample sheet."
+        },
+        {
+            "q": "Is a decoiler available with the machine?",
+            "a": "Yes. A 7-ton hydraulic decoiler can be supplied as part of the production line."
+        }
+    ],
+    "images": [
+        "https://lh3.googleusercontent.com/d/11mvvORHsgk4-1FY0FDBM2VfmoCPBmPPE"
+    ],
+    "video_url": None,
+    "createdAt": "2026-09-20 12:22:04.624000",
+    "updatedAt": "2026-09-20 12:22:04.624000"
+},
+
     {
         "id": "10-tons-hydraulic-decoiler",
         "name": "10 Tons Hydraulic Decoiler Machine",
@@ -835,6 +894,17 @@ SEED_PRODUCTS = [
         "createdAt": datetime.now(timezone.utc),
         "updatedAt": datetime.now(timezone.utc),
     },
+]
+
+SEED_CATEGORIES = [
+    {"id": "all", "name": "All Machinery"},
+    {"id": "roll-forming-sheet-metal", "name": "Roll Forming & Sheet Metal"},
+    {"id": "cut-to-length-line", "name": "Cut To Length Line"},
+    {"id": "bra-cup-moulding-machine", "name": "Bra Cup Moulding Machine"},
+    {"id": "bending-machines", "name": "Bending Machines"},
+    {"id": "facing-machines", "name": "Facing Machines"},
+    {"id": "threading-machines", "name": "Threading Machines"},
+    {"id": "recoiling-decoiling-machines", "name": "Re-coiling & De-coiling Machines"},
 ]
 
 # In-memory fallback when MongoDB is unavailable
@@ -1988,6 +2058,12 @@ async def sitemap():
     <priority>0.90</priority>
   </url>""",
         f"""  <url>
+    <loc>{WEBSITE_URL}/blog/23-nali-liner-sheet-roll-forming-machine-guide</loc>
+    <lastmod>{now}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.92</priority>
+  </url>""",
+        f"""  <url>
     <loc>{WEBSITE_URL}/blog/guide-to-bra-cup-moulding-machines</loc>
     <lastmod>{now}</lastmod>
     <changefreq>monthly</changefreq>
@@ -2189,6 +2265,15 @@ async def submit_indexnow(username: str = Depends(verify_admin)):
 # ----------------- SEO Prerender for Crawlers -----------------
 # Blog article SEO data (matches blogData.js)
 BLOG_ARTICLES_SEO = [
+{
+    "slug": "23-nali-liner-sheet-roll-forming-machine-guide",
+    "title": "23 Nali Liner Sheet Roll Forming Machine (1220 mm): Working Principle, Profile Design, Specs & Price (2026)",
+    "description": "Comprehensive technical engineering guide on the 23 Nali liner sheet roll forming machine for 1220 mm PPGI/PPGL coils. Learn about 18-stage progressive forming, micro-rib pitch geometry, hydraulic post-cut shear, PLC automation, and competitive manufacturing benchmarks.",
+    "image": "https://lh3.googleusercontent.com/d/11mvvORHsgk4-1FY0FDBM2VfmoCPBmPPE",
+    "date": "2026-09-20",
+    "keywords": "23 Nali Liner Sheet Roll Forming Machine, 23 Nali Roll Forming Machine, Liner Sheet Roll Former, 23 Nali Sheet Making Machine, Roll Forming Machine, Sheet Making Machine, Corrugated Sheet Making Machine, PEB Liner Sheet Roll Former, Wall Cladding Sheet Machine, 1220 mm Liner Roll Former, PPGI Liner Sheet Making Machine, PPGL Roll Forming Machine, Galvanized Liner Sheet Machine, Tata Nali Sheet Machine, Multi Rib Liner Sheet Machine, Sinusoidal Wave Sheet Former, 18 Station Roll Forming Machine, High Speed Roll Former 50 m min, Hydraulic Post Cut Guillotine Shearing, PLC Controlled Roll Former, Cr12 Roller Tooling, 80 mm Solid Shaft Roll Forming, 7 Ton Hydraulic Decoiler, Industrial Shed Sheet Machine, False Ceiling Sheet Making Machine, Cold Room Wall Panel Roll Former, Ceiling Liner Patra Machine, Nali Patra Making Machine, Roll Forming Machine Manufacturer India, Roll Forming Line Price India, Gagan Engineering Works Khopoli"
+},
+
     {
         "slug": "guide-to-bra-cup-moulding-machines",
         "title": "Complete Guide to Bra Cup Moulding Machines: Types, Working Principle, Sizing & Price (2026)",

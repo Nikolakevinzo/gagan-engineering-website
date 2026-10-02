@@ -16,6 +16,10 @@ const CATEGORY_OPTIONS = [
   { id: "bra-cup-moulding-machine", name: "Bra Cup Moulding Machine" },
   { id: "roll-forming-sheet-metal", name: "Roll Forming & Sheet Metal" },
   { id: "cut-to-length-line", name: "Cut To Length Line" },
+  { id: "bending-machines", name: "Bending Machines" },
+  { id: "facing-machines", name: "Facing Machines" },
+  { id: "threading-machines", name: "Threading Machines" },
+  { id: "recoiling-decoiling-machines", name: "Re-coiling & De-coiling Machines" },
 ];
 
 export default function AdminProductList() {

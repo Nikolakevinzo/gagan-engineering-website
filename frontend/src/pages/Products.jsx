@@ -26,6 +26,30 @@ const CATEGORY_META = {
     title: "Bra Cup Moulding Machines Manufacturer & Exporter",
     description: "High-precision electric, foam, fabric, and padded bra cup moulding presses for intimate wear lingerie manufacturing in India and export.",
     keywords: "Bra Cup Moulding Machine Manufacturer, Bra Cup Fabric Moulding, Foam Bra Cup Machine, Intimate Wear Machinery, Lingerie Moulding Press India"
+  },
+  "bending-machines": {
+    name: "Bending Machines",
+    title: "Industrial Bending Machines Manufacturer India",
+    description: "Heavy-duty hydraulic and mechanical bending machines for precision metal bending, pipe bending, and plate bending operations in industrial fabrication.",
+    keywords: "Bending Machine Manufacturer India, Hydraulic Bending Machine, Pipe Bending Machine, Metal Bending Machine, Plate Bending Machine Khopoli"
+  },
+  "facing-machines": {
+    name: "Facing Machines",
+    title: "Facing Machines Manufacturer & Supplier India",
+    description: "Precision pipe facing, counter boring, and end-finishing machines for accurate surface preparation in pipeline, boiler, and heavy engineering industries.",
+    keywords: "Facing Machine Manufacturer India, Pipe Facing Machine, Counter Boring Machine, End Facing Machine, Pipe End Preparation Machine"
+  },
+  "threading-machines": {
+    name: "Threading Machines",
+    title: "Industrial Threading Machines Manufacturer India",
+    description: "High-performance pipe threading, bolt threading, and rebar threading machines for precision thread cutting in oil & gas, construction, and manufacturing sectors.",
+    keywords: "Threading Machine Manufacturer India, Pipe Threading Machine, Bolt Threading Machine, Rebar Threading Machine, Thread Cutting Machine"
+  },
+  "recoiling-decoiling-machines": {
+    name: "Re-coiling & De-coiling Machines",
+    title: "Re-coiling & De-coiling Machines Manufacturer India",
+    description: "Heavy-duty motorized re-coiling and de-coiling machines for steel coil handling, tension-controlled unwinding, and rewinding in metal processing lines.",
+    keywords: "Recoiling Machine Manufacturer India, Decoiling Machine, Coil Rewinding Machine, Steel Coil Handling Machine, Motorized Decoiler"
   }
 };
 
@@ -120,7 +144,11 @@ export default function Products() {
       p.category === activeCategory ||
       (activeCategory === "Bra Cup Moulding Machine" && (p.category?.includes("Bra Cup") || p.categorySlug === "bra-cup-moulding-machine")) ||
       (activeCategory === "Roll Forming & Sheet Metal" && (p.category?.includes("Roll") || p.category?.includes("Decoiler") || p.category?.includes("Roofing") || p.categorySlug === "roll-forming-sheet-metal")) ||
-      (activeCategory === "Cut To Length Line" && (p.category?.includes("Cut") || p.category?.includes("CTL") || p.categorySlug === "cut-to-length-line"));
+      (activeCategory === "Cut To Length Line" && (p.category?.includes("Cut") || p.category?.includes("CTL") || p.categorySlug === "cut-to-length-line")) ||
+      (activeCategory === "Bending Machines" && (p.category?.includes("Bending") || p.categorySlug === "bending-machines")) ||
+      (activeCategory === "Facing Machines" && (p.category?.includes("Facing") || p.categorySlug === "facing-machines")) ||
+      (activeCategory === "Threading Machines" && (p.category?.includes("Threading") || p.categorySlug === "threading-machines")) ||
+      (activeCategory === "Re-coiling & De-coiling Machines" && (p.category?.includes("Recoil") || p.category?.includes("Decoil") || p.category?.includes("Re-coil") || p.category?.includes("De-coil") || p.categorySlug === "recoiling-decoiling-machines"));
 
     const matchesSearch =
       searchQuery.trim() === "" ||
