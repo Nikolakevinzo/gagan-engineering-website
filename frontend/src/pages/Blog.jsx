@@ -17,36 +17,43 @@ export default function Blog() {
   useEffect(() => {
     let isMounted = true;
 
-    const mergeWithLocal = (baseArticles) => {
+    const mergeAllArticles = (apiArticles) => {
+      const map = new Map();
+      // 1. Base: Static articles bundled in code
+      BLOG_ARTICLES.forEach((a) => {
+        if (a?.slug) map.set(a.slug, a);
+      });
+      // 2. Overlay: API articles from MongoDB
+      if (Array.isArray(apiArticles)) {
+        apiArticles.forEach((a) => {
+          if (a?.slug) map.set(a.slug, { ...(map.get(a.slug) || {}), ...a });
+        });
+      }
+      // 3. Overlay: Local storage edits/drafts
       try {
         const stored = JSON.parse(localStorage.getItem("gagan_custom_blogs") || "[]");
-        if (Array.isArray(stored) && stored.length > 0) {
-          const merged = [...baseArticles];
+        if (Array.isArray(stored)) {
           stored.forEach((item) => {
-            const idx = merged.findIndex((a) => a.slug === item.slug);
-            if (idx >= 0) {
-              merged[idx] = { ...merged[idx], ...item };
-            } else {
-              merged.push(item);
-            }
+            if (item?.slug) map.set(item.slug, { ...(map.get(item.slug) || {}), ...item });
           });
-          return merged;
         }
       } catch (e) {}
-      return baseArticles;
+      const list = Array.from(map.values());
+      list.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
+      return list;
     };
 
     fetch("/api/blogs?limit=100")
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (isMounted && data && Array.isArray(data.articles) && data.articles.length > 0) {
-          setArticles(mergeWithLocal(data.articles));
+          setArticles(mergeAllArticles(data.articles));
         } else if (isMounted) {
-          setArticles(mergeWithLocal(BLOG_ARTICLES));
+          setArticles(mergeAllArticles([]));
         }
       })
       .catch(() => {
-        if (isMounted) setArticles(mergeWithLocal(BLOG_ARTICLES));
+        if (isMounted) setArticles(mergeAllArticles([]));
       });
     return () => {
       isMounted = false;

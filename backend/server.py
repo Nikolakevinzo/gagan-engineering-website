@@ -1103,8 +1103,15 @@ async def get_blogs_from_db(published_only: bool = True) -> List[Dict]:
         query = {"published": True} if published_only else {}
         cursor = db["blogs"].find(query, {"_id": 0}).sort("date", -1)
         docs = await cursor.to_list(length=500)
-        if docs:
-            return docs
+        existing_slugs = {d.get("slug") for d in (docs or []) if d.get("slug")}
+        missing_seed = [
+            b for b in _mem_blogs
+            if b.get("slug") not in existing_slugs and (not published_only or b.get("published", True))
+        ]
+        combined = (docs or []) + missing_seed
+        combined.sort(key=lambda x: str(x.get("date", "")), reverse=True)
+        if combined:
+            return combined
         if published_only:
             return [b for b in _mem_blogs if b.get("published", True)]
         return list(_mem_blogs)
@@ -1143,7 +1150,7 @@ async def get_blog_by_slug(slug: str, published_only: bool = False) -> Optional[
 # ----------------- Startup Seeder -----------------
 @app.on_event("startup")
 async def seed_database():
-    """Seed database with default products and blogs if collections are empty."""
+    """Seed database with default products and blogs if collections are empty or missing records."""
     if db is None:
         logger.warning("MongoDB not connected — using in-memory data.")
         return
@@ -1158,7 +1165,10 @@ async def seed_database():
             await db["products"].update_many({}, {"$unset": {"_id_excluded": ""}})
             logger.info(f"Seeded {len(SEED_PRODUCTS)} products successfully.")
         else:
-            logger.info(f"Products collection already has {count} documents, skipping seed.")
+            for p in SEED_PRODUCTS:
+                if await db["products"].count_documents({"id": p["id"]}) == 0:
+                    await db["products"].insert_one({**p})
+                    logger.info(f"Auto-seeded missing product: {p['id']}")
         
         blog_count = await db["blogs"].count_documents({})
         if blog_count == 0:
@@ -1169,7 +1179,13 @@ async def seed_database():
             await db["blogs"].update_many({}, {"$unset": {"_id_excluded": ""}})
             logger.info(f"Seeded {len(SEED_BLOGS)} blogs successfully.")
         else:
-            logger.info(f"Blogs collection already has {blog_count} documents, skipping seed.")
+            for b in SEED_BLOGS:
+                if await db["blogs"].count_documents({"slug": b["slug"]}) == 0:
+                    doc = dict(b)
+                    doc["createdAt"] = datetime.now(timezone.utc)
+                    doc["updatedAt"] = datetime.now(timezone.utc)
+                    await db["blogs"].insert_one(doc)
+                    logger.info(f"Auto-seeded missing blog: {b['slug']}")
     except Exception as e:
         logger.warning(f"Could not seed database: {e}")
 
