@@ -2094,6 +2094,12 @@ async def sitemap():
     <priority>0.88</priority>
   </url>""",
         f"""  <url>
+    <loc>{WEBSITE_URL}/blog/gc-roofing-sheet-manufacturing-business-guide</loc>
+    <lastmod>{now}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>""",
+        f"""  <url>
     <loc>{WEBSITE_URL}/blog/guide-to-corrugated-sheet-making-machines</loc>
     <lastmod>{now}</lastmod>
     <changefreq>weekly</changefreq>

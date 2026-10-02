@@ -12,7 +12,7 @@ const facts = [
   { label: "Years in Business", value: "19+ Years" },
   { label: "Nature of Business", value: "Manufacturer & Exporter" },
   { label: "Firm Structure", value: "Proprietorship" },
-  { label: "Annual Turnover", value: "₹40L – ₹1.5Cr" },
+  { label: "Annual Turnover", value: "₹1.5Cr – ₹2Cr" },
   { label: "Team Size", value: "11–25 Engineers" },
   { label: "GST Registration", value: "Sep 2017 (MH)" },
   { label: "IndiaMART Rating", value: "4.0★ TrustSEAL" },

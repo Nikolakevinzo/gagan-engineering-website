@@ -192,6 +192,7 @@ All fabrication, CNC turning, roller machining (EN31 alloy tool steel), hydrauli
   - CTL Lines: `https://www.gaganengineerings.in/products/category/cut-to-length-line`
 - **Technical Knowledge Guides**:
   - Corrugated Sheet Roll Forming Guide: `https://www.gaganengineerings.in/blog/guide-to-corrugated-sheet-making-machines`
+  - GC Roofing Sheet Manufacturing Business Guide: `https://www.gaganengineerings.in/blog/gc-roofing-sheet-manufacturing-business-guide`
   - Pipe Counter Boring & Facing Guide: `https://www.gaganengineerings.in/blog/pipe-counter-boring-and-facing-machine-guide`
   - Curved Roofing Sheet Crimping Guide: `https://www.gaganengineerings.in/blog/curved-roofing-sheet-crimping-machine-guide`
   - 10-Ton Hydraulic Decoiler Guide: `https://www.gaganengineerings.in/blog/10-ton-hydraulic-decoiler-guide`
