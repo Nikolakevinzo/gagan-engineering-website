@@ -1914,8 +1914,16 @@ def get_product_sku(p_id: str) -> str:
     return f"GSK-{clean[:16]}"
 
 def _absolute_image_url(image):
+    if not image or not isinstance(image, str):
+        return f"{WEBSITE_URL.rstrip('/')}/logo.png"
+    import re
     from urllib.parse import urljoin
-    return urljoin(f"{WEBSITE_URL.rstrip('/')}/", image or "logo.png")
+    match = re.search(r"drive\.google\.com/(?:file/d/|open\?id=|uc\?(?:.*&)?id=|thumbnail\?(?:.*&)?id=)([a-zA-Z0-9_-]+)", image)
+    if match:
+        return f"https://lh3.googleusercontent.com/d/{match.group(1)}"
+    if "dropbox.com" in image and "dl=0" in image:
+        image = image.replace("dl=0", "raw=1")
+    return urljoin(f"{WEBSITE_URL.rstrip('/')}/", image.strip() or "logo.png")
 
 def _content_lastmod(record):
     """Use recorded content dates; never claim a request changed the page."""

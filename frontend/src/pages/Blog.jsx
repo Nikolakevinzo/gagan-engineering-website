@@ -5,6 +5,7 @@ import SEO from "@/components/SEO";
 import SectionHeader from "@/components/SectionHeader";
 import { BLOG_CATEGORIES } from "@/lib/blogData";
 import { BUSINESS } from "@/lib/business";
+import { normalizeImageUrl } from "@/lib/catalogueData";
 
 export default function Blog() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -158,7 +159,7 @@ export default function Blog() {
 
             <div className="md:col-span-5 h-64 md:h-full bg-[#0c0c0e] relative overflow-hidden flex items-center justify-center p-6 border-t md:border-t-0 md:border-l border-white/10">
               <img
-                src={featuredArticle.image}
+                src={normalizeImageUrl(featuredArticle.image)}
                 alt={featuredArticle.title}
                 onError={(e) => {
                   e.currentTarget.src = "https://5.imimg.com/data5/ANDROID/Default/2025/10/550586008/TZ/II/HL/4175789/product-jpeg-500x500.jpg";
@@ -179,7 +180,7 @@ export default function Blog() {
               <div>
                 <div className="aspect-[16/9] bg-[#0c0c0e] overflow-hidden relative border-b border-white/10 flex items-center justify-center p-4">
                   <img
-                    src={article.image}
+                    src={normalizeImageUrl(article.image)}
                     alt={article.title}
                     onError={(e) => {
                       e.currentTarget.src = "https://5.imimg.com/data5/ANDROID/Default/2025/10/550586008/TZ/II/HL/4175789/product-jpeg-500x500.jpg";

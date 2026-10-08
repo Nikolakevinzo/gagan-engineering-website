@@ -9,7 +9,7 @@ import {
 import { toast } from "sonner";
 import { useAdminAuth } from "@/components/AdminLayout";
 import { BLOG_ARTICLES } from "@/lib/blogData";
-import { CATALOGUE_PRODUCTS } from "@/lib/catalogueData";
+import { CATALOGUE_PRODUCTS, normalizeImageUrl } from "@/lib/catalogueData";
 
 const STANDARD_CATEGORIES = [
   { name: "Roll Forming & PEB Framing", slug: "roll-forming" },
@@ -276,6 +276,7 @@ export default function AdminBlogForm() {
 
     const payload = {
       ...formData,
+      image: normalizeImageUrl(formData.image),
       tableOfContents
     };
 
@@ -417,7 +418,7 @@ export default function AdminBlogForm() {
           {formData.image && (
             <div className="w-full h-80 bg-[#121216] border border-white/10 rounded-xs overflow-hidden">
               <img
-                src={formData.image}
+                src={normalizeImageUrl(formData.image)}
                 alt={formData.title}
                 onError={(e) => { e.currentTarget.src = "/logo.png"; }}
                 className="w-full h-full object-contain p-4"
@@ -628,10 +629,16 @@ export default function AdminBlogForm() {
                   <input
                     type="text"
                     value={formData.image}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, image: e.target.value }))}
-                    placeholder="e.g. /automatic-ctl.png or https://..."
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setFormData((prev) => ({ ...prev, image: normalizeImageUrl(val) }));
+                    }}
+                    placeholder="e.g. https://drive.google.com/file/d/... or /automatic-ctl.png"
                     className="w-full bg-[#121216] border border-white/10 rounded-xs px-3.5 py-2.5 text-xs text-white font-mono focus:outline-hidden focus:border-[#FF5722]"
                   />
+                  <p className="text-[10px] text-white/40 mt-1">
+                    Google Drive share links (drive.google.com/file/d/...) are auto-converted to direct embeds. Ensure sharing is set to "Anyone with the link".
+                  </p>
                 </div>
 
                 <div>
@@ -657,7 +664,7 @@ export default function AdminBlogForm() {
               <div className="h-44 bg-[#121216] border border-white/10 rounded-xs overflow-hidden flex items-center justify-center relative">
                 {formData.image ? (
                   <img
-                    src={formData.image}
+                    src={normalizeImageUrl(formData.image)}
                     alt="Cover preview"
                     onError={(e) => { e.currentTarget.src = "/logo.png"; }}
                     className="w-full h-full object-contain p-2"

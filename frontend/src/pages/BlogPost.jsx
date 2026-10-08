@@ -4,7 +4,7 @@ import { Calendar, Clock, ArrowLeft, ArrowRight, Tag, Share2, Printer, CheckCirc
 import { toast } from "sonner";
 import SEO from "@/components/SEO";
 import SectionHeader from "@/components/SectionHeader";
-import { CATALOGUE_PRODUCTS } from "@/lib/catalogueData";
+import { CATALOGUE_PRODUCTS, normalizeImageUrl } from "@/lib/catalogueData";
 import { BUSINESS } from "@/lib/business";
 import { api } from "@/lib/api";
 
@@ -264,7 +264,7 @@ export default function BlogPost() {
             {/* Featured Image */}
             <div className="aspect-[16/9] bg-[#0c0c0e] border border-white/10 rounded-xs overflow-hidden flex items-center justify-center p-6 shadow-2xl">
               <img
-                src={article.image}
+                src={normalizeImageUrl(article.image)}
                 alt={article.title}
                 onError={(e) => {
                   e.currentTarget.src = "https://5.imimg.com/data5/ANDROID/Default/2025/10/550586008/TZ/II/HL/4175789/product-jpeg-500x500.jpg";
