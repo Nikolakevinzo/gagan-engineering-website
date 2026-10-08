@@ -8,6 +8,69 @@ import { CATALOGUE_PRODUCTS } from "@/lib/catalogueData";
 import { BUSINESS } from "@/lib/business";
 import { api } from "@/lib/api";
 
+function renderInlineContent(text) {
+  if (!text) return null;
+  const tokenRegex = /(\*\*[^*]+\*\*|\[[^\]]+\]\([^)]+\))/g;
+  const parts = [];
+  let lastIndex = 0;
+  let match;
+  let key = 0;
+
+  while ((match = tokenRegex.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      parts.push(text.substring(lastIndex, match.index));
+    }
+    const token = match[0];
+    if (token.startsWith("**") && token.endsWith("**")) {
+      const boldText = token.slice(2, -2);
+      parts.push(<strong key={`b-${key++}`} className="font-semibold text-white">{boldText}</strong>);
+    } else if (token.startsWith("[")) {
+      const closingBracket = token.indexOf("](");
+      if (closingBracket !== -1) {
+        const linkText = token.slice(1, closingBracket);
+        const url = token.slice(closingBracket + 2, -1).trim();
+        const isSafeUrl = (url.startsWith("/") && !url.startsWith("//")) || /^https?:\/\//i.test(url);
+        if (isSafeUrl) {
+          const isExternal = /^https?:\/\//i.test(url);
+          const isDownload = url.startsWith("/downloads/");
+          if (isExternal || isDownload) {
+            parts.push(
+              <a
+                key={`a-${key++}`}
+                href={url}
+                target={isExternal ? "_blank" : undefined}
+                rel={isExternal ? "noopener noreferrer" : undefined}
+                className="text-[#FF5722] hover:underline font-medium"
+              >
+                {linkText}
+              </a>
+            );
+          } else {
+            parts.push(
+              <Link
+                key={`l-${key++}`}
+                to={url}
+                className="text-[#FF5722] hover:underline font-medium"
+              >
+                {linkText}
+              </Link>
+            );
+          }
+        } else {
+          parts.push(token);
+        }
+      } else {
+        parts.push(token);
+      }
+    }
+    lastIndex = tokenRegex.lastIndex;
+  }
+  if (lastIndex < text.length) {
+    parts.push(text.substring(lastIndex));
+  }
+  return parts;
+}
+
 export default function BlogPost() {
   const { slug } = useParams();
   const requestRoute = useRef({ slug });
@@ -210,7 +273,6 @@ export default function BlogPost() {
               />
             </div>
 
-
             {/* Render Article Sections */}
             {(article.content || []).map((sec, idx) => {
               if (sec.type === "section") {
@@ -220,7 +282,7 @@ export default function BlogPost() {
                       {sec.heading}
                     </h2>
                     <div className="whitespace-pre-line text-white/75 text-sm sm:text-base leading-relaxed">
-                      {sec.text}
+                      {renderInlineContent(sec.text)}
                     </div>
 
                     {sec.items && sec.items.length > 0 && (
@@ -228,7 +290,7 @@ export default function BlogPost() {
                         {sec.items.map((item, i) => (
                           <li key={i} className="flex items-start gap-2.5">
                             <span className="text-[#FF5722] font-bold text-base leading-none mt-1">▸</span>
-                            <span dangerouslySetInnerHTML={{ __html: item.replace(/\*\*(.*?)\*\*/g, '<strong class="text-white">$1</strong>') }} />
+                            <span>{renderInlineContent(item)}</span>
                           </li>
                         ))}
                       </ul>

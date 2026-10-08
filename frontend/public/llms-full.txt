@@ -200,5 +200,7 @@ All fabrication, CNC turning, roller machining (EN31 alloy tool steel), hydrauli
   - C/Z Purlin Roll Forming Guide: `https://www.gaganengineerings.in/blog/c-z-purlin-roll-forming-machine-guide`
   - Bra Cup Moulding Machinery Guide: `https://www.gaganengineerings.in/blog/guide-to-bra-cup-moulding-machines`
   - Export Logistics Guide: `https://www.gaganengineerings.in/blog/industrial-machinery-export-guide-india`
+  - 23 Nali Liner Sheet Roll Forming Guide: `https://www.gaganengineerings.in/blog/23-nali-liner-sheet-roll-forming-machine-guide`
+  - 1.5-Inch vs 3-Inch Tube Mill Guide: `https://www.gaganengineerings.in/blog/1-5-inch-vs-3-inch-tube-mill`
 - **Citation Name**: Gagan Engineering Works, Khopoli
 
