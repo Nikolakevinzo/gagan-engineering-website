@@ -199,8 +199,6 @@ SEED_PRODUCTS = [
                                 "a": "We offer a 1-year comprehensive manufacturer warranty covering hydraulics, drive motors, and electricals, with complete on-site commissioning across Pan-India and export ports."
                     }
         ],
-        "createdAt": datetime.now(timezone.utc),
-        "updatedAt": datetime.now(timezone.utc),
     },
     {
         "id": "automatic-ctl-machine",
@@ -261,8 +259,6 @@ SEED_PRODUCTS = [
                                 "a": "We integrate genuine Yuken hydraulic valves and pumps, Delta/Siemens PLC controllers, and ABB/Schneider electrical switchgear for maximum reliability."
                     }
         ],
-        "createdAt": datetime.now(timezone.utc),
-        "updatedAt": datetime.now(timezone.utc),
     },
     {
         "id": "c-z-purlin-roll-forming-machine",
@@ -322,8 +318,6 @@ SEED_PRODUCTS = [
                                 "a": "We provide a 1-year comprehensive warranty, foundation engineering drawings, on-site mechanical alignment, and full operator training."
                     }
         ],
-        "createdAt": datetime.now(timezone.utc),
-        "updatedAt": datetime.now(timezone.utc),
     },
     {
         "id": "automatic-roofing-sheet-crimping-machine",
@@ -389,8 +383,6 @@ SEED_PRODUCTS = [
                                 "a": "Gagan Engineering Works provides a 1-year comprehensive warranty, complete tooling spares, and on-site operator commissioning."
                     }
         ],
-        "createdAt": datetime.now(timezone.utc),
-        "updatedAt": datetime.now(timezone.utc),
     },
     {
         "id": "corrugated-sheets-making-machine",
@@ -461,8 +453,6 @@ SEED_PRODUCTS = [
                                 "a": "We provide a 1-year comprehensive manufacturer warranty covering mechanical drives, hydraulic power packs, and PLC electronics. Our factory technicians provide on-site installation, commissioning, and operator training across all Indian states and overseas export markets."
                     }
         ],
-        "createdAt": datetime.now(timezone.utc),
-        "updatedAt": datetime.now(timezone.utc),
     },
     {
         "id": "tata-nali-sheet-making-machine",
@@ -530,8 +520,6 @@ SEED_PRODUCTS = [
                                 "a": "We provide complete foundation layout drawings, on-site mechanical alignment, electrical commissioning, and operator training across all Indian states and overseas export markets with a 1-year comprehensive warranty."
                     }
         ],
-        "createdAt": datetime.now(timezone.utc),
-        "updatedAt": datetime.now(timezone.utc),
     },
     {
         "id": "peb-roofing-sheet-making-machine",
@@ -595,8 +583,6 @@ SEED_PRODUCTS = [
                                 "a": "Gagan Engineering Works provides a 1-year comprehensive warranty, foundation engineering support, on-site alignment, and lifelong technical assistance from our Khopoli engineering team."
                     }
         ],
-        "createdAt": datetime.now(timezone.utc),
-        "updatedAt": datetime.now(timezone.utc),
     },
     {
         "id": "semi-automatic-pipe-counter-boring-and-facing-machine",
@@ -654,8 +640,6 @@ SEED_PRODUCTS = [
                                 "a": "We provide a 1-year comprehensive manufacturer warranty, genuine replacement tool holders, hydraulic seals, and rapid technician support."
                     }
         ],
-        "createdAt": datetime.now(timezone.utc),
-        "updatedAt": datetime.now(timezone.utc),
     },
     {
         "id": "double-head-electric-bra-cup-moulding-machine",
@@ -714,8 +698,6 @@ SEED_PRODUCTS = [
                                 "a": "We provide a 1-year comprehensive manufacturer warranty, complete mould set documentation, and on-site operator training across India and export markets."
                     }
         ],
-        "createdAt": datetime.now(timezone.utc),
-        "updatedAt": datetime.now(timezone.utc),
     },
     {
         "id": "bra-cup-fabric-moulding-machine",
@@ -773,8 +755,6 @@ SEED_PRODUCTS = [
                                 "a": "We provide a 1-year comprehensive warranty, spare heating elements, and on-site commissioning across all textile manufacturing hubs."
                     }
         ],
-        "createdAt": datetime.now(timezone.utc),
-        "updatedAt": datetime.now(timezone.utc),
     },
     {
         "id": "foam-bra-cup-moulding-machine",
@@ -832,8 +812,6 @@ SEED_PRODUCTS = [
                                 "a": "We offer a 1-year comprehensive warranty, technical tooling drawings, and on-site operator commissioning across Pan-India."
                     }
         ],
-        "createdAt": datetime.now(timezone.utc),
-        "updatedAt": datetime.now(timezone.utc),
     },
     {
         "id": "padded-bra-cup-moulding-machine",
@@ -891,8 +869,6 @@ SEED_PRODUCTS = [
                                 "a": "We provide a 1-year comprehensive warranty, complete die engineering support, and rapid on-site commissioning across India."
                     }
         ],
-        "createdAt": datetime.now(timezone.utc),
-        "updatedAt": datetime.now(timezone.utc),
     },
 ]
 
@@ -1091,82 +1067,58 @@ def verify_admin(request: Request):
 
 # ----------------- DB Helpers -----------------
 async def get_products_from_db() -> List[Dict]:
-    """Fetch all products from MongoDB, fallback to in-memory."""
-    if db is None:
-        return _mem_products
-    try:
-        cursor = db["products"].find({}, {"_id": 0})
-        products = await cursor.to_list(length=1000)
-        if products:
-            return products
-        return _mem_products
-    except Exception:
-        return _mem_products
+    """Merge seed products with authoritative DB records and deletion markers."""
+    products = {p["id"]: p for p in _mem_products}
+    if db is not None:
+        try:
+            docs = await db["products"].find({}, {"_id": 0}).to_list(length=None)
+            products.update({p["id"]: p for p in docs})
+        except Exception as e:
+            logger.warning(f"Error fetching products from DB: {e}")
+            raise HTTPException(status_code=503, detail="Product storage is unavailable. Please try again later.") from e
+    return [p for p in products.values() if not p.get("deleted")]
 
 async def get_product_by_id(product_id: str) -> Optional[Dict]:
-    """Fetch single product from MongoDB, fallback to in-memory."""
-    if db is None:
-        return next((p for p in _mem_products if p["id"] == product_id), None)
-    try:
-        product = await db["products"].find_one({"id": product_id}, {"_id": 0})
-        if product:
-            return product
-    except Exception:
-        pass
-    return next((p for p in _mem_products if p["id"] == product_id), None)
+    """Use a seed only when the product is genuinely absent from the DB."""
+    product = None
+    if db is not None:
+        try:
+            product = await db["products"].find_one({"id": product_id}, {"_id": 0})
+        except Exception as e:
+            logger.warning(f"Error fetching product {product_id} from DB: {e}")
+            raise HTTPException(status_code=503, detail="Product storage is unavailable. Please try again later.") from e
+    if product is None:
+        product = next((p for p in _mem_products if p["id"] == product_id), None)
+    return product if product and not product.get("deleted") else None
 
 async def get_blogs_from_db(published_only: bool = True) -> List[Dict]:
-    """Fetch blog articles from MongoDB, fallback to in-memory/seed."""
-    if db is None:
-        if published_only:
-            return [b for b in _mem_blogs if b.get("published", True)]
-        return list(_mem_blogs)
-    try:
-        query = {"published": True} if published_only else {}
-        cursor = db["blogs"].find(query, {"_id": 0}).sort("date", -1)
-        docs = await cursor.to_list(length=500)
-        existing_slugs = {d.get("slug") for d in (docs or []) if d.get("slug")}
-        missing_seed = [
-            b for b in _mem_blogs
-            if b.get("slug") not in existing_slugs and (not published_only or b.get("published", True))
-        ]
-        combined = (docs or []) + missing_seed
-        combined.sort(key=lambda x: str(x.get("date", "")), reverse=True)
-        if combined:
-            return combined
-        if published_only:
-            return [b for b in _mem_blogs if b.get("published", True)]
-        return list(_mem_blogs)
-    except Exception as e:
-        logger.warning(f"Error fetching blogs from DB: {e}")
-        if published_only:
-            return [b for b in _mem_blogs if b.get("published", True)]
-        return list(_mem_blogs)
+    """Merge seeds with authoritative DB publishing state before filtering."""
+    articles = {b["slug"]: b for b in _mem_blogs}
+    if db is not None:
+        try:
+            # Drafts and deletion tombstones must also override their seed versions.
+            docs = await db["blogs"].find({}, {"_id": 0}).to_list(length=None)
+            articles.update({b["slug"]: b for b in docs})
+        except Exception as e:
+            logger.warning(f"Error fetching blogs from DB: {e}")
+            raise HTTPException(status_code=503, detail="Blog storage is unavailable. Please try again later.") from e
+    visible = [b for b in articles.values() if not b.get("deleted") and (not published_only or b.get("published", True))]
+    return sorted(visible, key=lambda b: str(b.get("date", "")), reverse=True)
 
 async def get_blog_by_slug(slug: str, published_only: bool = False) -> Optional[Dict]:
-    """Fetch single blog article by slug."""
-    if db is None:
-        for b in _mem_blogs:
-            if b.get("slug") == slug:
-                if published_only and not b.get("published", True):
-                    return None
-                return b
+    """Fetch a DB article, falling back only when the slug is genuinely absent."""
+    doc = None
+    if db is not None:
+        try:
+            doc = await db["blogs"].find_one({"slug": slug}, {"_id": 0})
+        except Exception as e:
+            logger.warning(f"Error fetching blog {slug} from DB: {e}")
+            raise HTTPException(status_code=503, detail="Blog storage is unavailable. Please try again later.") from e
+    if doc is None:
+        doc = next((b for b in _mem_blogs if b.get("slug") == slug), None)
+    if doc is None or doc.get("deleted") or (published_only and not doc.get("published", True)):
         return None
-    try:
-        query = {"slug": slug}
-        if published_only:
-            query["published"] = True
-        doc = await db["blogs"].find_one(query, {"_id": 0})
-        if doc:
-            return doc
-    except Exception as e:
-        logger.warning(f"Error fetching blog {slug} from DB: {e}")
-    for b in _mem_blogs:
-        if b.get("slug") == slug:
-            if published_only and not b.get("published", True):
-                return None
-            return b
-    return None
+    return doc
 
 
 # ----------------- Startup Seeder -----------------
@@ -1192,22 +1144,9 @@ async def seed_database():
                     await db["products"].insert_one({**p})
                     logger.info(f"Auto-seeded missing product: {p['id']}")
         
-        blog_count = await db["blogs"].count_documents({})
-        if blog_count == 0:
-            logger.info("Seeding blogs collection with default articles...")
-            await db["blogs"].insert_many([
-                {**b, "_id_excluded": True} for b in SEED_BLOGS
-            ])
-            await db["blogs"].update_many({}, {"$unset": {"_id_excluded": ""}})
-            logger.info(f"Seeded {len(SEED_BLOGS)} blogs successfully.")
-        else:
-            for b in SEED_BLOGS:
-                if await db["blogs"].count_documents({"slug": b["slug"]}) == 0:
-                    doc = dict(b)
-                    doc["createdAt"] = datetime.now(timezone.utc)
-                    doc["updatedAt"] = datetime.now(timezone.utc)
-                    await db["blogs"].insert_one(doc)
-                    logger.info(f"Auto-seeded missing blog: {b['slug']}")
+        for b in SEED_BLOGS:
+            # Insert missing seeds without replacing edits, drafts or deletion tombstones.
+            await db["blogs"].update_one({"slug": b["slug"]}, {"$setOnInsert": dict(b)}, upsert=True)
     except Exception as e:
         logger.warning(f"Could not seed database: {e}")
 
@@ -1280,7 +1219,10 @@ async def send_lead_email_with_diagnostics(lead: ContactLead) -> Tuple[Optional[
     # Method 1: Try Resend SDK
     try:
         result = await asyncio.to_thread(resend.Emails.send, payload)
-        email_id = result.get("id") if isinstance(result, dict) else str(result)
+        email_id = result.get("id") if isinstance(result, dict) else getattr(result, "id", None)
+        if not isinstance(email_id, str) or not email_id.strip():
+            raise ValueError("Email provider did not return a confirmation ID.")
+        email_id = email_id.strip()
         logger.info(f"Lead email successfully sent via Resend SDK for {lead.name}: {email_id}")
         return email_id, None
     except Exception as e:
@@ -1303,7 +1245,10 @@ async def send_lead_email_with_diagnostics(lead: ContactLead) -> Tuple[Optional[
         )
         if res.status_code in (200, 201):
             data = res.json()
-            email_id = data.get("id", "sent")
+            email_id = data.get("id") if isinstance(data, dict) else None
+            if not isinstance(email_id, str) or not email_id.strip():
+                raise ValueError("Email provider did not return a confirmation ID.")
+            email_id = email_id.strip()
             logger.info(f"Lead email successfully sent via Resend REST API for {lead.name}: {email_id}")
             return email_id, None
         else:
@@ -1403,16 +1348,27 @@ async def submit_contact(payload: ContactLeadCreate, request: Request):
     lead_dict = lead.model_dump()
     lead_dict["created_at"] = lead.created_at.isoformat()
 
-    # Always keep in memory so leads section works even without MongoDB
-    _mem_leads.insert(0, lead_dict)
-
+    lead_saved = False
     if db is not None:
         try:
-            await db["contact_leads"].insert_one(lead.model_dump())
+            result = await db["contact_leads"].insert_one(lead.model_dump())
+            lead_saved = result.acknowledged
         except Exception as e:
             logger.warning(f"Failed to save lead to MongoDB: {e}")
 
-    email_id, err_detail = await send_lead_email_with_diagnostics(lead)
+    try:
+        email_id, err_detail = await send_lead_email_with_diagnostics(lead)
+    except Exception as e:
+        logger.warning(f"Failed to send lead email: {e}")
+        email_id, err_detail = None, "Email delivery is temporarily unavailable."
+
+    if not lead_saved and not email_id:
+        raise HTTPException(
+            status_code=503,
+            detail="We couldn't receive your quotation request. Please retry in a few minutes or contact us directly via phone or WhatsApp."
+        )
+
+    _mem_leads.insert(0, lead_dict)
 
     return {
         "status": "success",
@@ -1571,6 +1527,8 @@ def _validate_youtube_url(url: Optional[str]) -> Optional[str]:
 
 @admin_router.post("/products", status_code=201)
 async def admin_create_product(payload: ProductCreate, username: str = Depends(verify_admin)):
+    if db is None:
+        raise HTTPException(status_code=503, detail="Product storage is unavailable. Nothing was saved.")
     product_id = payload.id or payload.name.lower().replace(" ", "-").replace("/", "-").replace("&", "and")
     import re
     product_id = re.sub(r'[^a-z0-9-]', '', re.sub(r'\s+', '-', product_id.lower()))
@@ -1596,20 +1554,19 @@ async def admin_create_product(payload: ProductCreate, username: str = Depends(v
         "updatedAt": datetime.now(timezone.utc),
     }
 
-    if db is not None:
-        try:
-            await db["products"].insert_one({**new_product})
-            await db["products"].update_one({"id": product_id}, {"$unset": {"_id": ""}})
-        except Exception as e:
-            logger.warning(f"Failed to insert product to MongoDB: {e}")
-            _mem_products.append(new_product)
-    else:
-        _mem_products.append(new_product)
+    try:
+        # Reuse a deletion marker when restoring a product ID.
+        await db["products"].replace_one({"id": product_id}, dict(new_product), upsert=True)
+    except Exception as e:
+        logger.warning(f"Failed to save product to MongoDB: {e}")
+        raise HTTPException(status_code=503, detail="The product save could not be confirmed. Refresh before retrying.") from e
 
     return {"status": "created", "product": new_product}
 
 @admin_router.put("/products/{product_id}")
 async def admin_update_product(product_id: str, payload: ProductUpdate, username: str = Depends(verify_admin)):
+    if db is None:
+        raise HTTPException(status_code=503, detail="Product storage is unavailable. Nothing was saved.")
     existing = await get_product_by_id(product_id)
     if not existing:
         raise HTTPException(status_code=404, detail="Product not found")
@@ -1627,45 +1584,37 @@ async def admin_update_product(product_id: str, payload: ProductUpdate, username
 
     update_data["updatedAt"] = datetime.now(timezone.utc)
 
-    if db is not None:
-        try:
-            await db["products"].update_one({"id": product_id}, {"$set": update_data})
-        except Exception as e:
-            logger.warning(f"MongoDB update failed: {e}")
-            for i, p in enumerate(_mem_products):
-                if p["id"] == product_id:
-                    _mem_products[i] = {**p, **update_data}
-                    break
-    else:
-        for i, p in enumerate(_mem_products):
-            if p["id"] == product_id:
-                _mem_products[i] = {**p, **update_data}
-                break
-
-    updated = await get_product_by_id(product_id)
+    updated = {**existing, **update_data}
+    try:
+        await db["products"].update_one({"id": product_id}, {"$set": updated}, upsert=True)
+    except Exception as e:
+        logger.warning(f"MongoDB product update failed: {e}")
+        raise HTTPException(status_code=503, detail="The product save could not be confirmed. Refresh before retrying.") from e
     return {"status": "updated", "product": updated}
 
 @admin_router.delete("/products/{product_id}")
 async def admin_delete_product(product_id: str, username: str = Depends(verify_admin)):
-    global _mem_products
+    if db is None:
+        raise HTTPException(status_code=503, detail="Product storage is unavailable. Nothing was deleted.")
     existing = await get_product_by_id(product_id)
     if not existing:
         raise HTTPException(status_code=404, detail="Product not found")
 
-    if db is not None:
-        try:
-            await db["products"].delete_one({"id": product_id})
-        except Exception as e:
-            logger.warning(f"MongoDB delete failed: {e}")
-            _mem_products = [p for p in _mem_products if p["id"] != product_id]
-    else:
-        _mem_products = [p for p in _mem_products if p["id"] != product_id]
+    try:
+        await db["products"].update_one({"id": product_id}, {"$set": {
+            "deleted": True, "updatedAt": datetime.now(timezone.utc)
+        }}, upsert=True)
+    except Exception as e:
+        logger.warning(f"MongoDB product delete failed: {e}")
+        raise HTTPException(status_code=503, detail="The product deletion could not be confirmed. Refresh before retrying.") from e
 
     return {"status": "deleted", "id": product_id}
 
 @admin_router.post("/products/import")
 async def admin_import_products(products: List[ProductCreate], username: str = Depends(verify_admin)):
     """Bulk import products from JSON array. Skips duplicates by ID."""
+    if db is None:
+        raise HTTPException(status_code=503, detail="Product storage is unavailable. Nothing was saved.")
     import re
     created = []
     skipped = []
@@ -1674,27 +1623,18 @@ async def admin_import_products(products: List[ProductCreate], username: str = D
         product_id = payload.id or payload.name.lower()
         product_id = re.sub(r'[^a-z0-9-]', '', re.sub(r'\s+', '-', product_id.lower()))
 
-        existing = await get_product_by_id(product_id)
-        if existing:
-            skipped.append(product_id)
-            continue
-
-        new_product = {
-            **payload.model_dump(),
-            "id": product_id,
-            "faqs": [f.model_dump() for f in (payload.faqs or [])],
-            "createdAt": datetime.now(timezone.utc),
-            "updatedAt": datetime.now(timezone.utc),
-        }
-
-        if db is not None:
-            try:
-                await db["products"].insert_one({**new_product})
-            except Exception as e:
-                logger.warning(f"Failed to insert product {product_id}: {e}")
-                _mem_products.append(new_product)
-        else:
-            _mem_products.append(new_product)
+        try:
+            await admin_create_product(payload.model_copy(update={"id": product_id}), username=username)
+        except HTTPException as e:
+            if e.status_code == 409:
+                skipped.append(product_id)
+                continue
+            if created:
+                raise HTTPException(status_code=e.status_code, detail={
+                    "message": "Import stopped. Earlier products were saved; review these IDs before retrying.",
+                    "error": e.detail, "created_ids": created, "skipped_ids": skipped
+                }) from e
+            raise
 
         created.append(product_id)
 
@@ -1761,6 +1701,8 @@ async def admin_get_blog(slug: str, username: str = Depends(verify_admin)):
 
 @admin_router.post("/blogs", status_code=201)
 async def admin_create_blog(payload: BlogArticleCreate, username: str = Depends(verify_admin)):
+    if db is None:
+        raise HTTPException(status_code=503, detail="Blog storage is unavailable. Nothing was saved.")
     import re
     slug = payload.slug or payload.title.lower()
     slug = re.sub(r'[^a-z0-9-]', '', re.sub(r'[\s_]+', '-', slug.lower())).strip('-')
@@ -1780,20 +1722,19 @@ async def admin_create_blog(payload: BlogArticleCreate, username: str = Depends(
         "updatedAt": now,
     }
 
-    if db is not None:
-        try:
-            await db["blogs"].insert_one({**new_article})
-            await db["blogs"].update_one({"slug": slug}, {"$unset": {"_id": ""}})
-        except Exception as e:
-            logger.warning(f"Failed to insert blog to MongoDB: {e}")
-            _mem_blogs.append(new_article)
-    else:
-        _mem_blogs.append(new_article)
+    try:
+        # Reuse a deleted slug's tombstone rather than inserting a duplicate document.
+        await db["blogs"].replace_one({"slug": slug}, dict(new_article), upsert=True)
+    except Exception as e:
+        logger.warning(f"Failed to save blog to MongoDB: {e}")
+        raise HTTPException(status_code=503, detail="The blog save could not be confirmed. Refresh before retrying.") from e
 
     return {"status": "created", "article": new_article}
 
 @admin_router.put("/blogs/{slug}")
 async def admin_update_blog(slug: str, payload: BlogArticleUpdate, username: str = Depends(verify_admin)):
+    if db is None:
+        raise HTTPException(status_code=503, detail="Blog storage is unavailable. Nothing was saved.")
     existing = await get_blog_by_slug(slug, published_only=False)
     if not existing:
         raise HTTPException(status_code=404, detail="Blog article not found")
@@ -1801,39 +1742,31 @@ async def admin_update_blog(slug: str, payload: BlogArticleUpdate, username: str
     update_data = {k: v for k, v in payload.model_dump(exclude_unset=True).items() if v is not None}
     update_data["updatedAt"] = datetime.now(timezone.utc)
 
-    if db is not None:
-        try:
-            await db["blogs"].update_one({"slug": slug}, {"$set": update_data})
-        except Exception as e:
-            logger.warning(f"MongoDB blog update failed: {e}")
-            for i, b in enumerate(_mem_blogs):
-                if b["slug"] == slug:
-                    _mem_blogs[i] = {**b, **update_data}
-                    break
-    else:
-        for i, b in enumerate(_mem_blogs):
-            if b["slug"] == slug:
-                _mem_blogs[i] = {**b, **update_data}
-                break
-
-    updated = await get_blog_by_slug(slug, published_only=False)
+    updated = {**existing, **update_data}
+    try:
+        # A fallback seed may not exist in MongoDB yet; persist the complete article.
+        await db["blogs"].update_one({"slug": slug}, {"$set": updated}, upsert=True)
+    except Exception as e:
+        logger.warning(f"MongoDB blog update failed: {e}")
+        raise HTTPException(status_code=503, detail="The blog save could not be confirmed. Refresh before retrying.") from e
     return {"status": "updated", "article": updated}
 
 @admin_router.delete("/blogs/{slug}")
 async def admin_delete_blog(slug: str, username: str = Depends(verify_admin)):
+    if db is None:
+        raise HTTPException(status_code=503, detail="Blog storage is unavailable. Nothing was deleted.")
     existing = await get_blog_by_slug(slug, published_only=False)
     if not existing:
         raise HTTPException(status_code=404, detail="Blog article not found")
 
-    if db is not None:
-        try:
-            await db["blogs"].delete_one({"slug": slug})
-        except Exception as e:
-            logger.warning(f"MongoDB delete blog failed: {e}")
-            global _mem_blogs
-            _mem_blogs = [b for b in _mem_blogs if b["slug"] != slug]
-    else:
-        _mem_blogs = [b for b in _mem_blogs if b["slug"] != slug]
+    try:
+        # Retain a durable marker so fallback merging and startup cannot restore it.
+        await db["blogs"].update_one({"slug": slug}, {"$set": {
+            "published": False, "deleted": True, "updatedAt": datetime.now(timezone.utc)
+        }}, upsert=True)
+    except Exception as e:
+        logger.warning(f"MongoDB delete blog failed: {e}")
+        raise HTTPException(status_code=503, detail="The blog deletion could not be confirmed. Refresh before retrying.") from e
 
     return {"status": "deleted", "slug": slug}
 
@@ -2004,246 +1937,72 @@ def get_product_sku(p_id: str) -> str:
     clean = re.sub(r'[^a-zA-Z0-9]', '', p_id).upper()
     return f"GSK-{clean[:16]}"
 
-PRODUCT_ESTIMATED_PRICES = {
-    "10-tons-hydraulic-decoiler": "350000.00",
-    "automatic-ctl-machine": "950000.00",
-    "c-z-purlin-roll-forming-machine": "1200000.00",
-    "automatic-roofing-sheet-crimping-machine": "450000.00",
-    "corrugated-sheets-making-machine": "650000.00",
-    "tata-nali-sheet-making-machine": "850000.00",
-    "peb-roofing-sheet-making-machine": "1150000.00",
-    "semi-automatic-pipe-counter-boring-and-facing-machine": "250000.00",
-    "double-head-electric-bra-cup-moulding-machine": "150000.00",
-    "bra-cup-fabric-moulding-machine": "125000.00",
-    "foam-bra-cup-moulding-machine": "135000.00",
-    "padded-bra-cup-moulding-machine": "165000.00",
-}
+def _content_lastmod(record):
+    """Use recorded content dates; never claim a request changed the page."""
+    for key in ("updatedAt", "updated_at", "dateModified", "date", "createdAt"):
+        value = record.get(key)
+        if isinstance(value, datetime):
+            return value.date().isoformat()
+        if isinstance(value, str):
+            try:
+                return datetime.fromisoformat(value.replace("Z", "+00:00")).date().isoformat()
+            except ValueError:
+                continue
+    return None
+
 
 @app.get("/sitemap.xml", response_class=Response)
 async def sitemap():
+    import xml.etree.ElementTree as ET
+    from urllib.parse import quote
     products = await get_products_from_db()
-    now = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    blogs = await get_blogs_from_db(published_only=True)
+    sitemap_ns = "http://www.sitemaps.org/schemas/sitemap/0.9"
+    image_ns = "http://www.google.com/schemas/sitemap-image/1.1"
+    ET.register_namespace("", sitemap_ns)
+    ET.register_namespace("image", image_ns)
+    root = ET.Element(f"{{{sitemap_ns}}}urlset")
 
-    urls = [
-        f"""  <url>
-    <loc>{WEBSITE_URL}/</loc>
-    <lastmod>{now}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
-  </url>""",
-        f"""  <url>
-    <loc>{WEBSITE_URL}/products</loc>
-    <lastmod>{now}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.95</priority>
-  </url>""",
-        f"""  <url>
-    <loc>{WEBSITE_URL}/products/category/bra-cup-moulding-machine</loc>
-    <lastmod>{now}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.90</priority>
-  </url>""",
-        f"""  <url>
-    <loc>{WEBSITE_URL}/products/category/roll-forming-sheet-metal</loc>
-    <lastmod>{now}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.90</priority>
-  </url>""",
-        f"""  <url>
-    <loc>{WEBSITE_URL}/products/category/cut-to-length-line</loc>
-    <lastmod>{now}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.90</priority>
-  </url>""",
-        f"""  <url>
-    <loc>{WEBSITE_URL}/about</loc>
-    <lastmod>{now}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>""",
-        f"""  <url>
-    <loc>{WEBSITE_URL}/factory</loc>
-    <lastmod>{now}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
-  </url>""",
-        f"""  <url>
-    <loc>{WEBSITE_URL}/blog</loc>
-    <lastmod>{now}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.90</priority>
-  </url>""",
-        f"""  <url>
-    <loc>{WEBSITE_URL}/blog/23-nali-liner-sheet-roll-forming-machine-guide</loc>
-    <lastmod>{now}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.92</priority>
-  </url>""",
-        f"""  <url>
-    <loc>{WEBSITE_URL}/blog/guide-to-bra-cup-moulding-machines</loc>
-    <lastmod>{now}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.88</priority>
-  </url>""",
-        f"""  <url>
-    <loc>{WEBSITE_URL}/blog/automatic-cut-to-length-ctl-line-guide</loc>
-    <lastmod>{now}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.88</priority>
-  </url>""",
-        f"""  <url>
-    <loc>{WEBSITE_URL}/blog/c-z-purlin-roll-forming-machine-guide</loc>
-    <lastmod>{now}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.88</priority>
-  </url>""",
-        f"""  <url>
-    <loc>{WEBSITE_URL}/blog/10-ton-hydraulic-decoiler-guide</loc>
-    <lastmod>{now}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.88</priority>
-  </url>""",
-        f"""  <url>
-    <loc>{WEBSITE_URL}/blog/industrial-machinery-export-guide-india</loc>
-    <lastmod>{now}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.88</priority>
-  </url>""",
-        f"""  <url>
-    <loc>{WEBSITE_URL}/blog/gc-roofing-sheet-manufacturing-business-guide</loc>
-    <lastmod>{now}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.95</priority>
-  </url>""",
-        f"""  <url>
-    <loc>{WEBSITE_URL}/blog/guide-to-corrugated-sheet-making-machines</loc>
-    <lastmod>{now}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.92</priority>
-  </url>""",
-        f"""  <url>
-    <loc>{WEBSITE_URL}/blog/pipe-counter-boring-and-facing-machine-guide</loc>
-    <lastmod>{now}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.90</priority>
-  </url>""",
-        f"""  <url>
-    <loc>{WEBSITE_URL}/blog/curved-roofing-sheet-crimping-machine-guide</loc>
-    <lastmod>{now}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.90</priority>
-  </url>""",
-        f"""  <url>
-    <loc>{WEBSITE_URL}/contact</loc>
-    <lastmod>{now}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
-  </url>""",
-        f"""  <url>
-    <loc>{WEBSITE_URL}/return-policy</loc>
-    <lastmod>{now}</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.5</priority>
-  </url>""",
+    def add_url(path, record=None):
+        node = ET.SubElement(root, f"{{{sitemap_ns}}}url")
+        ET.SubElement(node, f"{{{sitemap_ns}}}loc").text = f"{WEBSITE_URL.rstrip('/')}/{path}"
+        lastmod = _content_lastmod(record or {})
+        if lastmod:
+            ET.SubElement(node, f"{{{sitemap_ns}}}lastmod").text = lastmod
+        return node
 
-        f"""  <url>
-    <loc>{WEBSITE_URL}/privacy-policy</loc>
-    <lastmod>{now}</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.5</priority>
-  </url>""",
-        f"""  <url>
-    <loc>{WEBSITE_URL}/terms</loc>
-    <lastmod>{now}</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.5</priority>
-  </url>""",
-    ]
-
-
-    for p in products:
-        product_date = now
-        if isinstance(p.get("updatedAt"), datetime):
-            product_date = p["updatedAt"].strftime("%Y-%m-%d")
-        
-        img_tag = ""
-        if p.get("image"):
-            img_url = p["image"]
-            p_name = p.get("name", "").replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-            img_tag = f"""
-    <image:image>
-      <image:loc>{img_url}</image:loc>
-      <image:title>{p_name}</image:title>
-      <image:caption>{p_name} manufactured by Gagan Engineering Works Khopoli</image:caption>
-    </image:image>"""
-
-        urls.append(f"""  <url>
-    <loc>{WEBSITE_URL}/products/{p['id']}</loc>
-    <lastmod>{product_date}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>{img_tag}
-  </url>""")
-
-    xml = f"""<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
-{chr(10).join(urls)}
-</urlset>"""
-
+    for path in PAGE_META:
+        add_url(path)
+    for slug in CATEGORY_SEO:
+        add_url(f"products/category/{slug}")
+    for blog in blogs:
+        if blog.get("slug"):
+            add_url(f"blog/{quote(str(blog['slug']), safe='')}", blog)
+    for product in products:
+        if not product.get("id"):
+            continue
+        node = add_url(f"products/{quote(str(product['id']), safe='')}", product)
+        if product.get("image"):
+            image = ET.SubElement(node, f"{{{image_ns}}}image")
+            ET.SubElement(image, f"{{{image_ns}}}loc").text = _absolute_image_url(product["image"])
+            ET.SubElement(image, f"{{{image_ns}}}title").text = str(product.get("name", ""))
+    xml = ET.tostring(root, encoding="utf-8", xml_declaration=True)
     return Response(content=xml, media_type="application/xml", headers={"Cache-Control": "public, max-age=3600"})
+
 
 @app.get("/google-merchant-feed.xml", response_class=Response)
 @app.get("/google-shopping-feed.xml", response_class=Response)
 async def google_merchant_feed():
-    products = await get_products_from_db()
-    items = []
-
-    for p in products:
-        p_id = p.get("id", "")
-        p_sku = get_product_sku(p_id)
-        p_name = p.get("name", "").replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-        p_desc = (p.get("description") or p.get("tagline") or p_name).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-        raw_img = p.get("image") or f"{WEBSITE_URL}/logo.png"
-        p_img = raw_img if raw_img.startswith("http") else f"{WEBSITE_URL}{'' if raw_img.startswith('/') else '/'}{raw_img}"
-        p_link = f"{WEBSITE_URL}/products/{p_id}"
-        category = p.get("category", "Industrial Machinery")
-        price_val = PRODUCT_ESTIMATED_PRICES.get(p_id, "150000.00")
-        
-        # Industrial category mapping
-        google_cat = "Business &amp; Industrial &gt; Manufacturing &gt; Manufacturing Machinery"
-        
-        items.append(f"""    <item>
-      <g:id>{p_sku}</g:id>
-      <g:mpn>{p_sku}</g:mpn>
-      <g:title>{p_name}</g:title>
-      <g:description>{p_desc}</g:description>
-      <g:link>{p_link}</g:link>
-      <g:image_link>{p_img}</g:image_link>
-      <g:brand>Gagan Engineering Works</g:brand>
-      <g:condition>new</g:condition>
-      <g:availability>in_stock</g:availability>
-      <g:price>{price_val} INR</g:price>
-      <g:google_product_category>{google_cat}</g:google_product_category>
-      <g:product_type>{category}</g:product_type>
-      <g:identifier_exists>no</g:identifier_exists>
-      <g:shipping>
-        <g:country>IN</g:country>
-        <g:service>Freight Delivery (Pan-India)</g:service>
-        <g:price>0.00 INR</g:price>
-      </g:shipping>
-    </item>""")
-
-    rss = f"""<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">
-  <channel>
-    <title>Gagan Engineering Works - Machinery Catalogue Feed</title>
-    <link>{WEBSITE_URL}</link>
-    <description>Industrial Machinery &amp; Equipment Manufacturer in Khopoli, Maharashtra, India</description>
-{chr(10).join(items)}
-  </channel>
-</rss>"""
-
-    return Response(content=rss, media_type="application/xml", headers={"Cache-Control": "public, max-age=3600"})
+    # These machines are sold by quotation, with no public purchasable offers.
+    # Keep the feed valid but empty until verified price/availability data exists.
+    import xml.etree.ElementTree as ET
+    root = ET.Element("rss", {"version": "2.0", "xmlns:g": "http://base.google.com/ns/1.0"})
+    channel = ET.SubElement(root, "channel")
+    ET.SubElement(channel, "title").text = "Gagan Engineering Works - Machinery Catalogue Feed"
+    ET.SubElement(channel, "link").text = WEBSITE_URL
+    ET.SubElement(channel, "description").text = "Quotation-based industrial machinery; no public shopping offers."
+    xml = ET.tostring(root, encoding="utf-8", xml_declaration=True)
+    return Response(content=xml, media_type="application/xml", headers={"Cache-Control": "public, max-age=3600"})
 
 @admin_router.post("/submit-indexnow")
 @app.post("/api/admin/submit-indexnow")
@@ -2285,83 +2044,6 @@ async def submit_indexnow(username: str = Depends(verify_admin)):
 
 
 # ----------------- SEO Prerender for Crawlers -----------------
-# Blog article SEO data (matches blogData.js)
-BLOG_ARTICLES_SEO = [
-{
-    "slug": "23-nali-liner-sheet-roll-forming-machine-guide",
-    "title": "23 Nali Liner Sheet Roll Forming Machine (1220 mm): Working Principle, Profile Design, Specs & Price (2026)",
-    "description": "Comprehensive technical engineering guide on the 23 Nali liner sheet roll forming machine for 1220 mm PPGI/PPGL coils. Learn about 18-stage progressive forming, micro-rib pitch geometry, hydraulic post-cut shear, PLC automation, and competitive manufacturing benchmarks.",
-    "image": "https://lh3.googleusercontent.com/d/11mvvORHsgk4-1FY0FDBM2VfmoCPBmPPE",
-    "date": "2026-09-20",
-    "keywords": "23 Nali Liner Sheet Roll Forming Machine, 23 Nali Roll Forming Machine, Liner Sheet Roll Former, 23 Nali Sheet Making Machine, Roll Forming Machine, Sheet Making Machine, Corrugated Sheet Making Machine, PEB Liner Sheet Roll Former, Wall Cladding Sheet Machine, 1220 mm Liner Roll Former, PPGI Liner Sheet Making Machine, PPGL Roll Forming Machine, Galvanized Liner Sheet Machine, Tata Nali Sheet Machine, Multi Rib Liner Sheet Machine, Sinusoidal Wave Sheet Former, 18 Station Roll Forming Machine, High Speed Roll Former 50 m min, Hydraulic Post Cut Guillotine Shearing, PLC Controlled Roll Former, Cr12 Roller Tooling, 80 mm Solid Shaft Roll Forming, 7 Ton Hydraulic Decoiler, Industrial Shed Sheet Machine, False Ceiling Sheet Making Machine, Cold Room Wall Panel Roll Former, Ceiling Liner Patra Machine, Nali Patra Making Machine, Roll Forming Machine Manufacturer India, Roll Forming Line Price India, Gagan Engineering Works Khopoli"
-},
-
-    {
-        "slug": "guide-to-bra-cup-moulding-machines",
-        "title": "Complete Guide to Bra Cup Moulding Machines: Types, Working Principle, Sizing & Price (2026)",
-        "description": "A comprehensive technical guide for intimate wear manufacturers on choosing between electric, foam, fabric, and padded bra cup moulding presses, cycle times, temperature control, and aluminium die sizing.",
-        "image": "https://5.imimg.com/data5/ANDROID/Default/2025/10/550586008/TZ/II/HL/4175789/product-jpeg-500x500.jpg",
-        "date": "2026-08-20",
-        "keywords": "Bra Cup Moulding Machine Manufacturer, Double Head Electric Bra Cup Machine, Foam Bra Cup Press, Lingerie Manufacturing India"
-    },
-    {
-        "slug": "automatic-cut-to-length-ctl-line-guide",
-        "title": "Automatic Cut To Length (CTL) Lines: Leveling Precision, Shearing & ROI Analysis",
-        "description": "An engineering guide covering 9-roll to 13-roll gear-driven levelers, optical encoder shearing, hydraulic decoiler integration, and ROI calculations for steel service centers.",
-        "image": "https://www.gaganengineerings.in/automatic-ctl.png",
-        "date": "2026-08-15",
-        "keywords": "Automatic Cut to Length Machine Manufacturer, CTL Line India, Sheet Metal Leveling Line, Coil Shearing Line Khopoli"
-    },
-    {
-        "slug": "c-z-purlin-roll-forming-machine-guide",
-        "title": "C & Z Purlin Roll Forming Machines: Buying Guide for Pre-Engineered Buildings (PEB)",
-        "description": "Essential guide on quick-changeover C/Z purlin lines, hydraulic punching, flying cut-off systems, and roll forming speed optimization.",
-        "image": "https://5.imimg.com/data5/ANDWEB/Default/2026/3/591020192/NG/CE/TB/4175789/product-jpeg-500x500.jpeg",
-        "date": "2026-08-10",
-        "keywords": "C Z Purlin Roll Forming Machine Manufacturer, Purlin Machine India, PEB Structure Roll Former"
-    },
-    {
-        "slug": "10-ton-hydraulic-decoiler-guide",
-        "title": "10-Ton Hydraulic Decoilers: Heavy Coil Uncoiling, Mandrel Expansion & Safety Protocols",
-        "description": "Technical breakdown of 10,000 kg capacity hydraulic uncoilers, hydraulic wedge expansion, pneumatic snubber arms, and safety protocols.",
-        "image": "https://5.imimg.com/data5/ANDROID/Default/2026/3/590380757/WL/UR/BT/4175789/product-jpeg-500x500.jpg",
-        "date": "2026-08-05",
-        "keywords": "10 Ton Hydraulic Decoiler Manufacturer India, Heavy Uncoiler Machine, Motorized Hydraulic Decoiler Khopoli"
-    },
-    {
-        "slug": "industrial-machinery-export-guide-india",
-        "title": "Importing Industrial Machinery from India: Incoterms, Voltage Customization & JNPT Logistics",
-        "description": "Complete guide for international procurement teams on importing machinery from India: seaworthy timber crating, sea freight from JNPT Mumbai Port, Letter of Credit terms.",
-        "image": "https://images.unsplash.com/photo-1496247749665-49cf5b1022e9?crop=entropy&cs=srgb&fm=jpg&q=85",
-        "date": "2026-08-01",
-        "keywords": "Industrial Machinery Exporter India, Machinery Export JNPT Port Mumbai, Import Machinery from India"
-    },
-    {
-        "slug": "guide-to-corrugated-sheet-making-machines",
-        "title": "Complete Guide to Corrugated Sheet Making Machines: Types, Roll Forming Stations, Wave Profiles & Price in India (2026)",
-        "description": "A comprehensive engineering guide for roofing manufacturers on industrial corrugated sheet making machines: 16–18 progressive forming stations, EN31 hard chrome tooling, sinusoidal wave geometry, hydraulic post-cutting, and factory price breakdown.",
-        "image": "https://5.imimg.com/data5/SELLER/Default/2026/3/591026243/LM/XU/AK/4175789/corrugated-sheets-making-machine-500x500.jpeg",
-        "date": "2026-08-28",
-        "keywords": "Corrugated Sheet Making Machine Manufacturer India, Corrugated Sheet Making Machine Price, GI Roofing Sheet Roll Former, Sinusoidal Wave Profile Corrugation Machine Khopoli"
-    },
-    {
-        "slug": "pipe-counter-boring-and-facing-machine-guide",
-        "title": "Complete Guide to Pipe Counter Boring & Facing Machines: Tube End Preparation, Chamfering & Sizing (2026)",
-        "description": "Comprehensive technical guide on industrial pipe end preparation: simultaneous facing, ID counter-boring, and OD weld-prep beveling up to 60 mm OD, VFD spindle drives, and hydraulic clamping systems.",
-        "image": "https://5.imimg.com/data5/ANDROID/Default/2025/10/550582531/TR/XN/QZ/4175789/product-jpeg-500x500.jpg",
-        "date": "2026-08-30",
-        "keywords": "Pipe Counter Boring and Facing Machine Manufacturer India, Pipe End Facing Machine Price, Tube Chamfering Machine, Pipe End Preparation Khopoli Maharashtra"
-    },
-    {
-        "slug": "curved-roofing-sheet-crimping-machine-guide",
-        "title": "Industrial Guide to Roofing Sheet Crimping Machines: Curved Arch Profiles, PPGI Bending Radius & Machine Selection",
-        "description": "Technical guide for roofing and PEB contractors on automatic curved sheet crimping machines: hydraulic pressing mechanics, radius step calculations, paint protection, and arch canopy structural engineering.",
-        "image": "https://5.imimg.com/data5/SELLER/Default/2026/4/596257189/PL/SJ/DO/4175789/456-500x500.png",
-        "date": "2026-08-31",
-        "keywords": "Automatic Roofing Sheet Crimping Machine Manufacturer India, Curved Roofing Machine Price, PPGI Sheet Crimper Khopoli, Hydraulic Curved Arch Machine"
-    }
-]
-
 # Static page SEO metadata
 PAGE_META = {
     "": {
@@ -2412,38 +2094,84 @@ PAGE_META = {
 }
 
 CATEGORY_SEO = {
-    "bra-cup-moulding-machine": {
-        "title": "Bra Cup Moulding Machines Manufacturer & Exporter | Gagan Engineering Works",
-        "description": "High-precision electric, foam, fabric, and padded bra cup moulding presses for intimate wear lingerie manufacturing. Manufacturer in Khopoli, Maharashtra with global export.",
-        "keywords": "Bra Cup Moulding Machine Manufacturer, Bra Cup Fabric Moulding, Foam Bra Cup Machine, Intimate Wear Machinery India",
-        "name": "Bra Cup Moulding Machines"
-    },
     "roll-forming-sheet-metal": {
-        "title": "Roll Forming & Sheet Metal Machinery Manufacturer | Gagan Engineering Works",
-        "description": "Heavy-duty C/Z purlin roll formers, 10-ton hydraulic decoilers, roofing sheet crimping machines, and corrugated sheet making machines. Manufacturer in Khopoli.",
-        "keywords": "Roll Forming Machine India, C Z Purlin Machine, 10 Ton Hydraulic Decoiler, Roofing Sheet Crimping Machine",
-        "name": "Roll Forming & Sheet Metal Machinery"
+        "name": "Roll Forming & Sheet Metal",
+        "title": "Roll Forming & Sheet Metal Machinery Manufacturer",
+        "description": "Heavy-duty C/Z purlin roll formers, 10-ton hydraulic decoilers, and automatic roofing sheet crimping machines for industrial fabrication.",
+        "keywords": "Roll Forming Machine India, C Z Purlin Machine, 10 Ton Hydraulic Decoiler, Roofing Sheet Crimping Machine, Sheet Metal Machinery",
+        "matches": ("Roll", "Decoiler", "Roofing"),
     },
     "cut-to-length-line": {
-        "title": "Automatic Cut To Length (CTL) Lines Manufacturer | Gagan Engineering Works",
-        "description": "Precision automated cut-to-length lines with hydraulic decoiling, 9-roll EN31 leveling, and optical encoder PLC shearing for coils up to 6mm thickness.",
-        "keywords": "Cut to Length Line Manufacturer, Automatic CTL Machine, Coil Processing Line, Sheet Leveler Khopoli",
-        "name": "Cut To Length (CTL) Lines"
-    }
+        "name": "Cut To Length Line",
+        "title": "Automatic Cut To Length (CTL) Lines Manufacturer",
+        "description": "Precision automated cut-to-length lines with hydraulic decoiling, 9-roll EN31 leveling, and optical encoder PLC shearing for coils up to 6mm.",
+        "keywords": "Cut to Length Line Manufacturer, Automatic CTL Machine, Coil Processing Line, Heavy Sheet Leveler Khopoli Maharashtra",
+        "matches": ("Cut", "CTL"),
+    },
+    "bra-cup-moulding-machine": {
+        "name": "Bra Cup Moulding Machine",
+        "title": "Bra Cup Moulding Machines Manufacturer & Exporter",
+        "description": "High-precision electric, foam, fabric, and padded bra cup moulding presses for intimate wear lingerie manufacturing in India and export.",
+        "keywords": "Bra Cup Moulding Machine Manufacturer, Bra Cup Fabric Moulding, Foam Bra Cup Machine, Intimate Wear Machinery, Lingerie Moulding Press India",
+        "matches": ("Bra Cup",),
+    },
+    "bending-machines": {
+        "name": "Bending Machines",
+        "title": "Industrial Bending Machines Manufacturer India",
+        "description": "Heavy-duty hydraulic and mechanical bending machines for precision metal bending, pipe bending, and plate bending operations in industrial fabrication.",
+        "keywords": "Bending Machine Manufacturer India, Hydraulic Bending Machine, Pipe Bending Machine, Metal Bending Machine, Plate Bending Machine Khopoli",
+        "matches": ("Bending",),
+    },
+    "facing-machines": {
+        "name": "Facing Machines",
+        "title": "Facing Machines Manufacturer & Supplier India",
+        "description": "Precision pipe facing, counter boring, and end-finishing machines for accurate surface preparation in pipeline, boiler, and heavy engineering industries.",
+        "keywords": "Facing Machine Manufacturer India, Pipe Facing Machine, Counter Boring Machine, End Facing Machine, Pipe End Preparation Machine",
+        "matches": ("Facing",),
+    },
+    "threading-machines": {
+        "name": "Threading Machines",
+        "title": "Industrial Threading Machines Manufacturer India",
+        "description": "High-performance pipe threading, bolt threading, and rebar threading machines for precision thread cutting in oil & gas, construction, and manufacturing sectors.",
+        "keywords": "Threading Machine Manufacturer India, Pipe Threading Machine, Bolt Threading Machine, Rebar Threading Machine, Thread Cutting Machine",
+        "matches": ("Threading",),
+    },
+    "recoiling-decoiling-machines": {
+        "name": "Re-coiling & De-coiling Machines",
+        "title": "Re-coiling & De-coiling Machines Manufacturer India",
+        "description": "Heavy-duty motorized re-coiling and de-coiling machines for steel coil handling, tension-controlled unwinding, and rewinding in metal processing lines.",
+        "keywords": "Recoiling Machine Manufacturer India, Decoiling Machine, Coil Rewinding Machine, Steel Coil Handling Machine, Motorized Decoiler",
+        "matches": ("Recoil", "Decoil", "Re-coil", "De-coil"),
+    },
 }
 
 
+def _products_for_category(products, slug):
+    meta = CATEGORY_SEO[slug]
+    return [p for p in products if p.get("categorySlug") == slug or any(
+        word in (p.get("category") or "") for word in meta["matches"]
+    )]
+
+
 def _html_escape(text):
-    """Escape HTML special characters."""
-    if not text:
-        return ""
-    return str(text).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('"', "&quot;").replace("'", "&#x27;")
+    from html import escape
+    return escape(str(text), quote=True) if text is not None else ""
+
+
+def _schema_json(value):
+    import json
+    # JSON-LD data may contain user-authored text, including closing script tags.
+    return json.dumps(value, ensure_ascii=False).replace("<", "\\u003c")
+
+
+def _absolute_image_url(image):
+    from urllib.parse import urljoin
+    return urljoin(f"{WEBSITE_URL.rstrip('/')}/", image or "logo.png")
 
 
 def _build_org_schema():
     """Build the Organization JSON-LD schema."""
-    import json
-    return json.dumps({
+    return _schema_json({
         "@context": "https://schema.org",
         "@type": ["Organization", "LocalBusiness"],
         "@id": f"{WEBSITE_URL}/#organization",
@@ -2477,21 +2205,18 @@ def _build_org_schema():
         ],
         "priceRange": "₹₹₹",
         "sameAs": ["https://www.indiamart.com/gaganengineeringworks/"]
-    }, ensure_ascii=False)
+    })
 
 
 def _build_product_schema(product, canonical_url):
-    """Build Product + FAQ JSON-LD schema with full Google Rich Snippet compliance."""
-    import json
+    """Describe catalogue products without inventing offers or review evidence."""
     schemas = []
     
     p_id = product.get("id", "")
     p_name = product.get("name", "")
     p_desc = product.get("description") or product.get("tagline", "")
     p_sku = get_product_sku(p_id)
-    raw_img = product.get("image") or f"{WEBSITE_URL}/logo.png"
-    p_img = raw_img if raw_img.startswith("http") else f"{WEBSITE_URL}{'' if raw_img.startswith('/') else '/'}{raw_img}"
-    p_price = PRODUCT_ESTIMATED_PRICES.get(p_id, "150000.00").split(".")[0]
+    p_img = _absolute_image_url(product.get("image"))
     
     prod_schema = {
         "@context": "https://schema.org",
@@ -2511,88 +2236,6 @@ def _build_product_schema(product, canonical_url):
         prod_schema["keywords"] = product["keywords"]
     
     schemas.append(prod_schema)
-    prod_schema.update({
-        "countryOfOrigin": {"@type": "Country", "name": "India"},
-        "aggregateRating": {
-            "@type": "AggregateRating",
-            "ratingValue": "4.8",
-            "reviewCount": "24",
-            "bestRating": "5",
-            "worstRating": "1"
-        },
-        "review": [
-            {
-                "@type": "Review",
-                "reviewRating": {"@type": "Rating", "ratingValue": "5", "bestRating": "5"},
-                "author": {"@type": "Person", "name": "Rajesh Patel"},
-                "datePublished": "2025-11-20",
-                "reviewBody": "Heavy-duty industrial build quality with precision tolerances. Installed and running smoothly at our fabrication plant in Gujarat."
-            },
-            {
-                "@type": "Review",
-                "reviewRating": {"@type": "Rating", "ratingValue": "5", "bestRating": "5"},
-                "author": {"@type": "Person", "name": "Amitabh Sharma"},
-                "datePublished": "2026-01-15",
-                "reviewBody": "Excellent technical service and commissioning support from Gagan Engineering Works Khopoli team. Highly recommended for heavy engineering."
-            }
-        ],
-        "offers": {
-            "@type": "Offer",
-            "url": canonical_url,
-            "priceCurrency": "INR",
-            "price": p_price,
-            "priceValidUntil": "2027-12-31",
-            "priceSpecification": {
-                "@type": "UnitPriceSpecification",
-                "priceCurrency": "INR",
-                "priceType": "https://schema.org/InvoicePrice",
-                "description": "Custom quotation based on required specifications, motor rating, and export destination"
-            },
-            "availability": "https://schema.org/InStock",
-            "itemCondition": "https://schema.org/NewCondition",
-            "seller": {"@type": "Organization", "name": "Gagan Engineering Works"},
-            "hasMerchantReturnPolicy": {
-                "@type": "MerchantReturnPolicy",
-                "applicableCountry": "IN",
-                "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
-                "merchantReturnDays": 30,
-                "returnMethod": "https://schema.org/ReturnByMail",
-                "returnFees": "https://schema.org/FreeReturn",
-                "returnPolicyCountry": "IN",
-                "url": f"{WEBSITE_URL}/return-policy"
-            },
-            "shippingDetails": {
-                "@type": "OfferShippingDetails",
-                "shippingRate": {
-                    "@type": "MonetaryAmount",
-                    "value": "0",
-                    "currency": "INR"
-                },
-                "shippingDestination": [
-                    {"@type": "DefinedRegion", "addressCountry": "IN"},
-                    {"@type": "DefinedRegion", "addressCountry": "AE"},
-                    {"@type": "DefinedRegion", "addressCountry": "SA"},
-                    {"@type": "DefinedRegion", "addressCountry": "US"}
-                ],
-                "deliveryTime": {
-                    "@type": "ShippingDeliveryTime",
-                    "handlingTime": {
-                        "@type": "QuantitativeValue",
-                        "minValue": 10,
-                        "maxValue": 25,
-                        "unitCode": "d"
-                    },
-                    "transitTime": {
-                        "@type": "QuantitativeValue",
-                        "minValue": 3,
-                        "maxValue": 7,
-                        "unitCode": "d"
-                    }
-                }
-            }
-        }
-    })
-    
     # FAQ schema
     faqs = product.get("faqs", [])
     if faqs:
@@ -2613,7 +2256,7 @@ def _build_product_schema(product, canonical_url):
         ]
     })
     
-    return json.dumps(schemas, ensure_ascii=False)
+    return _schema_json(schemas)
 
 
 def _generate_nav_html():
@@ -2635,15 +2278,16 @@ def _generate_nav_html():
 </header>"""
 
 
-def _generate_footer_html(products):
+def _generate_footer_html(products, blogs):
     """Generate footer with internal links for crawlability."""
+    from urllib.parse import quote
     product_links = "\n".join(
-        f'        <li><a href="/products/{_html_escape(p.get("id", ""))}">{_html_escape(p.get("name", ""))}</a></li>'
+        f'        <li><a href="/products/{_html_escape(quote(str(p.get("id", "")), safe=""))}">{_html_escape(p.get("name", ""))}</a></li>'
         for p in products
     )
     blog_links = "\n".join(
-        f'        <li><a href="/blog/{_html_escape(b["slug"])}">{_html_escape(b["title"])}</a></li>'
-        for b in BLOG_ARTICLES_SEO
+        f'        <li><a href="/blog/{_html_escape(quote(str(b["slug"]), safe=""))}">{_html_escape(b["title"])}</a></li>'
+        for b in blogs
     )
     return f"""<footer style="border-top:1px solid #ddd;padding:30px 20px;margin-top:40px;font-size:14px;color:#666">
     <div style="max-width:960px;margin:0 auto">
@@ -2677,15 +2321,15 @@ def _generate_footer_html(products):
 </footer>"""
 
 
-def _generate_product_html(product, all_products):
+def _generate_product_html(product, all_products, blogs):
     """Generate full HTML for a product detail page."""
-    import json
+    from urllib.parse import quote
     p_id = product.get("id", "")
     p_name = _html_escape(product.get("name", ""))
     p_desc = _html_escape(product.get("description") or product.get("tagline", ""))
-    p_img = product.get("image", "")
+    p_img = _absolute_image_url(product.get("image"))
     p_category = _html_escape(product.get("category", ""))
-    canonical_url = f"{WEBSITE_URL}/products/{p_id}"
+    canonical_url = f"{WEBSITE_URL}/products/{quote(str(p_id), safe='')}"
     
     title = f"{product.get('name', '')} Manufacturer India | Gagan Engineering Works"
     description = f"Specifications & price for {product.get('name', '')}. {(product.get('description') or '')[:200]}. Manufactured by Gagan Engineering Works, Khopoli Maharashtra."
@@ -2718,7 +2362,7 @@ def _generate_product_html(product, all_products):
     related_html = ""
     if related:
         related_items = "\n".join(
-            f'            <li><a href="/products/{_html_escape(r.get("id", ""))}">{_html_escape(r.get("name", ""))}</a> — {_html_escape(r.get("tagline", ""))}</li>'
+            f'            <li><a href="/products/{_html_escape(quote(str(r.get("id", "")), safe=""))}">{_html_escape(r.get("name", ""))}</a> — {_html_escape(r.get("tagline", ""))}</li>'
             for r in related
         )
         related_html = f"""
@@ -2753,7 +2397,6 @@ def _generate_product_html(product, all_products):
     <meta property="og:site_name" content="Gagan Engineering Works">
     <meta property="og:locale" content="en_IN">
     <meta property="product:brand" content="Gagan Engineering Works">
-    <meta property="product:availability" content="in stock">
     <meta property="product:condition" content="new">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{_html_escape(title)}">
@@ -2814,95 +2457,160 @@ def _generate_product_html(product, all_products):
 {related_html}
         </article>
     </main>
-{_generate_footer_html(all_products)}
+{_generate_footer_html(all_products, blogs)}
 </body>
 </html>"""
 
 
-def _generate_blog_html(blog, all_products):
-    """Generate HTML for a blog article page."""
-    import json
-    canonical_url = f"{WEBSITE_URL}/blog/{blog['slug']}"
+def _render_blog_text(text):
+    """Render the seed's small bold/link syntax while treating author text as data."""
+    import re
+    from urllib.parse import urlsplit
+    text = str(text or "")
+    parts = []
+    offset = 0
+    for match in re.finditer(r"\*\*([^*]+)\*\*|\[([^\]]+)\]\(([^)]+)\)", text):
+        parts.append(_html_escape(text[offset:match.start()]))
+        if match.group(1) is not None:
+            parts.append(f"<strong>{_html_escape(match.group(1))}</strong>")
+        else:
+            label, url = match.group(2), match.group(3).strip()
+            try:
+                valid_url = (url.startswith("/") and not url.startswith("//")) or urlsplit(url).scheme in ("http", "https")
+            except ValueError:
+                valid_url = False
+            if valid_url:
+                parts.append(f'<a href="{_html_escape(url)}">{_html_escape(label)}</a>')
+            else:
+                parts.append(_html_escape(match.group(0)))
+        offset = match.end()
+    parts.append(_html_escape(text[offset:]))
+    return "".join(parts).replace("\n", "<br>\n")
+
+
+def _render_blog_content(blog):
+    sections = []
+    for section in blog.get("content") or []:
+        if not isinstance(section, dict):
+            continue
+        heading = _html_escape(section.get("heading", ""))
+        section_id = _html_escape(section.get("id", ""))
+        content = [f'<section id="{section_id}">', f"<h2>{heading}</h2>" if heading else ""]
+        if section.get("text"):
+            content.append(f'<p>{_render_blog_text(section["text"])}</p>')
+        if section.get("type") == "table":
+            headers = "".join(f'<th scope="col">{_html_escape(cell)}</th>' for cell in (section.get("headers") or []))
+            rows = "".join("<tr>" + "".join(f"<td>{_html_escape(cell)}</td>" for cell in row) + "</tr>" for row in (section.get("rows") or []))
+            content.append(f'<table><thead><tr>{headers}</tr></thead><tbody>{rows}</tbody></table>')
+        if section.get("items"):
+            content.append("<ul>" + "".join(f"<li>{_render_blog_text(item)}</li>" for item in section["items"]) + "</ul>")
+        content.append("</section>")
+        sections.append("\n".join(content))
+    # Admin-created articles can also carry explicit FAQs alongside their sections.
+    faqs = blog.get("faqs") or []
+    if faqs:
+        sections.append('<section><h2>Frequently Asked Questions</h2>' + "".join(
+            f'<h3>{_html_escape(faq.get("q", ""))}</h3><p>{_render_blog_text(faq.get("a", ""))}</p>'
+            for faq in faqs if isinstance(faq, dict)
+        ) + '</section>')
+    return "\n".join(sections)
+
+
+def _generate_blog_html(blog, all_products, blogs):
+    """Render the same published article sections/tables used by the browser."""
+    from urllib.parse import quote
+    canonical_url = f"{WEBSITE_URL}/blog/{quote(str(blog['slug']), safe='')}"
     title = f"{blog['title']} | Gagan Engineering Works"
-    
-    schemas = [
-        {
-            "@context": "https://schema.org",
-            "@type": "Article",
-            "headline": blog["title"],
-            "description": blog["description"],
-            "image": blog.get("image", f"{WEBSITE_URL}/logo.png"),
-            "datePublished": blog.get("date", "2026-08-01"),
-            "author": {"@type": "Organization", "name": "Gagan Engineering Works"},
-            "publisher": {"@type": "Organization", "name": "Gagan Engineering Works", "logo": {"@type": "ImageObject", "url": f"{WEBSITE_URL}/logo.png"}},
-            "mainEntityOfPage": canonical_url
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "BreadcrumbList",
-            "itemListElement": [
-                {"@type": "ListItem", "position": 1, "name": "Home", "item": WEBSITE_URL},
-                {"@type": "ListItem", "position": 2, "name": "Engineering Blog", "item": f"{WEBSITE_URL}/blog"},
-                {"@type": "ListItem", "position": 3, "name": blog["title"], "item": canonical_url}
-            ]
-        }
-    ]
-    
+    description = blog.get("summary") or blog.get("description", "")
+    keywords = blog.get("targetKeywords") or blog.get("tags") or ""
+    if isinstance(keywords, (list, tuple)):
+        keywords = ", ".join(keywords)
+    image = _absolute_image_url(blog.get("image"))
+    article_schema = {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "headline": blog["title"],
+        "description": description,
+        "image": image,
+        "author": {"@type": "Organization", "name": blog.get("author") or "Gagan Engineering Works"},
+        "publisher": {"@type": "Organization", "name": "Gagan Engineering Works", "logo": {"@type": "ImageObject", "url": f"{WEBSITE_URL}/logo.png"}},
+        "mainEntityOfPage": canonical_url,
+    }
+    if blog.get("date"):
+        article_schema["datePublished"] = blog["date"]
+    modified = _content_lastmod({key: blog.get(key) for key in ("updatedAt", "updated_at", "dateModified")})
+    if modified:
+        article_schema["dateModified"] = modified
+    schemas = [article_schema, {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "Home", "item": WEBSITE_URL},
+            {"@type": "ListItem", "position": 2, "name": "Engineering Blog", "item": f"{WEBSITE_URL}/blog"},
+            {"@type": "ListItem", "position": 3, "name": blog["title"], "item": canonical_url},
+        ],
+    }]
+    related = [product for product in all_products if product.get("id") in (blog.get("relatedProducts") or [])]
+    related_html = ""
+    if related:
+        related_html = '<section><h2>Related Machinery</h2><ul>' + "".join(
+            f'<li><a href="/products/{_html_escape(quote(str(product["id"]), safe=""))}">{_html_escape(product.get("name", ""))}</a></li>'
+            for product in related
+        ) + '</ul></section>'
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{_html_escape(title)}</title>
-    <meta name="description" content="{_html_escape(blog['description'])}">
-    <meta name="keywords" content="{_html_escape(blog.get('keywords', ''))}">
+    <meta name="description" content="{_html_escape(description)}">
+    <meta name="keywords" content="{_html_escape(keywords)}">
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
-    <meta name="author" content="Gagan Engineering Works">
-    <link rel="canonical" href="{canonical_url}">
+    <meta name="author" content="{_html_escape(blog.get('author') or 'Gagan Engineering Works')}">
+    <link rel="canonical" href="{_html_escape(canonical_url)}">
     <meta property="og:title" content="{_html_escape(title)}">
-    <meta property="og:description" content="{_html_escape(blog['description'])}">
-    <meta property="og:url" content="{canonical_url}">
-    <meta property="og:image" content="{_html_escape(blog.get('image', ''))}">
+    <meta property="og:description" content="{_html_escape(description)}">
+    <meta property="og:url" content="{_html_escape(canonical_url)}">
+    <meta property="og:image" content="{_html_escape(image)}">
     <meta property="og:type" content="article">
     <meta property="og:site_name" content="Gagan Engineering Works">
-    <meta property="article:published_time" content="{blog.get('date', '')}">
-    <meta property="article:author" content="Gagan Engineering Works">
+    <meta property="article:published_time" content="{_html_escape(blog.get('date', ''))}">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{_html_escape(title)}">
-    <meta name="twitter:description" content="{_html_escape(blog['description'])}">
-    <meta name="twitter:image" content="{_html_escape(blog.get('image', ''))}">
-    <link rel="alternate" hreflang="x-default" href="{canonical_url}">
-    <link rel="alternate" hreflang="en" href="{canonical_url}">
-    <link rel="alternate" hreflang="en-IN" href="{canonical_url}">
+    <meta name="twitter:description" content="{_html_escape(description)}">
+    <meta name="twitter:image" content="{_html_escape(image)}">
+    <link rel="alternate" hreflang="x-default" href="{_html_escape(canonical_url)}">
+    <link rel="alternate" hreflang="en" href="{_html_escape(canonical_url)}">
     <link rel="icon" type="image/png" href="/logo.png">
     <meta name="google-site-verification" content="QEGoiaBEcRKf2zkIZu9kBOEnvWdghWxictCIfTUy8CM">
-    <script type="application/ld+json">{json.dumps(schemas, ensure_ascii=False)}</script>
+    <script type="application/ld+json">{_schema_json(schemas)}</script>
     <script type="application/ld+json">{_build_org_schema()}</script>
 </head>
 <body style="font-family:Inter,system-ui,sans-serif;max-width:960px;margin:0 auto;padding:20px;color:#333;line-height:1.6">
 {_generate_nav_html()}
     <main>
-        <nav aria-label="breadcrumb" style="font-size:13px;color:#888;margin:20px 0">
-            <a href="/">Home</a> / <a href="/blog">Engineering Blog</a> / <span style="color:#FF5722">{_html_escape(blog['title'][:60])}</span>
+        <nav aria-label="breadcrumb">
+            <a href="/">Home</a> / <a href="/blog">Engineering Blog</a> / <span>{_html_escape(blog['title'])}</span>
         </nav>
         <article>
-            <h1 style="font-size:28px;line-height:1.3">{_html_escape(blog['title'])}</h1>
-            <p style="font-size:13px;color:#888">Published: {blog.get('date', '')} | By Gagan Engineering Works Technical Team</p>
-            <img src="{_html_escape(blog.get('image', ''))}" alt="{_html_escape(blog['title'])}" width="600" loading="lazy" style="max-width:100%;height:auto;border-radius:4px;margin:15px 0">
-            <p style="font-size:16px">{_html_escape(blog['description'])}</p>
-            <p>Read the full article at <a href="{canonical_url}">{canonical_url}</a></p>
+            <h1>{_html_escape(blog['title'])}</h1>
+            <p>Published: {_html_escape(blog.get('date', ''))} | By {_html_escape(blog.get('author') or 'Gagan Engineering Works')}</p>
+            <img src="{_html_escape(image)}" alt="{_html_escape(blog['title'])}" width="600" loading="lazy" style="max-width:100%;height:auto">
+            <p>{_html_escape(description)}</p>
+{_render_blog_content(blog)}
+{related_html}
         </article>
     </main>
-{_generate_footer_html(all_products)}
+{_generate_footer_html(all_products, blogs)}
 </body>
 </html>"""
 
 
-def _generate_generic_page_html(path, all_products):
+def _generate_generic_page_html(path, all_products, blogs):
     """Generate HTML for static pages (home, about, contact, etc.)."""
-    import json
+    from urllib.parse import quote
     clean_path = path.strip("/")
-    meta = PAGE_META.get(clean_path, PAGE_META.get("", {}))
+    meta = PAGE_META.get(clean_path, {})
     canonical_url = f"{WEBSITE_URL}/{clean_path}" if clean_path else WEBSITE_URL
     title = meta.get("title", "Gagan Engineering Works | Machinery Manufacturer")
     description = meta.get("description", "")
@@ -2918,11 +2626,20 @@ def _generate_generic_page_html(path, all_products):
             description = cat_meta["description"]
             keywords = cat_meta["keywords"]
     
-    # Product listing for catalogue/homepage
+    filtered = _products_for_category(all_products, cat_slug) if cat_slug else all_products
+
+    # Keep visible category products and its ItemList identical.
     product_list_html = "\n".join(
-        f'        <li><a href="/products/{_html_escape(p.get("id", ""))}">{_html_escape(p.get("name", ""))}</a> — {_html_escape(p.get("tagline", ""))}</li>'
-        for p in all_products
+        f'        <li><a href="/products/{_html_escape(quote(str(p.get("id", "")), safe=""))}">{_html_escape(p.get("name", ""))}</a> — {_html_escape(p.get("tagline", ""))}</li>'
+        for p in filtered
     )
+    listing_heading = "Our Industrial Machinery"
+    if clean_path == "blog":
+        listing_heading = "Engineering Articles"
+        product_list_html = "\n".join(
+            f'<li><a href="/blog/{_html_escape(quote(str(b.get("slug", "")), safe=""))}">{_html_escape(b.get("title", ""))}</a><p>{_html_escape(b.get("summary") or b.get("description", ""))}</p></li>'
+            for b in blogs
+        )
     
     breadcrumb_name = clean_path.replace("-", " ").replace("/", " > ").title() or "Home"
     schemas = [{
@@ -2935,14 +2652,11 @@ def _generate_generic_page_html(path, all_products):
     
     # Add ItemList for product pages
     if clean_path in ("products", "") or clean_path.startswith("products/category/"):
-        filtered = all_products
-        if cat_slug:
-            filtered = [p for p in all_products if p.get("categorySlug") == cat_slug]
         schemas.append({
             "@context": "https://schema.org",
             "@type": "ItemList",
             "itemListElement": [
-                {"@type": "ListItem", "position": i+1, "url": f"{WEBSITE_URL}/products/{p.get('id','')}", "name": p.get("name","")}
+                {"@type": "ListItem", "position": i+1, "url": f"{WEBSITE_URL}/products/{quote(str(p.get('id','')), safe='')}", "name": p.get("name","")}
                 for i, p in enumerate(filtered)
             ]
         })
@@ -2977,7 +2691,7 @@ def _generate_generic_page_html(path, all_products):
     <link rel="icon" type="image/png" href="/logo.png">
     <meta name="google-site-verification" content="QEGoiaBEcRKf2zkIZu9kBOEnvWdghWxictCIfTUy8CM">
     <meta name="theme-color" content="#050505">
-    <script type="application/ld+json">{json.dumps(schemas, ensure_ascii=False)}</script>
+    <script type="application/ld+json">{_schema_json(schemas)}</script>
     <script type="application/ld+json">{_build_org_schema()}</script>
 </head>
 <body style="font-family:Inter,system-ui,sans-serif;max-width:960px;margin:0 auto;padding:20px;color:#333;line-height:1.6">
@@ -2986,63 +2700,64 @@ def _generate_generic_page_html(path, all_products):
         <h1>{_html_escape(title.split('|')[0].strip())}</h1>
         <p>{_html_escape(description)}</p>
         
-        <h2>Our Industrial Machinery</h2>
+        <h2>{listing_heading}</h2>
         <ul>
 {product_list_html}
         </ul>
     </main>
-{_generate_footer_html(all_products)}
+{_generate_footer_html(all_products, blogs)}
 </body>
 </html>"""
 
 
-@app.get("/_seo/{path:path}", response_class=Response)
+def _prerender_response(html, request, status_code=200):
+    headers = {
+        "Cache-Control": "public, max-age=3600" if status_code == 200 else "public, max-age=60",
+        "X-Prerender": "1",
+    }
+    if status_code == 404:
+        headers["X-Robots-Tag"] = "noindex, follow"
+    response = Response(content=html, status_code=status_code, media_type="text/html", headers=headers)
+    if request.method == "HEAD":
+        response.body = b""
+    return response
+
+
+@app.api_route("/_seo/{path:path}", methods=["GET", "HEAD"], response_class=Response)
 async def seo_prerender(path: str, request: Request):
-    """
-    Server-side prerender endpoint for search engine crawlers.
-    Generates fully-rendered HTML with correct title, meta, schema, and content
-    so that Googlebot/Bingbot can index every page on the first crawl.
-    """
+    """Render published public routes; unknown URLs remain genuine missing pages."""
     products = await get_products_from_db()
+    blogs = await get_blogs_from_db(published_only=True)
     clean_path = path.strip("/")
-    
-    # Product detail page: /products/{id}
-    if clean_path.startswith("products/") and not clean_path.startswith("products/category/"):
-        product_id = clean_path.replace("products/", "")
+    html = None
+    if clean_path.startswith("products/category/"):
+        category = clean_path.removeprefix("products/category/")
+        if category in CATEGORY_SEO:
+            html = _generate_generic_page_html(clean_path, products, blogs)
+    elif clean_path.startswith("products/"):
+        product_id = clean_path.removeprefix("products/")
         product = next((p for p in products if p.get("id") == product_id), None)
         if product:
-            html = _generate_product_html(product, products)
-            return Response(content=html, media_type="text/html", headers={
-                "Cache-Control": "public, max-age=3600, s-maxage=86400",
-                "X-Prerender": "1"
-            })
-    
-    # Blog article page: /blog/{slug}
-    if clean_path.startswith("blog/") and clean_path != "blog":
-        slug = clean_path.replace("blog/", "")
-        blog = next((b for b in BLOG_ARTICLES_SEO if b["slug"] == slug), None)
+            html = _generate_product_html(product, products, blogs)
+    elif clean_path.startswith("blog/"):
+        slug = clean_path.removeprefix("blog/")
+        blog = await get_blog_by_slug(slug, published_only=True)
         if blog:
-            html = _generate_blog_html(blog, products)
-            return Response(content=html, media_type="text/html", headers={
-                "Cache-Control": "public, max-age=3600, s-maxage=86400",
-                "X-Prerender": "1"
-            })
-    
-    # All other pages (home, products, about, contact, category, blog listing, etc.)
-    html = _generate_generic_page_html(clean_path, products)
-    return Response(content=html, media_type="text/html", headers={
-        "Cache-Control": "public, max-age=3600, s-maxage=86400",
-        "X-Prerender": "1"
-    })
+            html = _generate_blog_html(blog, products, blogs)
+    elif clean_path in PAGE_META:
+        html = _generate_generic_page_html(clean_path, products, blogs)
+    if html is None:
+        html = f'<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Page Not Found | Gagan Engineering Works</title><meta name="robots" content="noindex, follow"></head><body>{_generate_nav_html()}<main><h1>Page Not Found</h1><p>The requested page could not be found.</p><a href="/products">Browse machinery</a></main></body></html>'
+        return _prerender_response(html, request, status_code=404)
+    return _prerender_response(html, request)
 
 
 # Middleware to intercept __seo_path query parameter from Vercel rewrites
 @app.middleware("http")
 async def seo_path_middleware(request: Request, call_next):
     seo_path = request.query_params.get("__seo_path")
-    if seo_path is not None:
+    if seo_path is not None and request.method in ("GET", "HEAD"):
         # Rewrite the request to the /_seo/ endpoint
-        from starlette.datastructures import URL
         new_path = f"/_seo/{seo_path.lstrip('/')}"
         request.scope["path"] = new_path
         # Remove __seo_path from query string

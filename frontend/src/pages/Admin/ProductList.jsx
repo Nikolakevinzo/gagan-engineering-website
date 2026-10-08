@@ -4,10 +4,9 @@ import { useAdminAuth } from "@/components/AdminLayout";
 import {
   Plus, Search, Trash2, Edit3, Star, StarOff,
   Filter, RefreshCw, ChevronLeft, ChevronRight, Eye,
-  Download, Copy, Check, X, RotateCcw
+  Download, Copy, Check, X
 } from "lucide-react";
 import { getBackendUrl } from "@/lib/adminConfig";
-import { CATALOGUE_PRODUCTS } from "@/lib/catalogueData";
 
 const BACKEND_URL = getBackendUrl();
 
@@ -45,26 +44,6 @@ export default function AdminProductList() {
     setLoading(true);
     setError("");
 
-    // Helper: merge arrays (later wins by id)
-    const mergeProducts = (base, overrides) => {
-      const merged = [...base];
-      overrides.forEach((item) => {
-        const idx = merged.findIndex((m) => m.id === item.id);
-        if (idx >= 0) {
-          merged[idx] = { ...merged[idx], ...item };
-        } else {
-          merged.push(item);
-        }
-      });
-      return merged;
-    };
-
-    // Load localStorage admin updates
-    let localProducts = [];
-    try {
-      localProducts = JSON.parse(localStorage.getItem("gagan_custom_products") || "[]");
-    } catch (e) {}
-
     try {
       const params = new URLSearchParams({ page, limit: LIMIT });
       if (search) params.set("search", search);
@@ -76,35 +55,12 @@ export default function AdminProductList() {
       if (!res.ok) throw new Error("Failed to fetch products from backend");
       const data = await res.json();
 
-      let base = data.products && data.products.length > 0 ? data.products : CATALOGUE_PRODUCTS;
-      // Merge localStorage on top of API results (local always wins for instant feedback)
-      if (localProducts.length > 0) {
-        base = mergeProducts(base, localProducts);
-      }
-
-      // Apply filters client-side
-      let filtered = base;
-      if (category !== "all") {
-        filtered = filtered.filter((p) => p.categorySlug === category || p.category?.toLowerCase().includes(category));
-      }
-      if (search) {
-        filtered = filtered.filter((p) => p.name.toLowerCase().includes(search.toLowerCase()));
-      }
-
-      setProducts(filtered);
-      setTotal(filtered.length);
+      setProducts(data.products || []);
+      setTotal(data.total ?? data.products?.length ?? 0);
     } catch (err) {
-      // Gracefully show catalogue + localStorage products so admin is never blocked
-      console.warn("Backend products fetch failed, using fallback catalogue:", err);
-      let filtered = mergeProducts(CATALOGUE_PRODUCTS, localProducts);
-      if (category !== "all") {
-        filtered = filtered.filter((p) => p.categorySlug === category);
-      }
-      if (search) {
-        filtered = filtered.filter((p) => p.name.toLowerCase().includes(search.toLowerCase()));
-      }
-      setProducts(filtered);
-      setTotal(filtered.length);
+      setProducts([]);
+      setTotal(0);
+      setError("Could not load saved products. Check your connection and refresh.");
     } finally {
       setLoading(false);
     }
@@ -179,19 +135,6 @@ export default function AdminProductList() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => {
-              if (window.confirm("Reset browser cache and reload live data strictly from MongoDB Atlas?")) {
-                localStorage.removeItem("gagan_custom_products");
-                window.location.reload();
-              }
-            }}
-            className="flex items-center gap-1.5 text-xs text-amber-400 hover:text-white bg-amber-400/10 hover:bg-amber-500 border border-amber-400/30 px-3 py-2.5 rounded-sm transition-all font-semibold uppercase tracking-wider"
-            title="Clear browser local overrides and load strictly from cloud database"
-          >
-            <RotateCcw className="w-3.5 h-3.5" /> Clear Local Cache
-          </button>
           <button
             type="button"
             onClick={() => {

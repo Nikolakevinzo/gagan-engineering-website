@@ -1,60 +1,55 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Calendar, Clock, ArrowLeft, ArrowRight, Tag, Share2, Printer, CheckCircle2, Factory, Wrench, Send, Phone, MessageCircle, BookOpen, Layers } from "lucide-react";
 import { toast } from "sonner";
 import SEO from "@/components/SEO";
 import SectionHeader from "@/components/SectionHeader";
-import { BLOG_ARTICLES } from "@/lib/blogData";
 import { CATALOGUE_PRODUCTS } from "@/lib/catalogueData";
 import { BUSINESS } from "@/lib/business";
 import { api } from "@/lib/api";
 
 export default function BlogPost() {
   const { slug } = useParams();
+  const requestRoute = useRef({ slug });
+  if (requestRoute.current.slug !== slug) requestRoute.current = { slug };
   const navigate = useNavigate();
 
-  const staticArticle = BLOG_ARTICLES.find((a) => a.slug === slug);
-  const [article, setArticle] = useState(staticArticle || null);
-  const [loadingArticle, setLoadingArticle] = useState(!staticArticle);
+  const [article, setArticle] = useState(null);
+  const [loadingArticle, setLoadingArticle] = useState(true);
+  const [loadedSlug, setLoadedSlug] = useState(null);
+  const [articleError, setArticleError] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
+    setLoadingArticle(true);
+    setArticle(null);
+    setArticleError(false);
+    setRfqDone(false);
+    setRfqError(false);
+    setRfqSubmitting(false);
 
-    const getLocalBlog = (blogSlug) => {
-      try {
-        const stored = JSON.parse(localStorage.getItem("gagan_custom_blogs") || "[]");
-        return stored.find((b) => b.slug === blogSlug);
-      } catch (e) {
-        return null;
-      }
+    const applyArticle = (art) => {
+      if (!isMounted) return;
+      setArticle(art?.published !== false ? art || null : null);
+      setLoadedSlug(slug);
+      setLoadingArticle(false);
     };
 
     fetch(`/api/blogs/${slug}`)
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (isMounted) {
-          let art = (data && data.article) ? data.article : staticArticle;
-          const localOverride = getLocalBlog(slug);
-          if (localOverride) art = { ...art, ...localOverride };
-          if (art) setArticle(art);
-        }
+      .then(async (res) => {
+        if (res.status >= 500) throw new Error("Article service unavailable");
+        // A missing or unpublished article must not reappear from a bundled seed.
+        if (!res.ok) return null;
+        const data = await res.json();
+        return data.article;
       })
+      .then(applyArticle)
       .catch(() => {
-        if (isMounted) {
-          let art = staticArticle;
-          const localOverride = getLocalBlog(slug);
-          if (localOverride) art = { ...art, ...localOverride };
-          if (art) setArticle(art);
-        }
-      })
-      .finally(() => {
-        if (isMounted) setLoadingArticle(false);
+        if (isMounted) setArticleError(true);
+        applyArticle(null);
       });
 
-    return () => {
-      isMounted = false;
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => { isMounted = false; };
   }, [slug]);
 
   const [rfqForm, setRfqForm] = useState({
@@ -66,10 +61,12 @@ export default function BlogPost() {
   });
   const [rfqSubmitting, setRfqSubmitting] = useState(false);
   const [rfqDone, setRfqDone] = useState(false);
+  const [rfqError, setRfqError] = useState(false);
 
-  if (loadingArticle) {
+  if (loadingArticle || loadedSlug !== slug) {
     return (
       <div className="bg-[#050505] min-h-screen pt-32 flex flex-col items-center justify-center text-center px-4 text-white">
+        <SEO title="Loading Technical Guide" canonicalUrl={`${BUSINESS.websiteUrl}/blog/${slug}`} />
         <div className="w-8 h-8 border-2 border-[#FF5722] border-t-transparent rounded-full animate-spin mb-4" />
         <p className="mono text-xs text-white/50 tracking-wider uppercase">Loading Technical Guide...</p>
       </div>
@@ -79,9 +76,10 @@ export default function BlogPost() {
   if (!article) {
     return (
       <div className="bg-[#050505] min-h-screen pt-32 flex flex-col items-center justify-center text-center px-4 text-white">
-        <h1 className="font-display text-4xl text-white uppercase mb-4">Article Not Located</h1>
+        <SEO title={articleError ? "Article Temporarily Unavailable" : "Article Not Found"} robots="noindex, follow" canonicalUrl={`${BUSINESS.websiteUrl}/blog/${slug}`} />
+        <h1 className="font-display text-4xl text-white uppercase mb-4">{articleError ? "Article Temporarily Unavailable" : "Article Not Located"}</h1>
         <p className="text-white/60 mb-8 max-w-md text-sm">
-          The technical engineering publication you requested may have been revised or updated.
+          {articleError ? "We could not load this article. Please refresh to try again." : "The technical engineering publication you requested may have been revised or updated."}
         </p>
         <Link to="/blog" className="btn-primary">
           Back to Knowledge Hub
@@ -97,6 +95,8 @@ export default function BlogPost() {
       return;
     }
 
+    const submittedRoute = requestRoute.current;
+    setRfqError(false);
     setRfqSubmitting(true);
     try {
       const payload = {
@@ -108,6 +108,8 @@ export default function BlogPost() {
       };
 
       const res = await api.post("/contact", payload);
+      if (requestRoute.current !== submittedRoute) return;
+      if (!res.data?.lead_id) throw new Error("Quotation confirmation was not received");
 
       // Cache locally
       try {
@@ -128,10 +130,11 @@ export default function BlogPost() {
       toast.success("Inquiry received! Our machinery engineering team will contact you.");
       setRfqDone(true);
     } catch (err) {
-      toast.success("Thank you! Your quotation request has been recorded.");
-      setRfqDone(true);
+      if (requestRoute.current !== submittedRoute) return;
+      toast.error("Your request could not be submitted. Please retry or contact us directly.");
+      setRfqError(true);
     } finally {
-      setRfqSubmitting(false);
+      if (requestRoute.current === submittedRoute) setRfqSubmitting(false);
     }
   };
 
@@ -209,7 +212,7 @@ export default function BlogPost() {
 
 
             {/* Render Article Sections */}
-            {article.content.map((sec, idx) => {
+            {(article.content || []).map((sec, idx) => {
               if (sec.type === "section") {
                 return (
                   <section key={idx} id={sec.id} className="space-y-4 pt-2 scroll-mt-28">
@@ -300,6 +303,7 @@ export default function BlogPost() {
                 </div>
               ) : (
                 <form onSubmit={handleRfqSubmit} className="space-y-3 pt-2">
+                  {rfqError && <p role="alert" className="text-red-400 text-sm">Your request was not submitted. Please retry, <a href={`tel:${BUSINESS.phone}`} className="underline">call us</a> or use the WhatsApp link below.</p>}
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <input
                       type="text"

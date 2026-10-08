@@ -4,7 +4,7 @@ import { Search, MessageCircle, ArrowRight, Filter, Layers, Wrench, Cpu, Factory
 import SEO from "@/components/SEO";
 import ProductCard from "@/components/ProductCard";
 import SectionHeader from "@/components/SectionHeader";
-import { CATALOGUE_PRODUCTS, CATEGORIES } from "@/lib/catalogueData";
+import { CATEGORIES } from "@/lib/catalogueData";
 import { BUSINESS } from "@/lib/business";
 import { api } from "@/lib/api";
 
@@ -70,47 +70,26 @@ export default function Products() {
     return "All";
   };
 
-  const [products, setProducts] = useState(CATALOGUE_PRODUCTS);
+  const [products, setProducts] = useState([]);
+  const [catalogueError, setCatalogueError] = useState(false);
   const [activeCategory, setActiveCategory] = useState(getInitialCategory);
   const [searchQuery, setSearchQuery] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Helper: merge array of products with overrides (later wins)
-    const mergeProducts = (base, overrides) => {
-      const merged = [...base];
-      overrides.forEach((item) => {
-        const idx = merged.findIndex((m) => m.id === item.id);
-        if (idx >= 0) {
-          merged[idx] = { ...merged[idx], ...item };
-        } else {
-          merged.push(item);
-        }
-      });
-      return merged;
+    let isMounted = true;
+    const applyProducts = (list) => {
+      if (!isMounted) return;
+      setProducts(list.filter((p) => p.published !== false));
+      setLoading(false);
     };
-
-    const getMerged = (baseList) => {
-      try {
-        const stored = JSON.parse(localStorage.getItem("gagan_custom_products") || "[]");
-        if (Array.isArray(stored) && stored.length > 0) {
-          return mergeProducts(baseList, stored);
-        }
-      } catch (e) {}
-      return baseList;
-    };
-
-    api
-      .get("/products")
-      .then((r) => {
-        const base = (r.data && Array.isArray(r.data.products) && r.data.products.length > 0)
-          ? r.data.products
-          : CATALOGUE_PRODUCTS;
-        setProducts(getMerged(base));
-      })
+    api.get("/products")
+      .then((r) => applyProducts(Array.isArray(r.data?.products) ? r.data.products : []))
       .catch(() => {
-        setProducts(getMerged(CATALOGUE_PRODUCTS));
+        if (isMounted) setCatalogueError(true);
+        applyProducts([]);
       });
+    return () => { isMounted = false; };
   }, []);
 
   useEffect(() => {
@@ -265,7 +244,7 @@ export default function Products() {
         </div>
 
         {/* Product Cards Grid */}
-        {filteredProducts.length > 0 ? (
+        {loading ? <p className="py-12 text-white/60 text-center">Loading machinery...</p> : catalogueError ? <p role="alert" className="py-12 text-red-400 text-center">The catalogue is temporarily unavailable. Please refresh to try again.</p> : filteredProducts.length > 0 ? (
           <div
             className="mt-8 sm:mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
             data-testid="products-grid"

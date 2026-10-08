@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useAdminAuth } from "@/components/AdminLayout";
-import { BLOG_ARTICLES, BLOG_CATEGORIES } from "@/lib/blogData";
+import { BLOG_ARTICLES } from "@/lib/blogData";
 import { CATALOGUE_PRODUCTS } from "@/lib/catalogueData";
 
 const STANDARD_CATEGORIES = [
@@ -65,15 +65,6 @@ export default function AdminBlogForm() {
     const fetchArticle = async () => {
       setLoading(true);
 
-      const applyLocalOverride = (art) => {
-        try {
-          const stored = JSON.parse(localStorage.getItem("gagan_custom_blogs") || "[]");
-          const local = stored.find((b) => b.slug === slug);
-          if (local) return { ...art, ...local };
-        } catch (e) {}
-        return art;
-      };
-
       try {
         const res = await fetch(`/api/admin/blogs/${slug}`, {
           headers: getAuthHeader()
@@ -81,7 +72,7 @@ export default function AdminBlogForm() {
         if (res.ok) {
           const data = await res.json();
           if (data.article) {
-            const finalArt = applyLocalOverride(data.article);
+            const finalArt = data.article;
             setFormData({
               ...finalArt,
               published: finalArt.published !== false,
@@ -94,7 +85,7 @@ export default function AdminBlogForm() {
           // Fallback to static blogData
           const staticMatch = BLOG_ARTICLES.find((a) => a.slug === slug);
           if (staticMatch) {
-            const finalArt = applyLocalOverride(staticMatch);
+            const finalArt = staticMatch;
             setFormData({
               ...finalArt,
               published: true,
@@ -111,7 +102,7 @@ export default function AdminBlogForm() {
         console.warn("Failed to fetch from API, falling back to static:", err);
         const staticMatch = BLOG_ARTICLES.find((a) => a.slug === slug);
         if (staticMatch) {
-          const finalArt = applyLocalOverride(staticMatch);
+          const finalArt = staticMatch;
           setFormData({
             ...finalArt,
             published: true,
@@ -304,34 +295,15 @@ export default function AdminBlogForm() {
         body: JSON.stringify(payload)
       });
 
-      if (res.ok) {
-        // Also save to localStorage for immediate frontend sync
-        try {
-          const stored = JSON.parse(localStorage.getItem("gagan_custom_blogs") || "[]");
-          const filtered = stored.filter((b) => b.slug !== payload.slug);
-          localStorage.setItem("gagan_custom_blogs", JSON.stringify([...filtered, payload]));
-        } catch (e) {}
-        toast.success(isEditMode ? "Article updated successfully!" : "New article published successfully!");
-        navigate("/admin/blogs");
-      } else {
-        // API failed (e.g. 401 auth mismatch) — save locally so frontend picks it up
-        try {
-          const stored = JSON.parse(localStorage.getItem("gagan_custom_blogs") || "[]");
-          const filtered = stored.filter((b) => b.slug !== payload.slug);
-          localStorage.setItem("gagan_custom_blogs", JSON.stringify([...filtered, payload]));
-        } catch (e) {}
-        toast.warning("Saved locally. Server sync failed — check admin credentials in Vercel environment variables.");
-        navigate("/admin/blogs");
+      if (!res.ok) {
+        const error = await res.json().catch(() => ({}));
+        toast.error(typeof error.detail === "string" ? error.detail : typeof error.detail?.message === "string" ? error.detail.message : "Article was not saved. Please check the entered values and retry; your edits remain in the editor.");
+        return;
       }
-    } catch (err) {
-      // Network error — save locally
-      try {
-        const stored = JSON.parse(localStorage.getItem("gagan_custom_blogs") || "[]");
-        const filtered = stored.filter((b) => b.slug !== payload.slug);
-        localStorage.setItem("gagan_custom_blogs", JSON.stringify([...filtered, payload]));
-      } catch (e) {}
-      toast.warning("Saved locally (offline). Changes will sync when server is available.");
+      toast.success(isEditMode ? "Article saved successfully!" : payload.published ? "New article published successfully!" : "Draft saved successfully!");
       navigate("/admin/blogs");
+    } catch (err) {
+      toast.error("Article was not saved. Check your connection and retry; your edits remain in the editor.");
     } finally {
       setSaving(false);
     }

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { BUSINESS } from "@/lib/business";
-import { getProductSku, PRODUCT_ESTIMATED_PRICES } from "@/lib/catalogueData";
+import { getProductSku } from "@/lib/catalogueData";
 
 /**
  * Universal Global SEO, Hreflang & Schema.org JSON-LD Manager for React 19
@@ -16,7 +16,8 @@ export default function SEO({
   productData = null,
   faqData = null,
   breadcrumbs = null,
-  itemList = null
+  itemList = null,
+  robots = "index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"
 }) {
   const siteTitle = title
     ? `${title} | Gagan Engineering Works`
@@ -54,7 +55,7 @@ export default function SEO({
     // 2. Standard Global Meta Tags
     updateMetaTag("name", "description", siteDescription);
     updateMetaTag("name", "keywords", siteKeywords);
-    updateMetaTag("name", "robots", "index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1");
+    updateMetaTag("name", "robots", robots);
     updateMetaTag("name", "author", BUSINESS.name);
     updateMetaTag("name", "language", "English");
     updateMetaTag("name", "distribution", "Global");
@@ -183,7 +184,6 @@ export default function SEO({
       const absoluteImage = rawImg.startsWith("http")
         ? rawImg
         : `${BUSINESS.websiteUrl}${rawImg.startsWith("/") ? "" : "/"}${rawImg}`;
-      const productPrice = PRODUCT_ESTIMATED_PRICES[productData.id] || "150000";
 
       schemas.push({
         "@context": "https://schema.org",
@@ -208,113 +208,6 @@ export default function SEO({
         "countryOfOrigin": {
           "@type": "Country",
           "name": "India"
-        },
-        "aggregateRating": {
-          "@type": "AggregateRating",
-          "ratingValue": "4.8",
-          "reviewCount": "24",
-          "bestRating": "5",
-          "worstRating": "1"
-        },
-        "review": [
-          {
-            "@type": "Review",
-            "reviewRating": {
-              "@type": "Rating",
-              "ratingValue": "5",
-              "bestRating": "5"
-            },
-            "author": {
-              "@type": "Person",
-              "name": "Rajesh Patel"
-            },
-            "datePublished": "2025-11-20",
-            "reviewBody": "Heavy-duty industrial build quality with precision tolerances. Installed and running smoothly at our fabrication plant in Gujarat."
-          },
-          {
-            "@type": "Review",
-            "reviewRating": {
-              "@type": "Rating",
-              "ratingValue": "5",
-              "bestRating": "5"
-            },
-            "author": {
-              "@type": "Person",
-              "name": "Amitabh Sharma"
-            },
-            "datePublished": "2026-01-15",
-            "reviewBody": "Excellent technical service and commissioning support from Gagan Engineering Works Khopoli team. Highly recommended for heavy engineering."
-          }
-        ],
-        "offers": {
-          "@type": "Offer",
-          "url": currentUrl,
-          "priceCurrency": "INR",
-          "price": productPrice,
-          "priceValidUntil": "2027-12-31",
-          "priceSpecification": {
-            "@type": "UnitPriceSpecification",
-            "priceCurrency": "INR",
-            "priceType": "https://schema.org/InvoicePrice",
-            "description": "Custom quotation based on required specifications, motor rating, and export destination"
-          },
-          "availability": "https://schema.org/InStock",
-          "itemCondition": "https://schema.org/NewCondition",
-          "seller": {
-            "@type": "Organization",
-            "name": BUSINESS.name
-          },
-          "hasMerchantReturnPolicy": {
-            "@type": "MerchantReturnPolicy",
-            "applicableCountry": "IN",
-            "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
-            "merchantReturnDays": 30,
-            "returnMethod": "https://schema.org/ReturnByMail",
-            "returnFees": "https://schema.org/FreeReturn",
-            "returnPolicyCountry": "IN",
-            "url": `${BUSINESS.websiteUrl}/return-policy`
-          },
-          "shippingDetails": {
-            "@type": "OfferShippingDetails",
-            "shippingRate": {
-              "@type": "MonetaryAmount",
-              "value": "0",
-              "currency": "INR"
-            },
-            "shippingDestination": [
-              {
-                "@type": "DefinedRegion",
-                "addressCountry": "IN"
-              },
-              {
-                "@type": "DefinedRegion",
-                "addressCountry": "AE"
-              },
-              {
-                "@type": "DefinedRegion",
-                "addressCountry": "SA"
-              },
-              {
-                "@type": "DefinedRegion",
-                "addressCountry": "US"
-              }
-            ],
-            "deliveryTime": {
-              "@type": "ShippingDeliveryTime",
-              "handlingTime": {
-                "@type": "QuantitativeValue",
-                "minValue": 10,
-                "maxValue": 25,
-                "unitCode": "d"
-              },
-              "transitTime": {
-                "@type": "QuantitativeValue",
-                "minValue": 3,
-                "maxValue": 7,
-                "unitCode": "d"
-              }
-            }
-          }
         }
       });
     }
@@ -372,7 +265,8 @@ export default function SEO({
       document.head.appendChild(schemaScript);
     }
     schemaScript.text = JSON.stringify(schemas.length === 1 ? schemas[0] : schemas);
-  }, [siteTitle, siteDescription, siteKeywords, currentUrl, metaImage, ogType, productData, faqData, breadcrumbs, itemList]);
+    return () => schemaScript.remove();
+  }, [siteTitle, siteDescription, siteKeywords, currentUrl, metaImage, ogType, productData, faqData, breadcrumbs, itemList, robots]);
 
   return null;
 }

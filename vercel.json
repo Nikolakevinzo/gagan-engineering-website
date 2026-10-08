@@ -43,6 +43,34 @@
       }
     },
     {
+      "src": "/product/?",
+      "status": 301,
+      "headers": {
+        "Location": "https://www.gaganengineerings.in/products"
+      }
+    },
+    {
+      "src": "/gallery/?",
+      "status": 301,
+      "headers": {
+        "Location": "https://www.gaganengineerings.in/factory"
+      }
+    },
+    {
+      "src": "/returns/?",
+      "status": 301,
+      "headers": {
+        "Location": "https://www.gaganengineerings.in/return-policy"
+      }
+    },
+    {
+      "src": "/category/([^/]+)/?",
+      "status": 301,
+      "headers": {
+        "Location": "https://www.gaganengineerings.in/products/category/$1"
+      }
+    },
+    {
       "src": "/api/(.*)",
       "dest": "api/index.py",
       "headers": {
@@ -96,8 +124,16 @@
       "dest": "/api/index.py?__seo_path=$1"
     },
     {
-      "src": "/(.*)",
+      "src": "/(?:|products(?:/category/[^/]+|/[^/]+)?|category/[^/]+|blog(?:/[^/]+)?|about|factory|contact|return-policy|privacy-policy|terms|product|gallery|returns|admin(?:/.*)?)/?",
       "dest": "frontend/index.html"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "frontend/index.html",
+      "status": 404,
+      "headers": {
+        "X-Robots-Tag": "noindex, follow"
+      }
     }
   ]
 }

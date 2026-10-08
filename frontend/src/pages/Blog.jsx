@@ -3,58 +3,36 @@ import { Link, useSearchParams } from "react-router-dom";
 import { BookOpen, Calendar, Clock, ArrowRight, Search, Tag, Sparkles, Filter, Factory, Wrench } from "lucide-react";
 import SEO from "@/components/SEO";
 import SectionHeader from "@/components/SectionHeader";
-import { BLOG_ARTICLES, BLOG_CATEGORIES } from "@/lib/blogData";
+import { BLOG_CATEGORIES } from "@/lib/blogData";
 import { BUSINESS } from "@/lib/business";
 
 export default function Blog() {
   const [searchParams, setSearchParams] = useSearchParams();
   const activeCatParam = searchParams.get("category") || "all";
 
-  const [articles, setArticles] = useState(BLOG_ARTICLES);
+  const [articles, setArticles] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [blogError, setBlogError] = useState(false);
   const [activeCategory, setActiveCategory] = useState(activeCatParam);
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     let isMounted = true;
 
-    const mergeAllArticles = (apiArticles) => {
-      const map = new Map();
-      // 1. Base: Static articles bundled in code
-      BLOG_ARTICLES.forEach((a) => {
-        if (a?.slug) map.set(a.slug, a);
-      });
-      // 2. Overlay: API articles from MongoDB
-      if (Array.isArray(apiArticles)) {
-        apiArticles.forEach((a) => {
-          if (a?.slug) map.set(a.slug, { ...(map.get(a.slug) || {}), ...a });
-        });
-      }
-      // 3. Overlay: Local storage edits/drafts
-      try {
-        const stored = JSON.parse(localStorage.getItem("gagan_custom_blogs") || "[]");
-        if (Array.isArray(stored)) {
-          stored.forEach((item) => {
-            if (item?.slug) map.set(item.slug, { ...(map.get(item.slug) || {}), ...item });
-          });
-        }
-      } catch (e) {}
-      const list = Array.from(map.values());
-      list.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
-      return list;
-    };
-
     fetch("/api/blogs?limit=100")
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (isMounted && data && Array.isArray(data.articles) && data.articles.length > 0) {
-          setArticles(mergeAllArticles(data.articles));
-        } else if (isMounted) {
-          setArticles(mergeAllArticles([]));
-        }
+      .then(async (res) => {
+        if (res.status >= 500) throw new Error("Blog service unavailable");
+        if (!res.ok) return [];
+        const data = await res.json();
+        return Array.isArray(data.articles) ? data.articles : [];
+      })
+      .then((list) => {
+        if (isMounted) setArticles(list.filter((a) => a.published !== false).sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0)));
       })
       .catch(() => {
-        if (isMounted) setArticles(mergeAllArticles([]));
-      });
+        if (isMounted) { setArticles([]); setBlogError(true); }
+      })
+      .finally(() => { if (isMounted) setLoading(false); });
     return () => {
       isMounted = false;
     };
@@ -81,7 +59,7 @@ export default function Blog() {
     return matchesCat && matchesSearch;
   });
 
-  const featuredArticle = articles[0] || BLOG_ARTICLES[0];
+  const featuredArticle = articles[0];
 
   return (
     <div className="bg-[#050505] min-h-screen pt-24 sm:pt-28 pb-16 sm:pb-24 text-white">
@@ -254,7 +232,7 @@ export default function Blog() {
           ))}
         </div>
 
-        {filteredArticles.length === 0 && (
+        {loading ? <p className="py-12 text-center text-white/60">Loading engineering guides...</p> : blogError ? <p role="alert" className="py-12 text-center text-red-400">Engineering guides are temporarily unavailable. Please refresh to try again.</p> : filteredArticles.length === 0 && (
           <div className="py-20 text-center text-white/50">
             <BookOpen className="w-10 h-10 text-[#FF5722] mx-auto mb-3" />
             <div className="font-display text-xl text-white uppercase">No Engineering Guides Located</div>

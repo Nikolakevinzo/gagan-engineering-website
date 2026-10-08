@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, ArrowRight, Phone, MessageCircle, ShieldCheck, Printer, FileText, ChevronDown, Wrench, Factory, Globe, Send, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
@@ -6,17 +6,21 @@ import SEO from "@/components/SEO";
 import ProductCard from "@/components/ProductCard";
 import ProductGallery from "@/components/ProductGallery";
 import SectionHeader from "@/components/SectionHeader";
-import { CATALOGUE_PRODUCTS, getLiveCatalogueProducts, getProductImages, getProductVideoId } from "@/lib/catalogueData";
+import { getProductImages, getProductVideoId } from "@/lib/catalogueData";
 import { BUSINESS } from "@/lib/business";
 import { api } from "@/lib/api";
 
 export default function ProductDetail() {
   const { id } = useParams();
+  const requestRoute = useRef({ id });
+  if (requestRoute.current.id !== id) requestRoute.current = { id };
   const navigate = useNavigate();
 
   const [product, setProduct] = useState(null);
   const [related, setRelated] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadedId, setLoadedId] = useState(null);
+  const [productError, setProductError] = useState(false);
   const [openFaq, setOpenFaq] = useState(null);
 
   // Instant RFQ form state
@@ -30,6 +34,7 @@ export default function ProductDetail() {
   });
   const [rfqSubmitting, setRfqSubmitting] = useState(false);
   const [rfqDone, setRfqDone] = useState(false);
+  const [rfqError, setRfqError] = useState(false);
 
   const handleRfqSubmit = async (e) => {
     e.preventDefault();
@@ -38,6 +43,8 @@ export default function ProductDetail() {
       return;
     }
 
+    const submittedRoute = requestRoute.current;
+    setRfqError(false);
     setRfqSubmitting(true);
     try {
       const payload = {
@@ -49,6 +56,8 @@ export default function ProductDetail() {
       };
 
       const res = await api.post("/contact", payload);
+      if (requestRoute.current !== submittedRoute) return;
+      if (!res.data?.lead_id) throw new Error("Quotation confirmation was not received");
 
       // Save lead locally to browser backup
       try {
@@ -69,60 +78,52 @@ export default function ProductDetail() {
       toast.success("Quotation request submitted to our engineering team!");
       setRfqDone(true);
     } catch (err) {
-      console.error("RFQ submission error:", err);
-      toast.success("Inquiry noted! Our engineering team will contact you shortly.");
-      setRfqDone(true);
+      if (requestRoute.current !== submittedRoute) return;
+      toast.error("Your request could not be submitted. Please retry or contact us directly.");
+      setRfqError(true);
     } finally {
-      setRfqSubmitting(false);
+      if (requestRoute.current === submittedRoute) setRfqSubmitting(false);
     }
   };
 
   useEffect(() => {
+    let isMounted = true;
     setLoading(true);
+    setProduct(null);
+    setProductError(false);
+    setRelated([]);
+    setOpenFaq(null);
+    setRfqDone(false);
+    setRfqError(false);
+    setRfqSubmitting(false);
 
-    const getLocalProduct = (prodId) => {
-      try {
-        const stored = JSON.parse(localStorage.getItem("gagan_custom_products") || "[]");
-        return stored.find((p) => p.id === prodId);
-      } catch (e) {
-        return null;
-      }
+    const applyProduct = (p, relatedProducts) => {
+      if (!isMounted) return;
+      const publishedProduct = p?.published !== false ? p : null;
+      setProduct(publishedProduct || null);
+      setRelated(publishedProduct ? relatedProducts.filter((item) => item.published !== false) : []);
+      setLoadedId(id);
+      setLoading(false);
+      window.scrollTo(0, 0);
     };
 
-    api
-      .get(`/products/${id}`)
+    api.get(`/products/${id}`)
       .then((r) => {
-        let p = (r.data && r.data.product) ? r.data.product : CATALOGUE_PRODUCTS.find((item) => item.id === id);
-        const localOverride = getLocalProduct(id);
-        if (localOverride) p = { ...p, ...localOverride };
-        if (p) {
-          setProduct(p);
-          setRelated(
-            r.data?.related ||
-            CATALOGUE_PRODUCTS.filter((item) => item.categorySlug === p.categorySlug && item.id !== p.id).slice(0, 3)
-          );
-        }
-        setLoading(false);
-        window.scrollTo(0, 0);
+        // A successful public API response is authoritative, including a missing product.
+        applyProduct(r.data?.product, Array.isArray(r.data?.related) ? r.data.related : []);
       })
-      .catch(() => {
-        let p = CATALOGUE_PRODUCTS.find((item) => item.id === id);
-        const localOverride = getLocalProduct(id);
-        if (localOverride) p = { ...p, ...localOverride };
-        if (p) {
-          setProduct(p);
-          setRelated(
-            CATALOGUE_PRODUCTS.filter((item) => item.categorySlug === p.categorySlug && item.id !== p.id).slice(0, 3)
-          );
-        }
-        setLoading(false);
-        window.scrollTo(0, 0);
+      .catch((err) => {
+        if (isMounted && (!err.response || err.response.status >= 500)) setProductError(true);
+        applyProduct(null, []);
       });
+
+    return () => { isMounted = false; };
   }, [id]);
 
-  if (loading) {
+  if (loading || loadedId !== id) {
     return (
       <div className="bg-[#050505] min-h-screen pt-32 flex items-center justify-center text-white/50 mono uppercase tracking-widest text-sm">
+        <SEO title="Loading Machine Specifications" canonicalUrl={`${BUSINESS.websiteUrl}/products/${id}`} />
         Loading Machine Specifications...
       </div>
     );
@@ -131,9 +132,10 @@ export default function ProductDetail() {
   if (!product) {
     return (
       <div className="bg-[#050505] min-h-screen pt-32 flex flex-col items-center justify-center text-center px-4">
-        <h1 className="font-display text-4xl text-white uppercase mb-4">Machine Not Found</h1>
+        <SEO title={productError ? "Machine Temporarily Unavailable" : "Machine Not Found"} robots="noindex, follow" canonicalUrl={`${BUSINESS.websiteUrl}/products/${id}`} />
+        <h1 className="font-display text-4xl text-white uppercase mb-4">{productError ? "Machine Temporarily Unavailable" : "Machine Not Found"}</h1>
         <p className="text-white/60 mb-8 max-w-md">
-          The requested machinery specification may have been moved or updated in our workshop catalogue.
+          {productError ? "We could not load this machine. Please refresh to try again." : "The requested machinery specification may have been moved or updated in our workshop catalogue."}
         </p>
         <Link to="/products" className="btn-primary">
           Browse All Machinery
@@ -323,6 +325,7 @@ export default function ProductDetail() {
               </div>
             ) : (
               <form onSubmit={handleRfqSubmit} className="space-y-4">
+                {rfqError && <p role="alert" className="text-red-400 text-sm">Your request was not submitted. Please retry, <a href={`tel:${BUSINESS.phone}`} className="underline">call us</a> or <a href={`https://wa.me/${BUSINESS.phoneRaw}`} target="_blank" rel="noreferrer" className="underline">use WhatsApp</a>.</p>}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                   <div>
                     <label className="block mono text-[10px] uppercase tracking-wider text-white/60 mb-1.5">

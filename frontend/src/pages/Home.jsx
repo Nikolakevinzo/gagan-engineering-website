@@ -5,7 +5,6 @@ import SEO from "@/components/SEO";
 import ProductCard from "@/components/ProductCard";
 import SectionHeader from "@/components/SectionHeader";
 import { BUSINESS, GLOBAL_FAQS } from "@/lib/business";
-import { CATALOGUE_PRODUCTS, getLiveCatalogueProducts } from "@/lib/catalogueData";
 import { api } from "@/lib/api";
 
 const HERO_BG = "/hero-bg.jpg";
@@ -47,51 +46,25 @@ const INDUSTRIES = [
 ];
 
 export default function Home() {
-  const [products, setProducts] = useState(getLiveCatalogueProducts);
-  const [featured, setFeatured] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [catalogueError, setCatalogueError] = useState(false);
   const [selectedIndustry, setSelectedIndustry] = useState("all");
   const [openFaq, setOpenFaq] = useState(null);
 
   useEffect(() => {
-    // Helper: merge array of products with overrides (later wins)
-    const mergeProducts = (base, overrides) => {
-      const merged = [...base];
-      overrides.forEach((item) => {
-        const idx = merged.findIndex((m) => m.id === item.id);
-        if (idx >= 0) {
-          merged[idx] = { ...merged[idx], ...item };
-        } else {
-          merged.push(item);
-        }
-      });
-      return merged;
+    let isMounted = true;
+    const applyProducts = (list) => {
+      if (!isMounted) return;
+      const visibleProducts = list.filter((p) => p.published !== false);
+      setProducts(visibleProducts);
     };
-
-    const getMerged = (baseList) => {
-      try {
-        const stored = JSON.parse(localStorage.getItem("gagan_custom_products") || "[]");
-        if (Array.isArray(stored) && stored.length > 0) {
-          return mergeProducts(baseList, stored);
-        }
-      } catch (e) {}
-      return baseList;
-    };
-
-    api
-      .get("/products")
-      .then((r) => {
-        const base = (r.data && Array.isArray(r.data.products) && r.data.products.length > 0)
-          ? r.data.products
-          : CATALOGUE_PRODUCTS;
-        const finalProds = getMerged(base);
-        setProducts(finalProds);
-        setFeatured(finalProds.filter((p) => p.featured));
-      })
+    api.get("/products")
+      .then((r) => applyProducts(Array.isArray(r.data?.products) ? r.data.products : []))
       .catch(() => {
-        const finalProds = getMerged(CATALOGUE_PRODUCTS);
-        setProducts(finalProds);
-        setFeatured(finalProds.filter((p) => p.featured));
+        if (isMounted) setCatalogueError(true);
+        applyProducts([]);
       });
+    return () => { isMounted = false; };
   }, []);
 
   const filteredCatalog =
@@ -232,6 +205,7 @@ export default function Home() {
 
           {/* Dynamic Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            {catalogueError && <p role="alert" className="text-red-400">The catalogue is temporarily unavailable. Please refresh to try again.</p>}
             {filteredCatalog.map((p, idx) => (
               <ProductCard key={p.id} product={p} index={idx} />
             ))}

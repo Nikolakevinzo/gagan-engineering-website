@@ -199,8 +199,6 @@ SEED_PRODUCTS = [
                                 "a": "We offer a 1-year comprehensive manufacturer warranty covering hydraulics, drive motors, and electricals, with complete on-site commissioning across Pan-India and export ports."
                     }
         ],
-        "createdAt": datetime.now(timezone.utc),
-        "updatedAt": datetime.now(timezone.utc),
     },
     {
         "id": "automatic-ctl-machine",
@@ -261,8 +259,6 @@ SEED_PRODUCTS = [
                                 "a": "We integrate genuine Yuken hydraulic valves and pumps, Delta/Siemens PLC controllers, and ABB/Schneider electrical switchgear for maximum reliability."
                     }
         ],
-        "createdAt": datetime.now(timezone.utc),
-        "updatedAt": datetime.now(timezone.utc),
     },
     {
         "id": "c-z-purlin-roll-forming-machine",
@@ -322,8 +318,6 @@ SEED_PRODUCTS = [
                                 "a": "We provide a 1-year comprehensive warranty, foundation engineering drawings, on-site mechanical alignment, and full operator training."
                     }
         ],
-        "createdAt": datetime.now(timezone.utc),
-        "updatedAt": datetime.now(timezone.utc),
     },
     {
         "id": "automatic-roofing-sheet-crimping-machine",
@@ -381,8 +375,6 @@ SEED_PRODUCTS = [
                                 "a": "Gagan Engineering Works provides a 1-year comprehensive warranty, complete tooling spares, and on-site operator commissioning."
                     }
         ],
-        "createdAt": datetime.now(timezone.utc),
-        "updatedAt": datetime.now(timezone.utc),
     },
     {
         "id": "corrugated-sheets-making-machine",
@@ -443,8 +435,6 @@ SEED_PRODUCTS = [
                                 "a": "We provide a 1-year comprehensive manufacturer warranty covering mechanical drives, hydraulic power packs, and PLC electronics. Our factory technicians provide on-site installation, commissioning, and operator training across all Indian states and overseas export markets."
                     }
         ],
-        "createdAt": datetime.now(timezone.utc),
-        "updatedAt": datetime.now(timezone.utc),
     },
     {
         "id": "tata-nali-sheet-making-machine",
@@ -508,8 +498,6 @@ SEED_PRODUCTS = [
                                 "a": "We provide complete foundation layout drawings, on-site mechanical alignment, electrical commissioning, and operator training across all Indian states and overseas export markets with a 1-year comprehensive warranty."
                     }
         ],
-        "createdAt": datetime.now(timezone.utc),
-        "updatedAt": datetime.now(timezone.utc),
     },
     {
         "id": "peb-roofing-sheet-making-machine",
@@ -573,8 +561,6 @@ SEED_PRODUCTS = [
                                 "a": "Gagan Engineering Works provides a 1-year comprehensive warranty, foundation engineering support, on-site alignment, and lifelong technical assistance from our Khopoli engineering team."
                     }
         ],
-        "createdAt": datetime.now(timezone.utc),
-        "updatedAt": datetime.now(timezone.utc),
     },
     {
         "id": "semi-automatic-pipe-counter-boring-and-facing-machine",
@@ -632,8 +618,6 @@ SEED_PRODUCTS = [
                                 "a": "We provide a 1-year comprehensive manufacturer warranty, genuine replacement tool holders, hydraulic seals, and rapid technician support."
                     }
         ],
-        "createdAt": datetime.now(timezone.utc),
-        "updatedAt": datetime.now(timezone.utc),
     },
     {
         "id": "double-head-electric-bra-cup-moulding-machine",
@@ -692,8 +676,6 @@ SEED_PRODUCTS = [
                                 "a": "We provide a 1-year comprehensive manufacturer warranty, complete mould set documentation, and on-site operator training across India and export markets."
                     }
         ],
-        "createdAt": datetime.now(timezone.utc),
-        "updatedAt": datetime.now(timezone.utc),
     },
     {
         "id": "bra-cup-fabric-moulding-machine",
@@ -751,8 +733,6 @@ SEED_PRODUCTS = [
                                 "a": "We provide a 1-year comprehensive warranty, spare heating elements, and on-site commissioning across all textile manufacturing hubs."
                     }
         ],
-        "createdAt": datetime.now(timezone.utc),
-        "updatedAt": datetime.now(timezone.utc),
     },
     {
         "id": "foam-bra-cup-moulding-machine",
@@ -810,8 +790,6 @@ SEED_PRODUCTS = [
                                 "a": "We offer a 1-year comprehensive warranty, technical tooling drawings, and on-site operator commissioning across Pan-India."
                     }
         ],
-        "createdAt": datetime.now(timezone.utc),
-        "updatedAt": datetime.now(timezone.utc),
     },
     {
         "id": "padded-bra-cup-moulding-machine",
@@ -869,8 +847,6 @@ SEED_PRODUCTS = [
                                 "a": "We provide a 1-year comprehensive warranty, complete die engineering support, and rapid on-site commissioning across India."
                     }
         ],
-        "createdAt": datetime.now(timezone.utc),
-        "updatedAt": datetime.now(timezone.utc),
     },
 ]
 
@@ -1069,82 +1045,58 @@ def verify_admin(request: Request):
 
 # ----------------- DB Helpers -----------------
 async def get_products_from_db() -> List[Dict]:
-    """Fetch all products from MongoDB, fallback to in-memory."""
-    if db is None:
-        return _mem_products
-    try:
-        cursor = db["products"].find({}, {"_id": 0})
-        products = await cursor.to_list(length=1000)
-        if products:
-            return products
-        return _mem_products
-    except Exception:
-        return _mem_products
+    """Merge seed products with authoritative DB records and deletion markers."""
+    products = {p["id"]: p for p in _mem_products}
+    if db is not None:
+        try:
+            docs = await db["products"].find({}, {"_id": 0}).to_list(length=None)
+            products.update({p["id"]: p for p in docs})
+        except Exception as e:
+            logger.warning(f"Error fetching products from DB: {e}")
+            raise HTTPException(status_code=503, detail="Product storage is unavailable. Please try again later.") from e
+    return [p for p in products.values() if not p.get("deleted")]
 
 async def get_product_by_id(product_id: str) -> Optional[Dict]:
-    """Fetch single product from MongoDB, fallback to in-memory."""
-    if db is None:
-        return next((p for p in _mem_products if p["id"] == product_id), None)
-    try:
-        product = await db["products"].find_one({"id": product_id}, {"_id": 0})
-        if product:
-            return product
-    except Exception:
-        pass
-    return next((p for p in _mem_products if p["id"] == product_id), None)
+    """Use a seed only when the product is genuinely absent from the DB."""
+    product = None
+    if db is not None:
+        try:
+            product = await db["products"].find_one({"id": product_id}, {"_id": 0})
+        except Exception as e:
+            logger.warning(f"Error fetching product {product_id} from DB: {e}")
+            raise HTTPException(status_code=503, detail="Product storage is unavailable. Please try again later.") from e
+    if product is None:
+        product = next((p for p in _mem_products if p["id"] == product_id), None)
+    return product if product and not product.get("deleted") else None
 
 async def get_blogs_from_db(published_only: bool = True) -> List[Dict]:
-    """Fetch blog articles from MongoDB, fallback to in-memory/seed."""
-    if db is None:
-        if published_only:
-            return [b for b in _mem_blogs if b.get("published", True)]
-        return list(_mem_blogs)
-    try:
-        query = {"published": True} if published_only else {}
-        cursor = db["blogs"].find(query, {"_id": 0}).sort("date", -1)
-        docs = await cursor.to_list(length=500)
-        existing_slugs = {d.get("slug") for d in (docs or []) if d.get("slug")}
-        missing_seed = [
-            b for b in _mem_blogs
-            if b.get("slug") not in existing_slugs and (not published_only or b.get("published", True))
-        ]
-        combined = (docs or []) + missing_seed
-        combined.sort(key=lambda x: str(x.get("date", "")), reverse=True)
-        if combined:
-            return combined
-        if published_only:
-            return [b for b in _mem_blogs if b.get("published", True)]
-        return list(_mem_blogs)
-    except Exception as e:
-        logger.warning(f"Error fetching blogs from DB: {e}")
-        if published_only:
-            return [b for b in _mem_blogs if b.get("published", True)]
-        return list(_mem_blogs)
+    """Merge seeds with authoritative DB publishing state before filtering."""
+    articles = {b["slug"]: b for b in _mem_blogs}
+    if db is not None:
+        try:
+            # Drafts and deletion tombstones must also override their seed versions.
+            docs = await db["blogs"].find({}, {"_id": 0}).to_list(length=None)
+            articles.update({b["slug"]: b for b in docs})
+        except Exception as e:
+            logger.warning(f"Error fetching blogs from DB: {e}")
+            raise HTTPException(status_code=503, detail="Blog storage is unavailable. Please try again later.") from e
+    visible = [b for b in articles.values() if not b.get("deleted") and (not published_only or b.get("published", True))]
+    return sorted(visible, key=lambda b: str(b.get("date", "")), reverse=True)
 
 async def get_blog_by_slug(slug: str, published_only: bool = False) -> Optional[Dict]:
-    """Fetch single blog article by slug."""
-    if db is None:
-        for b in _mem_blogs:
-            if b.get("slug") == slug:
-                if published_only and not b.get("published", True):
-                    return None
-                return b
+    """Fetch a DB article, falling back only when the slug is genuinely absent."""
+    doc = None
+    if db is not None:
+        try:
+            doc = await db["blogs"].find_one({"slug": slug}, {"_id": 0})
+        except Exception as e:
+            logger.warning(f"Error fetching blog {slug} from DB: {e}")
+            raise HTTPException(status_code=503, detail="Blog storage is unavailable. Please try again later.") from e
+    if doc is None:
+        doc = next((b for b in _mem_blogs if b.get("slug") == slug), None)
+    if doc is None or doc.get("deleted") or (published_only and not doc.get("published", True)):
         return None
-    try:
-        query = {"slug": slug}
-        if published_only:
-            query["published"] = True
-        doc = await db["blogs"].find_one(query, {"_id": 0})
-        if doc:
-            return doc
-    except Exception as e:
-        logger.warning(f"Error fetching blog {slug} from DB: {e}")
-    for b in _mem_blogs:
-        if b.get("slug") == slug:
-            if published_only and not b.get("published", True):
-                return None
-            return b
-    return None
+    return doc
 
 
 # ----------------- Startup Seeder -----------------
@@ -1170,22 +1122,9 @@ async def seed_database():
                     await db["products"].insert_one({**p})
                     logger.info(f"Auto-seeded missing product: {p['id']}")
         
-        blog_count = await db["blogs"].count_documents({})
-        if blog_count == 0:
-            logger.info("Seeding blogs collection with default articles...")
-            await db["blogs"].insert_many([
-                {**b, "_id_excluded": True} for b in SEED_BLOGS
-            ])
-            await db["blogs"].update_many({}, {"$unset": {"_id_excluded": ""}})
-            logger.info(f"Seeded {len(SEED_BLOGS)} blogs successfully.")
-        else:
-            for b in SEED_BLOGS:
-                if await db["blogs"].count_documents({"slug": b["slug"]}) == 0:
-                    doc = dict(b)
-                    doc["createdAt"] = datetime.now(timezone.utc)
-                    doc["updatedAt"] = datetime.now(timezone.utc)
-                    await db["blogs"].insert_one(doc)
-                    logger.info(f"Auto-seeded missing blog: {b['slug']}")
+        for b in SEED_BLOGS:
+            # Insert missing seeds without replacing edits, drafts or deletion tombstones.
+            await db["blogs"].update_one({"slug": b["slug"]}, {"$setOnInsert": dict(b)}, upsert=True)
     except Exception as e:
         logger.warning(f"Could not seed database: {e}")
 
@@ -1258,7 +1197,10 @@ async def send_lead_email_with_diagnostics(lead: ContactLead) -> Tuple[Optional[
     # Method 1: Try Resend SDK
     try:
         result = await asyncio.to_thread(resend.Emails.send, payload)
-        email_id = result.get("id") if isinstance(result, dict) else str(result)
+        email_id = result.get("id") if isinstance(result, dict) else getattr(result, "id", None)
+        if not isinstance(email_id, str) or not email_id.strip():
+            raise ValueError("Email provider did not return a confirmation ID.")
+        email_id = email_id.strip()
         logger.info(f"Lead email successfully sent via Resend SDK for {lead.name}: {email_id}")
         return email_id, None
     except Exception as e:
@@ -1281,7 +1223,10 @@ async def send_lead_email_with_diagnostics(lead: ContactLead) -> Tuple[Optional[
         )
         if res.status_code in (200, 201):
             data = res.json()
-            email_id = data.get("id", "sent")
+            email_id = data.get("id") if isinstance(data, dict) else None
+            if not isinstance(email_id, str) or not email_id.strip():
+                raise ValueError("Email provider did not return a confirmation ID.")
+            email_id = email_id.strip()
             logger.info(f"Lead email successfully sent via Resend REST API for {lead.name}: {email_id}")
             return email_id, None
         else:
@@ -1381,16 +1326,27 @@ async def submit_contact(payload: ContactLeadCreate, request: Request):
     lead_dict = lead.model_dump()
     lead_dict["created_at"] = lead.created_at.isoformat()
 
-    # Always keep in memory so leads section works even without MongoDB
-    _mem_leads.insert(0, lead_dict)
-
+    lead_saved = False
     if db is not None:
         try:
-            await db["contact_leads"].insert_one(lead.model_dump())
+            result = await db["contact_leads"].insert_one(lead.model_dump())
+            lead_saved = result.acknowledged
         except Exception as e:
             logger.warning(f"Failed to save lead to MongoDB: {e}")
 
-    email_id, err_detail = await send_lead_email_with_diagnostics(lead)
+    try:
+        email_id, err_detail = await send_lead_email_with_diagnostics(lead)
+    except Exception as e:
+        logger.warning(f"Failed to send lead email: {e}")
+        email_id, err_detail = None, "Email delivery is temporarily unavailable."
+
+    if not lead_saved and not email_id:
+        raise HTTPException(
+            status_code=503,
+            detail="We couldn't receive your quotation request. Please retry in a few minutes or contact us directly via phone or WhatsApp."
+        )
+
+    _mem_leads.insert(0, lead_dict)
 
     return {
         "status": "success",
@@ -1549,8 +1505,9 @@ def _validate_youtube_url(url: Optional[str]) -> Optional[str]:
 
 @admin_router.post("/products", status_code=201)
 async def admin_create_product(payload: ProductCreate, username: str = Depends(verify_admin)):
+    if db is None:
+        raise HTTPException(status_code=503, detail="Product storage is unavailable. Nothing was saved.")
     product_id = payload.id or payload.name.lower().replace(" ", "-").replace("/", "-").replace("&", "and")
-    # Slugify
     import re
     product_id = re.sub(r'[^a-z0-9-]', '', re.sub(r'\s+', '-', product_id.lower()))
 
@@ -1575,20 +1532,19 @@ async def admin_create_product(payload: ProductCreate, username: str = Depends(v
         "updatedAt": datetime.now(timezone.utc),
     }
 
-    if db is not None:
-        try:
-            await db["products"].insert_one({**new_product})
-            await db["products"].update_one({"id": product_id}, {"$unset": {"_id": ""}})
-        except Exception as e:
-            logger.warning(f"Failed to insert product to MongoDB: {e}")
-            _mem_products.append(new_product)
-    else:
-        _mem_products.append(new_product)
+    try:
+        # Reuse a deletion marker when restoring a product ID.
+        await db["products"].replace_one({"id": product_id}, dict(new_product), upsert=True)
+    except Exception as e:
+        logger.warning(f"Failed to save product to MongoDB: {e}")
+        raise HTTPException(status_code=503, detail="The product save could not be confirmed. Refresh before retrying.") from e
 
     return {"status": "created", "product": new_product}
 
 @admin_router.put("/products/{product_id}")
 async def admin_update_product(product_id: str, payload: ProductUpdate, username: str = Depends(verify_admin)):
+    if db is None:
+        raise HTTPException(status_code=503, detail="Product storage is unavailable. Nothing was saved.")
     existing = await get_product_by_id(product_id)
     if not existing:
         raise HTTPException(status_code=404, detail="Product not found")
@@ -1606,45 +1562,37 @@ async def admin_update_product(product_id: str, payload: ProductUpdate, username
 
     update_data["updatedAt"] = datetime.now(timezone.utc)
 
-    if db is not None:
-        try:
-            await db["products"].update_one({"id": product_id}, {"$set": update_data})
-        except Exception as e:
-            logger.warning(f"MongoDB update failed: {e}")
-            for i, p in enumerate(_mem_products):
-                if p["id"] == product_id:
-                    _mem_products[i] = {**p, **update_data}
-                    break
-    else:
-        for i, p in enumerate(_mem_products):
-            if p["id"] == product_id:
-                _mem_products[i] = {**p, **update_data}
-                break
-
-    updated = await get_product_by_id(product_id)
+    updated = {**existing, **update_data}
+    try:
+        await db["products"].update_one({"id": product_id}, {"$set": updated}, upsert=True)
+    except Exception as e:
+        logger.warning(f"MongoDB product update failed: {e}")
+        raise HTTPException(status_code=503, detail="The product save could not be confirmed. Refresh before retrying.") from e
     return {"status": "updated", "product": updated}
 
 @admin_router.delete("/products/{product_id}")
 async def admin_delete_product(product_id: str, username: str = Depends(verify_admin)):
-    global _mem_products
+    if db is None:
+        raise HTTPException(status_code=503, detail="Product storage is unavailable. Nothing was deleted.")
     existing = await get_product_by_id(product_id)
     if not existing:
         raise HTTPException(status_code=404, detail="Product not found")
 
-    if db is not None:
-        try:
-            await db["products"].delete_one({"id": product_id})
-        except Exception as e:
-            logger.warning(f"MongoDB delete failed: {e}")
-            _mem_products = [p for p in _mem_products if p["id"] != product_id]
-    else:
-        _mem_products = [p for p in _mem_products if p["id"] != product_id]
+    try:
+        await db["products"].update_one({"id": product_id}, {"$set": {
+            "deleted": True, "updatedAt": datetime.now(timezone.utc)
+        }}, upsert=True)
+    except Exception as e:
+        logger.warning(f"MongoDB product delete failed: {e}")
+        raise HTTPException(status_code=503, detail="The product deletion could not be confirmed. Refresh before retrying.") from e
 
     return {"status": "deleted", "id": product_id}
 
 @admin_router.post("/products/import")
 async def admin_import_products(products: List[ProductCreate], username: str = Depends(verify_admin)):
     """Bulk import products from JSON array. Skips duplicates by ID."""
+    if db is None:
+        raise HTTPException(status_code=503, detail="Product storage is unavailable. Nothing was saved.")
     import re
     created = []
     skipped = []
@@ -1653,27 +1601,18 @@ async def admin_import_products(products: List[ProductCreate], username: str = D
         product_id = payload.id or payload.name.lower()
         product_id = re.sub(r'[^a-z0-9-]', '', re.sub(r'\s+', '-', product_id.lower()))
 
-        existing = await get_product_by_id(product_id)
-        if existing:
-            skipped.append(product_id)
-            continue
-
-        new_product = {
-            **payload.model_dump(),
-            "id": product_id,
-            "faqs": [f.model_dump() for f in (payload.faqs or [])],
-            "createdAt": datetime.now(timezone.utc),
-            "updatedAt": datetime.now(timezone.utc),
-        }
-
-        if db is not None:
-            try:
-                await db["products"].insert_one({**new_product})
-            except Exception as e:
-                logger.warning(f"Failed to insert product {product_id}: {e}")
-                _mem_products.append(new_product)
-        else:
-            _mem_products.append(new_product)
+        try:
+            await admin_create_product(payload.model_copy(update={"id": product_id}), username=username)
+        except HTTPException as e:
+            if e.status_code == 409:
+                skipped.append(product_id)
+                continue
+            if created:
+                raise HTTPException(status_code=e.status_code, detail={
+                    "message": "Import stopped. Earlier products were saved; review these IDs before retrying.",
+                    "error": e.detail, "created_ids": created, "skipped_ids": skipped
+                }) from e
+            raise
 
         created.append(product_id)
 
@@ -1740,6 +1679,8 @@ async def admin_get_blog(slug: str, username: str = Depends(verify_admin)):
 
 @admin_router.post("/blogs", status_code=201)
 async def admin_create_blog(payload: BlogArticleCreate, username: str = Depends(verify_admin)):
+    if db is None:
+        raise HTTPException(status_code=503, detail="Blog storage is unavailable. Nothing was saved.")
     import re
     slug = payload.slug or payload.title.lower()
     slug = re.sub(r'[^a-z0-9-]', '', re.sub(r'[\s_]+', '-', slug.lower())).strip('-')
@@ -1759,20 +1700,19 @@ async def admin_create_blog(payload: BlogArticleCreate, username: str = Depends(
         "updatedAt": now,
     }
 
-    if db is not None:
-        try:
-            await db["blogs"].insert_one({**new_article})
-            await db["blogs"].update_one({"slug": slug}, {"$unset": {"_id": ""}})
-        except Exception as e:
-            logger.warning(f"Failed to insert blog to MongoDB: {e}")
-            _mem_blogs.append(new_article)
-    else:
-        _mem_blogs.append(new_article)
+    try:
+        # Reuse a deleted slug's tombstone rather than inserting a duplicate document.
+        await db["blogs"].replace_one({"slug": slug}, dict(new_article), upsert=True)
+    except Exception as e:
+        logger.warning(f"Failed to save blog to MongoDB: {e}")
+        raise HTTPException(status_code=503, detail="The blog save could not be confirmed. Refresh before retrying.") from e
 
     return {"status": "created", "article": new_article}
 
 @admin_router.put("/blogs/{slug}")
 async def admin_update_blog(slug: str, payload: BlogArticleUpdate, username: str = Depends(verify_admin)):
+    if db is None:
+        raise HTTPException(status_code=503, detail="Blog storage is unavailable. Nothing was saved.")
     existing = await get_blog_by_slug(slug, published_only=False)
     if not existing:
         raise HTTPException(status_code=404, detail="Blog article not found")
@@ -1780,39 +1720,31 @@ async def admin_update_blog(slug: str, payload: BlogArticleUpdate, username: str
     update_data = {k: v for k, v in payload.model_dump(exclude_unset=True).items() if v is not None}
     update_data["updatedAt"] = datetime.now(timezone.utc)
 
-    if db is not None:
-        try:
-            await db["blogs"].update_one({"slug": slug}, {"$set": update_data})
-        except Exception as e:
-            logger.warning(f"MongoDB blog update failed: {e}")
-            for i, b in enumerate(_mem_blogs):
-                if b["slug"] == slug:
-                    _mem_blogs[i] = {**b, **update_data}
-                    break
-    else:
-        for i, b in enumerate(_mem_blogs):
-            if b["slug"] == slug:
-                _mem_blogs[i] = {**b, **update_data}
-                break
-
-    updated = await get_blog_by_slug(slug, published_only=False)
+    updated = {**existing, **update_data}
+    try:
+        # A fallback seed may not exist in MongoDB yet; persist the complete article.
+        await db["blogs"].update_one({"slug": slug}, {"$set": updated}, upsert=True)
+    except Exception as e:
+        logger.warning(f"MongoDB blog update failed: {e}")
+        raise HTTPException(status_code=503, detail="The blog save could not be confirmed. Refresh before retrying.") from e
     return {"status": "updated", "article": updated}
 
 @admin_router.delete("/blogs/{slug}")
 async def admin_delete_blog(slug: str, username: str = Depends(verify_admin)):
+    if db is None:
+        raise HTTPException(status_code=503, detail="Blog storage is unavailable. Nothing was deleted.")
     existing = await get_blog_by_slug(slug, published_only=False)
     if not existing:
         raise HTTPException(status_code=404, detail="Blog article not found")
 
-    if db is not None:
-        try:
-            await db["blogs"].delete_one({"slug": slug})
-        except Exception as e:
-            logger.warning(f"MongoDB delete blog failed: {e}")
-            global _mem_blogs
-            _mem_blogs = [b for b in _mem_blogs if b["slug"] != slug]
-    else:
-        _mem_blogs = [b for b in _mem_blogs if b["slug"] != slug]
+    try:
+        # Retain a durable marker so fallback merging and startup cannot restore it.
+        await db["blogs"].update_one({"slug": slug}, {"$set": {
+            "published": False, "deleted": True, "updatedAt": datetime.now(timezone.utc)
+        }}, upsert=True)
+    except Exception as e:
+        logger.warning(f"MongoDB delete blog failed: {e}")
+        raise HTTPException(status_code=503, detail="The blog deletion could not be confirmed. Refresh before retrying.") from e
 
     return {"status": "deleted", "slug": slug}
 
@@ -1981,244 +1913,76 @@ def get_product_sku(p_id: str) -> str:
     clean = re.sub(r'[^a-zA-Z0-9]', '', p_id).upper()
     return f"GSK-{clean[:16]}"
 
-PRODUCT_ESTIMATED_PRICES = {
-    "10-tons-hydraulic-decoiler": "350000.00",
-    "automatic-ctl-machine": "950000.00",
-    "c-z-purlin-roll-forming-machine": "1200000.00",
-    "automatic-roofing-sheet-crimping-machine": "450000.00",
-    "corrugated-sheets-making-machine": "650000.00",
-    "semi-automatic-pipe-counter-boring-and-facing-machine": "250000.00",
-    "double-head-electric-bra-cup-moulding-machine": "150000.00",
-    "bra-cup-fabric-moulding-machine": "125000.00",
-    "foam-bra-cup-moulding-machine": "135000.00",
-    "padded-bra-cup-moulding-machine": "165000.00",
-}
+def _absolute_image_url(image):
+    from urllib.parse import urljoin
+    return urljoin(f"{WEBSITE_URL.rstrip('/')}/", image or "logo.png")
+
+def _content_lastmod(record):
+    """Use recorded content dates; never claim a request changed the page."""
+    for key in ("updatedAt", "updated_at", "dateModified", "date", "createdAt"):
+        value = record.get(key)
+        if isinstance(value, datetime):
+            return value.date().isoformat()
+        if isinstance(value, str):
+            try:
+                return datetime.fromisoformat(value.replace("Z", "+00:00")).date().isoformat()
+            except ValueError:
+                continue
+    return None
+
 
 @app.get("/sitemap.xml", response_class=Response)
 async def sitemap():
+    import xml.etree.ElementTree as ET
+    from urllib.parse import quote
     products = await get_products_from_db()
-    now = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    blogs = await get_blogs_from_db(published_only=True)
+    sitemap_ns = "http://www.sitemaps.org/schemas/sitemap/0.9"
+    image_ns = "http://www.google.com/schemas/sitemap-image/1.1"
+    ET.register_namespace("", sitemap_ns)
+    ET.register_namespace("image", image_ns)
+    root = ET.Element(f"{{{sitemap_ns}}}urlset")
 
-    urls = [
-        f"""  <url>
-    <loc>{WEBSITE_URL}/</loc>
-    <lastmod>{now}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
-  </url>""",
-        f"""  <url>
-    <loc>{WEBSITE_URL}/products</loc>
-    <lastmod>{now}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.95</priority>
-  </url>""",
-        f"""  <url>
-    <loc>{WEBSITE_URL}/products/category/bra-cup-moulding-machine</loc>
-    <lastmod>{now}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.90</priority>
-  </url>""",
-        f"""  <url>
-    <loc>{WEBSITE_URL}/products/category/roll-forming-sheet-metal</loc>
-    <lastmod>{now}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.90</priority>
-  </url>""",
-        f"""  <url>
-    <loc>{WEBSITE_URL}/products/category/cut-to-length-line</loc>
-    <lastmod>{now}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.90</priority>
-  </url>""",
-        f"""  <url>
-    <loc>{WEBSITE_URL}/about</loc>
-    <lastmod>{now}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>""",
-        f"""  <url>
-    <loc>{WEBSITE_URL}/factory</loc>
-    <lastmod>{now}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
-  </url>""",
-        f"""  <url>
-    <loc>{WEBSITE_URL}/blog</loc>
-    <lastmod>{now}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.90</priority>
-  </url>""",
-        f"""  <url>
-    <loc>{WEBSITE_URL}/blog/23-nali-liner-sheet-roll-forming-machine-guide</loc>
-    <lastmod>{now}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.92</priority>
-  </url>""",
-        f"""  <url>
-    <loc>{WEBSITE_URL}/blog/guide-to-bra-cup-moulding-machines</loc>
-    <lastmod>{now}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.88</priority>
-  </url>""",
-        f"""  <url>
-    <loc>{WEBSITE_URL}/blog/automatic-cut-to-length-ctl-line-guide</loc>
-    <lastmod>{now}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.88</priority>
-  </url>""",
-        f"""  <url>
-    <loc>{WEBSITE_URL}/blog/c-z-purlin-roll-forming-machine-guide</loc>
-    <lastmod>{now}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.88</priority>
-  </url>""",
-        f"""  <url>
-    <loc>{WEBSITE_URL}/blog/10-ton-hydraulic-decoiler-guide</loc>
-    <lastmod>{now}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.88</priority>
-  </url>""",
-        f"""  <url>
-    <loc>{WEBSITE_URL}/blog/industrial-machinery-export-guide-india</loc>
-    <lastmod>{now}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.88</priority>
-  </url>""",
-        f"""  <url>
-    <loc>{WEBSITE_URL}/blog/gc-roofing-sheet-manufacturing-business-guide</loc>
-    <lastmod>{now}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.95</priority>
-  </url>""",
-        f"""  <url>
-    <loc>{WEBSITE_URL}/blog/guide-to-corrugated-sheet-making-machines</loc>
-    <lastmod>{now}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.92</priority>
-  </url>""",
-        f"""  <url>
-    <loc>{WEBSITE_URL}/blog/pipe-counter-boring-and-facing-machine-guide</loc>
-    <lastmod>{now}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.90</priority>
-  </url>""",
-        f"""  <url>
-    <loc>{WEBSITE_URL}/blog/curved-roofing-sheet-crimping-machine-guide</loc>
-    <lastmod>{now}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.90</priority>
-  </url>""",
-        f"""  <url>
-    <loc>{WEBSITE_URL}/contact</loc>
-    <lastmod>{now}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
-  </url>""",
-        f"""  <url>
-    <loc>{WEBSITE_URL}/return-policy</loc>
-    <lastmod>{now}</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.5</priority>
-  </url>""",
+    def add_url(path, record=None):
+        node = ET.SubElement(root, f"{{{sitemap_ns}}}url")
+        ET.SubElement(node, f"{{{sitemap_ns}}}loc").text = f"{WEBSITE_URL.rstrip('/')}/{path}"
+        lastmod = _content_lastmod(record or {})
+        if lastmod:
+            ET.SubElement(node, f"{{{sitemap_ns}}}lastmod").text = lastmod
+        return node
 
-        f"""  <url>
-    <loc>{WEBSITE_URL}/privacy-policy</loc>
-    <lastmod>{now}</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.5</priority>
-  </url>""",
-        f"""  <url>
-    <loc>{WEBSITE_URL}/terms</loc>
-    <lastmod>{now}</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.5</priority>
-  </url>""",
-    ]
-
-
-    for p in products:
-        product_date = now
-        if isinstance(p.get("updatedAt"), datetime):
-            product_date = p["updatedAt"].strftime("%Y-%m-%d")
-        
-        img_tag = ""
-        if p.get("image"):
-            img_url = p["image"]
-            p_name = p.get("name", "").replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-            img_tag = f"""
-    <image:image>
-      <image:loc>{img_url}</image:loc>
-      <image:title>{p_name}</image:title>
-      <image:caption>{p_name} manufactured by Gagan Engineering Works Khopoli</image:caption>
-    </image:image>"""
-
-        urls.append(f"""  <url>
-    <loc>{WEBSITE_URL}/products/{p['id']}</loc>
-    <lastmod>{product_date}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>{img_tag}
-  </url>""")
-
-    xml = f"""<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
-{chr(10).join(urls)}
-</urlset>"""
-
+    for path in ("", "products", "about", "factory", "contact", "blog", "return-policy", "privacy-policy", "terms"):
+        add_url(path)
+    for slug in ("roll-forming-sheet-metal", "cut-to-length-line", "bra-cup-moulding-machine", "bending-machines", "facing-machines", "threading-machines", "recoiling-decoiling-machines"):
+        add_url(f"products/category/{slug}")
+    for blog in blogs:
+        if blog.get("slug"):
+            add_url(f"blog/{quote(str(blog['slug']), safe='')}", blog)
+    for product in products:
+        if not product.get("id"):
+            continue
+        node = add_url(f"products/{quote(str(product['id']), safe='')}", product)
+        if product.get("image"):
+            image = ET.SubElement(node, f"{{{image_ns}}}image")
+            ET.SubElement(image, f"{{{image_ns}}}loc").text = _absolute_image_url(product["image"])
+            ET.SubElement(image, f"{{{image_ns}}}title").text = str(product.get("name", ""))
+    xml = ET.tostring(root, encoding="utf-8", xml_declaration=True)
     return Response(content=xml, media_type="application/xml", headers={"Cache-Control": "public, max-age=3600"})
+
 
 @app.get("/google-merchant-feed.xml", response_class=Response)
 @app.get("/google-shopping-feed.xml", response_class=Response)
 async def google_merchant_feed():
-    products = await get_products_from_db()
-    items = []
-
-    for p in products:
-        p_id = p.get("id", "")
-        p_sku = get_product_sku(p_id)
-        p_name = p.get("name", "").replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-        p_desc = (p.get("description") or p.get("tagline") or p_name).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-        raw_img = p.get("image") or f"{WEBSITE_URL}/logo.png"
-        p_img = raw_img if raw_img.startswith("http") else f"{WEBSITE_URL}{'' if raw_img.startswith('/') else '/'}{raw_img}"
-        p_link = f"{WEBSITE_URL}/products/{p_id}"
-        category = p.get("category", "Industrial Machinery")
-        price_val = PRODUCT_ESTIMATED_PRICES.get(p_id, "150000.00")
-        
-        # Industrial category mapping
-        google_cat = "Business &amp; Industrial &gt; Manufacturing &gt; Manufacturing Machinery"
-        
-        items.append(f"""    <item>
-      <g:id>{p_sku}</g:id>
-      <g:mpn>{p_sku}</g:mpn>
-      <g:title>{p_name}</g:title>
-      <g:description>{p_desc}</g:description>
-      <g:link>{p_link}</g:link>
-      <g:image_link>{p_img}</g:image_link>
-      <g:brand>Gagan Engineering Works</g:brand>
-      <g:condition>new</g:condition>
-      <g:availability>in_stock</g:availability>
-      <g:price>{price_val} INR</g:price>
-      <g:google_product_category>{google_cat}</g:google_product_category>
-      <g:product_type>{category}</g:product_type>
-      <g:identifier_exists>no</g:identifier_exists>
-      <g:shipping>
-        <g:country>IN</g:country>
-        <g:service>Freight Delivery (Pan-India)</g:service>
-        <g:price>0.00 INR</g:price>
-      </g:shipping>
-    </item>""")
-
-    rss = f"""<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">
-  <channel>
-    <title>Gagan Engineering Works - Machinery Catalogue Feed</title>
-    <link>{WEBSITE_URL}</link>
-    <description>Industrial Machinery &amp; Equipment Manufacturer in Khopoli, Maharashtra, India</description>
-{chr(10).join(items)}
-  </channel>
-</rss>"""
-
-    return Response(content=rss, media_type="application/xml", headers={"Cache-Control": "public, max-age=3600"})
+    # These machines are sold by quotation, with no public purchasable offers.
+    # Keep the feed valid but empty until verified price/availability data exists.
+    import xml.etree.ElementTree as ET
+    root = ET.Element("rss", {"version": "2.0", "xmlns:g": "http://base.google.com/ns/1.0"})
+    channel = ET.SubElement(root, "channel")
+    ET.SubElement(channel, "title").text = "Gagan Engineering Works - Machinery Catalogue Feed"
+    ET.SubElement(channel, "link").text = WEBSITE_URL
+    ET.SubElement(channel, "description").text = "Quotation-based industrial machinery; no public shopping offers."
+    xml = ET.tostring(root, encoding="utf-8", xml_declaration=True)
+    return Response(content=xml, media_type="application/xml", headers={"Cache-Control": "public, max-age=3600"})
 
 @admin_router.post("/submit-indexnow")
 @app.post("/api/admin/submit-indexnow")

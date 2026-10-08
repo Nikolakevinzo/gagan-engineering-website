@@ -807,26 +807,6 @@ export const CATEGORIES = [
   { id: "recoiling-decoiling-machines", name: "Re-coiling & De-coiling Machines" }
 ];
 
-export function getLiveCatalogueProducts() {
-  let base = [...CATALOGUE_PRODUCTS];
-  try {
-    if (typeof window !== "undefined") {
-      const stored = JSON.parse(localStorage.getItem("gagan_custom_products") || "[]");
-      if (Array.isArray(stored) && stored.length > 0) {
-        stored.forEach((item) => {
-          const idx = base.findIndex((p) => p.id === item.id);
-          if (idx >= 0) {
-            base[idx] = { ...base[idx], ...item };
-          } else {
-            base.push(item);
-          }
-        });
-      }
-    }
-  } catch (e) {}
-  return base;
-}
-
 // ----------------- Standard Industrial Product SKUs & Indicative Pricing (SEO & Rich Results) -----------------
 
 export const PRODUCT_SKUS = {
@@ -850,21 +830,6 @@ export function getProductSku(id) {
   const clean = id.replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
   return `GSK-${clean.slice(0, 16)}`;
 }
-
-export const PRODUCT_ESTIMATED_PRICES = {
-  "10-tons-hydraulic-decoiler": "350000",
-  "automatic-ctl-machine": "950000",
-  "c-z-purlin-roll-forming-machine": "1200000",
-  "automatic-roofing-sheet-crimping-machine": "450000",
-  "corrugated-sheets-making-machine": "650000",
-  "tata-nali-sheet-making-machine": "850000",
-  "peb-roofing-sheet-making-machine": "1150000",
-  "semi-automatic-pipe-counter-boring-and-facing-machine": "250000",
-  "double-head-electric-bra-cup-moulding-machine": "150000",
-  "bra-cup-fabric-moulding-machine": "125000",
-  "foam-bra-cup-moulding-machine": "135000",
-  "padded-bra-cup-moulding-machine": "165000"
-};
 
 // ----------------- Media Helpers -----------------
 

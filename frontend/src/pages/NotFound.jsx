@@ -8,6 +8,7 @@ export default function NotFound() {
   return (
     <div className="min-h-screen bg-[#050505] text-white pt-28 pb-16 flex items-center justify-center px-4">
       <SEO
+        robots="noindex, follow"
         title="404 Page Not Found"
         description="The machinery page you are looking for may have been moved or updated. Explore our industrial machinery catalogue."
       />

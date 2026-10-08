@@ -665,15 +665,6 @@ export default function AdminProductForm() {
           p = CATALOGUE_PRODUCTS.find((item) => item.id === id);
         }
 
-        // Merge localStorage admin updates on top of fetched product
-        try {
-          const localProducts = JSON.parse(localStorage.getItem("gagan_custom_products") || "[]");
-          const localProd = localProducts.find((item) => item.id === id);
-          if (localProd) {
-            p = { ...(p || {}), ...localProd };
-          }
-        } catch (e) {}
-
         if (!p) throw new Error("Not found");
 
         setForm({
@@ -746,52 +737,15 @@ export default function AdminProductForm() {
       const data = await res.json().catch(() => ({}));
 
       if (res.ok) {
-        // ✅ Server confirmed the save — also update local cache for instant UI feedback
-        try {
-          const stored = JSON.parse(localStorage.getItem("gagan_custom_products") || "[]");
-          const prodId = isEdit ? id : (data?.product?.id || form.name.toLowerCase().replace(/[^a-z0-9]+/g, "-"));
-          const savedProduct = data?.product ? { ...data.product } : { ...payload, id: prodId };
-          const filtered = stored.filter((item) => item.id !== savedProduct.id);
-          localStorage.setItem("gagan_custom_products", JSON.stringify([...filtered, savedProduct]));
-        } catch (e) {}
-
-        setSuccess(isEdit ? "✅ Product updated successfully! Changes are live." : "✅ Product created successfully!");
-        if (!isEdit) {
-          setTimeout(() => navigate("/admin/products"), 1500);
-        }
+        setSuccess(isEdit ? "Product saved successfully." : "Product created successfully!");
+        if (!isEdit) setTimeout(() => navigate("/admin/products"), 1500);
       } else if (res.status === 401) {
-        setError("Authentication failed. Please log out and log in again.");
+        setError("Authentication failed. Please log out and log in again. Your edits remain in the editor.");
       } else {
-        // API failed — save locally as fallback
-        try {
-          const stored = JSON.parse(localStorage.getItem("gagan_custom_products") || "[]");
-          const prodId = isEdit ? id : form.name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
-          const updatedItem = { ...payload, id: prodId };
-          const filtered = stored.filter((item) => item.id !== prodId);
-          localStorage.setItem("gagan_custom_products", JSON.stringify([...filtered, updatedItem]));
-          setSuccess(`⚠️ ${isEdit ? "Updated" : "Created"} (saved to local cache — server error: ${data?.detail || res.status}).`);
-          if (!isEdit) {
-            setTimeout(() => navigate("/admin/products"), 2000);
-          }
-        } catch (e) {
-          setError(`Server error (${res.status}): ${data?.detail || "Could not save product."}`);
-        }
+        setError(typeof data.detail === "string" ? data.detail : typeof data.detail?.message === "string" ? data.detail.message : "Product was not saved. Please check the entered values and retry; your edits remain in the editor.");
       }
     } catch (err) {
-      // Network offline — fallback save to localStorage
-      try {
-        const stored = JSON.parse(localStorage.getItem("gagan_custom_products") || "[]");
-        const prodId = isEdit ? id : form.name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
-        const updatedItem = { ...payload, id: prodId };
-        const filtered = stored.filter((item) => item.id !== prodId);
-        localStorage.setItem("gagan_custom_products", JSON.stringify([...filtered, updatedItem]));
-        setSuccess(`⚠️ ${isEdit ? "Updated" : "Created"} locally (offline mode — will sync when reconnected).`);
-        if (!isEdit) {
-          setTimeout(() => navigate("/admin/products"), 2000);
-        }
-      } catch (e) {
-        setError(`Network error: ${err.message || "Could not save product."}`);
-      }
+      setError("Product was not saved. Check your connection and retry; your edits remain in the editor.");
     } finally {
       setLoading(false);
     }
@@ -817,11 +771,30 @@ export default function AdminProductForm() {
         headers: { ...getAuthHeader(), "Content-Type": "application/json" },
         body: JSON.stringify(parsed),
       });
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        const detail = data.detail;
+        const message = typeof detail === "string" ? detail : typeof detail?.message === "string" ? detail.message : "Import failed.";
+        const createdIds = Array.isArray(detail?.created_ids) ? detail.created_ids.filter((id) => typeof id === "string") : [];
+        const skippedIds = Array.isArray(detail?.skipped_ids) ? detail.skipped_ids.filter((id) => typeof id === "string") : [];
+        setError([
+          message,
+          createdIds.length && `Confirmed saved IDs: ${createdIds.join(", ")}.`,
+          skippedIds.length && `Skipped duplicate IDs: ${skippedIds.join(", ")}.`,
+          "Your JSON remains in the import editor. Review the product list before retrying the remaining products.",
+        ].filter(Boolean).join(" "));
+        return;
+      }
+      if (data.status !== "completed" || !Number.isInteger(data.created) || data.created < 0 || !Number.isInteger(data.skipped) || data.skipped < 0 ||
+          !Array.isArray(data.created_ids) || !data.created_ids.every((id) => typeof id === "string") || data.created_ids.length !== data.created ||
+          !Array.isArray(data.skipped_ids) || !data.skipped_ids.every((id) => typeof id === "string") || data.skipped_ids.length !== data.skipped) {
+        setError("Import confirmation could not be verified. Your JSON remains in the import editor; review the product list before retrying.");
+        return;
+      }
       setImportResult(data);
       setBulkJson("");
     } catch (err) {
-      setError("Import failed. Check your backend connection.");
+      setError("Import could not be confirmed. Your JSON remains in the import editor; check your connection and review the product list before retrying.");
     } finally {
       setImporting(false);
     }

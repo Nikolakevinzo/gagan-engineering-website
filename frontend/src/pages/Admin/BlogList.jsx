@@ -7,7 +7,6 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useAdminAuth } from "@/components/AdminLayout";
-import { BLOG_ARTICLES } from "@/lib/blogData";
 
 export default function AdminBlogList() {
   const { getAuthHeader } = useAdminAuth();
@@ -22,22 +21,6 @@ export default function AdminBlogList() {
   const [deleting, setDeleting] = useState(false);
 
   const fetchBlogs = async () => {
-    const mergeWithLocal = (baseArticles) => {
-      try {
-        const stored = JSON.parse(localStorage.getItem("gagan_custom_blogs") || "[]");
-        if (Array.isArray(stored) && stored.length > 0) {
-          const merged = [...baseArticles];
-          stored.forEach((item) => {
-            const idx = merged.findIndex((a) => a.slug === item.slug);
-            if (idx >= 0) merged[idx] = { ...merged[idx], ...item };
-            else merged.push(item);
-          });
-          return merged;
-        }
-      } catch (e) {}
-      return baseArticles;
-    };
-
     setLoading(true);
     try {
       const res = await fetch("/api/admin/blogs?limit=100", {
@@ -45,14 +28,14 @@ export default function AdminBlogList() {
       });
       if (res.ok) {
         const data = await res.json();
-        setArticles(mergeWithLocal(data.articles || []));
+        setArticles(data.articles || []);
       } else {
-        // Fallback to static blog data if API is unseeded or offline
-        setArticles(mergeWithLocal(BLOG_ARTICLES.map(a => ({ ...a, published: true }))));
+        setArticles([]);
+        toast.error("Could not load saved articles. Please refresh and try again.");
       }
     } catch (err) {
-      console.warn("Failed to fetch from API, falling back to static blog data:", err);
-      setArticles(mergeWithLocal(BLOG_ARTICLES.map(a => ({ ...a, published: true }))));
+      setArticles([]);
+      toast.error("Could not load saved articles. Check your connection and refresh.");
     } finally {
       setLoading(false);
     }
